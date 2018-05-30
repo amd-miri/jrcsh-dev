@@ -1,0 +1,663 @@
+/* HOMEPAGE */
+body.front #page-title {
+  display: none;
+}
+
+body.front #layout-body {
+  padding-top: 0;
+}
+body.front #landing-page-banner-text {
+  padding: 0;
+  z-index: 2;
+}
+
+body.front h1.title-page {
+  display: none;
+}
+
+body.front #block-system-main .view-header .title-page {
+  color: #135;
+  margin: 15px 0;
+  background-color: transparent;
+  padding-left: 0;
+}
+
+body.front #sidebar-right {
+  margin-top: -10px;
+}
+
+body.front #content-wrapper {
+  margin-top: 10px;
+}
+
+/* Banner */
+body.front #block-block-11 .panel-body {
+  padding: 20px;
+  background: #37aee7 url("../images/home-image.png") no-repeat top right;
+  border-top: 1px solid #0065a2;
+  border-bottom: 1px solid #0065a2;
+  -webkit-box-shadow: 0 5px 10px rgba(0,0,0,.5);
+  box-shadow: 0 5px 10px rgba(0,0,0,.5);
+}
+
+body.front h2,
+#block-block-11 h3 {
+  font-weight: bold;
+  font-size: 1.2em;
+  margin: 0;
+}
+
+body.front #block-block-11 h2 {
+  color: #fff;
+  font-size: 1.7em;
+  margin-top: 8px;
+}
+
+body.front #block-block-11 p {
+  margin: 0;
+}
+
+body.front .view-jrc-news .view-content {
+  display: flex;
+  flex-flow: row wrap;
+  margin-right: -20px;
+}
+
+body.front #block-system-main .view-jrc-news .view-content .views-row {
+  flex: 0 0 50%;
+  padding: 0;
+  padding-right: 20px;
+  margin: 0;
+  margin-bottom: 12px;
+  border: none;
+}
+
+body.front .view-jrc-news .views-row .views-field-field-file-image-thumbnail  img {
+  width: 100%;
+  height: auto;
+}
+
+body.front .view-jrc-news .views-row .views-field-field-file-image-thumbnail {
+  margin-bottom: 8px;
+}
+
+body.front .view-jrc-news .views-row .views-field-title {
+  font-weight: bold;
+  line-height: 1.2em;
+  margin-bottom: 8px;
+}
+
+/* Science updates - JRC news view conflict */
+body.front .region-sidebar-right .view-jrc-news .view-content {
+  display: block;
+  margin-right: 0;
+  font-size: .9em;
+}
+
+body.front .view-jrc-news .view-header h2,
+body.front #block-system-main .view-header h2 {
+  margin: -10px 0px 10px;
+  font-size: 1em;
+  color: rgb(255, 255, 255);
+  text-shadow: 2px 2px 2px #555555;
+  background-color: #21ade4;
+}
+
+@media screen and (max-width: 768px) {
+  body.front .view-jrc-news .view-content {
+    flex-flow: column;
+    margin-right: 0;
+  }
+  body.front #block-system-main .view-jrc-news .view-content .views-row {
+    border-bottom: 1px solid #135;
+    margin-bottom: 15px;
+    padding-bottom: 0;
+    padding-right: 0;
+  }
+  body.front .view-jrc-news .view-content {
+    display: block;
+  }
+}
+
+/* SCIENCE AREA FOOTER */
+.view-jrc-science-areas-footer .view-content {
+  margin: 10px;
+  font-size: .8em;
+}
+
+.view-jrc-science-areas-footer .span-footer-left {
+  width: 200px;
+  float: left;
+}
+
+.view-jrc-science-areas-footer .clear {
+  clear: both;
+  margin-top: 15px;
+}
+
+.view-jrc-science-areas-footer .span-footer-left div {
+  background-color: #21ade4;
+  padding: 0px;
+}
+
+.view-jrc-science-areas-footer .span-footer-left div span {
+  display: block;
+  padding: 5px;
+}
+
+.view-jrc-science-areas-footer .span-footer-left img {
+  width: 100%;
+  height: auto;
+}
+
+.view-jrc-science-areas-footer .span-footer-left a {
+  color: #fff;
+}
+
+.view-jrc-science-areas-footer .span-footer-right {
+  margin-left: 220px;
+  border-top: 1px solid #a6c8e4;
+  text-align: justify;
+  padding-top: 10px;
+}
+
+.view-jrc-science-areas-footer  ul {
+  list-style-image: none;
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+
+.view-jrc-science-areas-footer .span-footer-right ul * {
+  display: inline;
+}
+
+.view-jrc-science-areas-footer .span-footer-right ul li {
+  border-right: 1px solid #a6c8e4;
+  margin: 0 .5em 0 0;
+  padding-right: .5em;
+  font-size: .9em;
+}
+
+.view-jrc-science-areas-footer .span-footer-right ul li  span a {
+  -white-space: pre;
+}
+
+.view-jrc-science-areas-footer .span-footer-right .topic-level-1 {
+  font-weight: bold;
+}
+
+/* PRIORITIES */
+#priorities {
+  padding: 25px 0 0 0;
+  display: flex;
+  flex-flow: row wrap;
+}
+
+#priorities .wrapper {
+  flex: 0 0 50%;
+  padding: 0 15px 20px 15px;
+}
+
+#priorities .priority  br {
+  display: none;
+}
+
+#priorities .priority {
+  margin: 0;
+  padding: 0 15px;
+  border-radius: 10px;
+  min-width: 210px;
+  width: 100%;
+}
+
+#priorities .priority img {
+  margin: -10px 0 -15px -30px;
+  float: left;
+}
+
+#priorities .priority h2 {
+  font-size: 1.3em;
+  min-height: 4em;
+  margin: 0;
+  padding: 15px 0;
+}
+
+#priorities .priority a.link {
+  cursor: pointer;
+}
+
+#priorities .priority a.link:hover {
+  text-decoration: underline;
+}
+
+#priorities .priority * {
+  color: #103578;
+}
+
+#priorities .priority {
+  background-color: #efefef;
+}
+
+#priorities .priority h2 span {
+  color: inherit;
+}
+
+#priorities .priority#cp1 h2,
+#priorities .priority#cp1 a,
+#priorities .priority#cp1 a.link {
+  color: #992963;
+}
+
+#priorities .priority#cp1 hr {
+  border-color: #992963;
+}
+
+#priorities .priority#cp1 {
+  background-color: #fde6f9;
+}
+
+#priorities .priority#cp2 h2,
+#priorities .priority#cp2 a,
+#priorities .priority#cp2 a.link {
+  color: #c54537;
+}
+
+#priorities .priority#cp2 hr {
+  border-color: #c54537;
+}
+
+#priorities .priority#cp2 {
+  background-color: #feeee2;
+}
+
+#priorities .priority#cp3 h2,
+#priorities .priority#cp3 a,
+#priorities .priority#cp3 a.link {
+  color: #50812d;
+}
+
+#priorities .priority#cp3 hr {
+  border-color: #50812d;
+}
+
+#priorities .priority#cp3 {
+  background-color: #deffdc;
+}
+
+#priorities .priority#cp4 h2,
+#priorities .priority#cp4 a,
+#priorities .priority#cp4 a.link {
+  color: #103578;
+}
+
+#priorities .priority#cp5 h2,
+#priorities .priority#cp5 a,
+#priorities .priority#cp5 a.link {
+  color: #e6a500;
+}
+
+#priorities .priority#cp5 {
+  background-color: #fffec7;
+}
+
+#priorities .priority#cp6 h2,
+#priorities .priority#cp6 a,
+#priorities .priority#cp6 a.link {
+  color: #048595;
+}
+
+#priorities .priority#cp6 {
+  background-color: #e5fcfc;
+}
+
+#priorities .priority#cp7 h2,
+#priorities .priority#cp7 a,
+#priorities .priority#cp7 a.link {
+  color: #965f87;
+}
+
+#priorities .priority#cp7 {
+  background-color: #ffe6ff;
+}
+
+#priorities .priority#cp8 h2,
+#priorities .priority#cp8 a,
+#priorities .priority#cp8 a.link {
+  color: #006243;
+}
+
+#priorities .priority#cp8 {
+  background-color: #cdf4ed;
+}
+
+#priorities .priority#cp9 h2,
+#priorities .priority#cp9 a,
+#priorities .priority#cp9 a.link {
+  color: #04396e;
+}
+
+#priorities .priority#cp10 h2,
+#priorities .priority#cp10 a,
+#priorities .priority#cp10 a.link {
+  color: #945d41;
+}
+
+#priorities .priority#cp10 {
+  background-color: #fff2e7;
+}
+
+@media screen and (max-width: 768px) {
+  #priorities {
+    display: block;
+  }
+}
+
+@media screen and (max-width: 600px) {
+  #priorities {
+    flex-flow: column nowrap;
+  }
+}
+
+/**************** CONTACT FORM ********/
+div#completed,
+form#contact,
+form#contact fieldset,
+form#contact legend,
+form#contact ol,
+form#contact li {
+  margin: 0;
+  padding: 0;
+}
+
+.formcontact,
+div#completed {
+  margin: 0px;
+}
+
+form#contact,
+div#completed {
+  background: #f0f5ff;
+  border-radius: 6px;
+  padding: 20px;
+}
+
+form#contact #top-more em {
+  font-weight: normal;
+}
+
+form#contact fieldset,
+div#completed fieldset {
+  border: none;
+  margin-bottom: 10px;
+}
+
+form#contact fieldset:last-of-type {
+  margin-bottom: 0;
+}
+
+form#contact legend,
+div#completed legend {
+  color: #034ea2;
+  font-size: 16px;
+  font-weight: bold;
+  padding-bottom: 10px;
+  text-shadow: 0 1px 1px #c0d5d6;
+  border: none;
+}
+
+form#contact ol li,
+.message {
+  line-height: 30px;
+  list-style: none;
+  padding: 0 10px 5px 20px;
+  border-left: 5px solid #034ea2;
+}
+
+form#contact ol li#topic {
+  line-height: 1.2em;
+}
+
+form#contact ol ol li {
+  background: none;
+  border: none;
+  float: left;
+}
+
+form#contact label {
+  float: left;
+  font-size: 13px;
+  width: 110px;
+  margin-bottom: 0;
+}
+
+form#contact .radioboxes label {
+  display: inline;
+  margin: 0;
+  float: none;
+  width: auto;
+}
+
+form#contact .radioboxes input[type=radio] {
+  margin: 2px 5px 0 0;
+}
+
+form#contact br {
+  clear: left;
+}
+
+form#contact input,
+form#contact textarea,
+form#contact select {
+  background: #ffffff;
+  border: none;
+  border-radius: 3px;
+  font-family: Verdana, Arial, Helvetica, sans-serif;
+  font-style: italic;
+  font-size: 13px;
+  outline: none;
+  padding: 0 5px;
+  width: 100%;
+  box-shadow: 1px 1px 2px #ddd;
+}
+
+form#contact input[type=submit],
+form#contact input[type=radio] {
+  width: auto;
+  background-color: transparent;
+  padding: 0;
+}
+
+form#contact img#security_image {
+  background: #ffffff;
+  border: none;
+  float: left;
+  border-radius: 3px;
+  outline: none;
+  padding: 5px;
+}
+
+form#contact input#security_code {
+  float: left;
+  font-family: Verdana, Arial, Helvetica, sans-serif;
+  font-style: normal;
+  text-align: center;
+  width: 100px;
+}
+
+form#contact label.security_code {
+  line-height: 1.3em;
+  margin-left: 0px;
+  padding-top: 0px;
+}
+
+form#contact input:not([type=submit]):focus,
+form#contact textarea:focus,
+form#contact select:focus {
+  background: #2b75bc !important;
+  color: #ffffff;
+}
+
+form#contact input[type=radio] {
+  float: left;
+  margin-right: 5px;
+}
+
+form#contact button,
+div#completed a {
+  background: #21ade4;
+  border: none;
+  border-radius: 20px;
+  color: #ffffff;
+  display: block;
+  letter-spacing: 1px;
+  margin: auto;
+  padding: 7px 25px;
+  text-shadow: 0 1px 1px #cccccc;
+  text-transform: uppercase;
+  border: 1px solid #034ea2;
+}
+
+form#contact button:hover,
+div#completed a:hover {
+  background: #dde4f6;
+  cursor: pointer;
+  color: #111111;
+  text-shadow: 0 1px 1px #5555cc;
+}
+
+div#completed a {
+  width: 180px;
+  text-align: center;
+}
+
+form#contact input.error,
+form#contact textarea.error {
+  background-color: #fff2f2;
+  border: 1px solid #ff0000;
+}
+
+span.othertopic {
+  cursor: pointer;
+  display: block;
+}
+
+span.othertopic font {
+  text-decoration: underline;
+  font-style: italic;
+}
+
+/* Annual report button */
+div.btn-annual-report a {
+  display: block;
+  width: 40%;
+  margin: 0 0 30px 0;
+  color: black !important;
+  padding: 8px 20px 10px 20px;
+  background: #8ecb0b url("../images/jrc-ar-2015-btn-bg.jpg");
+  border: 2px dotted #669900;
+  border-radius: 15px;
+  -webkit-border-radius: 15px;
+  -moz-border-radius: 15px;
+  font-weight: bold;
+}
+
+/* Related Hashtag Twitter block */
+#block-jrc-sh-core-related-twitter-hashtag-block .smk-tweets:nth-child(1n+6) {
+  display: none;
+}
+
+#block-jrc-sh-core-related-twitter-hashtag-block .smk-tweets .smk-ago,
+#block-jrc-sh-core-related-twitter-hashtag-block .smk-tweets .smk-actions,
+#block-jrc-sh-core-related-twitter-hashtag-block .smk-tweets .smk-user span.smk-twitter-logo {
+  display: none;
+}
+
+#block-jrc-sh-core-related-twitter-hashtag-block .smk-tweets {
+  border: none;
+  margin: 0;
+}
+
+
+/* Science update summary dispay */
+.node-type-science-updates .field-type-text-with-summary p:first-child {
+  line-height: 1.3em;
+  font-weight: bolder;
+}
+
+/* Research topic pages identity block */
+body.node-type-topic .view-jrc-topic-taxonomies .panel-heading {
+  margin-top: 15px;
+  background-color: #1786e4;
+  color: #fff;
+  padding: 8px 15px;
+}
+body.node-type-topic .view-jrc-topic-taxonomies .panel-heading {
+  font-weight: bold;
+  font-size: 12px;
+}
+
+body.node-type-topic #block-views-ffbd7d96a0bd3242a02e0f9fe1d8ddef {
+  margin-bottom: 0;
+}
+
+body.node-type-topic #block-views-7bf446bef3b0b6e4d9c9138fa9c0b700,
+body.node-type-topic #block-views-ef774f0985c6d9c87152f748d590e0bb,
+body.node-type-topic #block-views-jrc-topic-related-topics-block,
+body.node-type-topic #block-views-jrc-related-to-topics-block-3 {
+  background-color: #d3ebfd;
+  padding: 0 0 10px 0;
+  border: 15px solid #d3ebfd;
+  border-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFAAAAAyCAYAAADLLVz8AAADjUlEQVRoge2bzXbaMBCF9f5PFEwoSWvA4Cb9ewSahDRrmoQ0x9141KvRyJbA51iczuKuGX/c+bE0NhfbfTOUJmegIZ/3YrtvzKmwiu2+KX7+tppmLIyzGAhqMsAJAKPALplmGYrHyKEeCzIaIDrNA3X33HwQNM9AUlyzu2cPLDpzUIDkOPrHODAM9uoMJMEloOjKWEd2AkR46DYO7Pr+xdHHDMVj5EDRlSkQgwCL7d6pcTP270mwPgkqR5QUjwR1zkA6NfIYgJMWHtU5TFcOzoJ6eLVaZCiMj8NEkDatodl0OdEDKMGz6RqARkEuz0AcKMK8alN7ngDRcHhY8xAeWh/BUWAr1O7QVBlptTs48SFMehZ8Pg6xqyY6AAuoeQiPUrYEeA44FvA6Q0lA6RlsekNKI8RLgBgE6KRuCF4LUAJHgW4yFoeJIAmgBBEbC3eh4e7D1L2Gmlfevzi1JASufnzLViGQ+Fwl1ERsLLOACw3WPsl9BM/WOwFcDeA+ZywLUwC5bEEuAKLkQl4LDaZv0H3QMKqA4yjIm4zFQaIjKwTYdueQCz2AkvskeKuHVw+eBO6W9OvP+GpjCYFEiFQPOUTJhRYgpq/kvgW0/wqLsgCPoH3JUASTQ9wAxGr3b9xZBFzI09jw9HVqH7qv/QF0Xhe4rxmpDyQ5kTozdyHVQimNTQEAefpi6lLt42nL4Y0NKwYkQsR0XoMLl8yFNo3ZO7Lh9Q/nvpD76gh43zJSH8S6y4UsjXkdNKH6Vwru2+wObuoK8Jzgn97HlwASIWIqY0fGATtUBz2AWP+k9EWAt49vYXhP7833jIQgPYg9ABdCHcRGYqYRANcwLNtxIABvbFidIAWIN+BCGrL5SCMBnCJA7MC8geDoUve5Twj6x4gKOTHkQpwLcbDGRsI7seEdGF/dePrWrPaF4I0JrQ+mBJFqYS2kMb7a8U484XOgQkyHKA7SmsbxaWzwHFAbSXoj8d6FdZRJG2Wc0xgdptOHafE4S1/n4l/nDF6i64FC+oGCeCKtR1rxR1renYgeqqYdqjq3cnqsn36s790L68VS2sWSA1CvNtOvNsXVDr1cj79c95aLdL0jbb3DW2/TBaO0BSNxP1BX3OJX3KI3VHXJMmI/UNd809d8O7f0ddG8f9E86TsR/dThCIAcon5scwRATGn93OsEgNyR+sHhCZ+7Esj//ZPXkwB2Qc1ZQz7vX0A75T+6BWkOAAAAAElFTkSuQmCC") 20 20 20 20 repeat stretch;
+  border-top: none;
+  border-bottom: none;
+  margin-top: 0;
+  margin-bottom: 0;
+  color: #074a8b;
+}
+
+body.node-type-topic #block-views-7bf446bef3b0b6e4d9c9138fa9c0b700 {
+  border-top: 15px solid #d3ebfd;
+}
+
+body.node-type-topic #block-views-jrc-topic-related-topics-block {
+  border-bottom: 15px solid #d3ebfd;
+}
+
+body.node-type-topic #block-views-7bf446bef3b0b6e4d9c9138fa9c0b700 .panel-heading,
+body.node-type-topic #block-views-ef774f0985c6d9c87152f748d590e0bb .panel-heading,
+body.node-type-topic #block-views-jrc-topic-related-topics-block .panel-heading,
+body.node-type-topic #block-views-jrc-related-to-topics-block-3 .panel-heading {
+  color: #074a8b;
+  font-size: 13px;
+  padding: 0;
+  font-weight: bold;
+  background-color: transparent;
+  margin-top: -4px;
+}
+
+body.node-type-topic #block-views-7bf446bef3b0b6e4d9c9138fa9c0b700 .panel-body .list-group a,
+body.node-type-topic #block-views-ef774f0985c6d9c87152f748d590e0bb .panel-body .list-group a,
+body.node-type-topic #block-views-jrc-topic-related-topics-block .panel-body .list-group a,
+body.node-type-topic #block-views-jrc-related-to-topics-block-3 a {
+  font-weight: normal;
+  padding: 0px;
+  background-color: transparent;
+  color: #074a8b;
+  border: none;
+  margin: 4px 0 6px 0;
+  font-size: 12px;
+  line-height: 1.25em;
+}
+
+body.node-type-topic #block-views-jrc-related-to-topics-block-3 p {
+  margin: 0 0 8px;
+}
+
+/* for rss main page */
+a.feed-icon {
+  display: none;
+}
+.views-exposed-form .form-item {
+  min-width: 150px;
+}

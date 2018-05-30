@@ -1,0 +1,6 @@
+name = Language selector (Page)
+description = Manage language selector at page level.
+core = 7.x
+dependencies[] = entity_translation
+
+datestamp = "1427356701"

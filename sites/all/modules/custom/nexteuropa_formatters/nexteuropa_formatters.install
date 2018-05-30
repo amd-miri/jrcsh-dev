@@ -1,0 +1,44 @@
+<?php
+
+/**
+ * @file
+ * Contains install hooks for the nexteuropa_formatters module.
+ */
+
+/**
+ * Implements hook_install().
+ */
+function nexteuropa_formatters_install() {
+  // Get the weight of the module we want to compare against.
+  $weight = db_select('system', 's')
+    ->fields('s', ['weight'])
+    ->condition('name', 'nexteuropa_multilingual', '=')
+    ->execute()
+    ->fetchField();
+
+  // Set our module to a weight 1 heavier, so ours moves lower in execution
+  // order.
+  db_update('system')
+    ->fields(['weight' => $weight + 1])
+    ->condition('name', 'nexteuropa_formatters', '=')
+    ->execute();
+}
+
+/**
+ * Update hook to change the weight of the module.
+ */
+function nexteuropa_formatters_update_7101() {
+  // Get the weight of the module we want to compare against.
+  $weight = db_select('system', 's')
+    ->fields('s', ['weight'])
+    ->condition('name', 'nexteuropa_multilingual', '=')
+    ->execute()
+    ->fetchField();
+
+  // Set our module to a weight 1 heavier, so ours moves lower in execution
+  // order.
+  db_update('system')
+    ->fields(['weight' => $weight + 1])
+    ->condition('name', 'nexteuropa_formatters', '=')
+    ->execute();
+}
