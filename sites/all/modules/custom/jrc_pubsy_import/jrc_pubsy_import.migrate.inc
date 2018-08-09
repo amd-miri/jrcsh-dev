@@ -63,21 +63,27 @@ class JrcPubsyImportPublicationsCoverMigration extends Migration {
     );
 
     $query = "
-             SELECT 
-                V_SHP_FILE.ID,
-                REQUEST_ID,
-                FILE_FILENAME,
-                FILE_THUMBNAIL
-        	  FROM 
-                V_SHP_FILE 
-        	  JOIN
-        		V_SHP_FILE_BLOB
-        	  ON
-        		V_SHP_FILE.ID = V_SHP_FILE_BLOB.ID
-        	  WHERE
-        	    FILE_THUMBNAIL_AVAILABLE = 'Y'
-        	  ORDER BY 
-        	    REQUEST_ID
+             SELECT * FROM (
+               SELECT
+                 V_SHP_FILE.ID,
+                 V_SHP_FILE.REQUEST_ID,
+                 FILE_FILENAME,
+                 FILE_THUMBNAIL
+               FROM
+                 V_SHP_FILE
+               JOIN
+                 V_SHP_FILE_BLOB
+               ON
+                 V_SHP_FILE.ID = V_SHP_FILE_BLOB.ID
+               JOIN
+                 V_SHP_PUBLICATION
+               ON
+                 V_SHP_FILE.REQUEST_ID = V_SHP_PUBLICATION.REQUEST_ID
+               WHERE
+                 FILE_THUMBNAIL_AVAILABLE = 'Y'
+               ORDER BY
+                 V_SHP_PUBLICATION.REQUEST_ID DESC)
+               WHERE ROWNUM <=500
               ";
 
     $count_query = "SELECT COUNT(*) FROM V_SHP_FILE WHERE FILE_THUMBNAIL_AVAILABLE = 'Y'";
@@ -174,37 +180,39 @@ class JrcPubsyImportPublicationsMigration extends Migration {
     );
 
     $query = "
-			  SELECT                                
-               V_SHP_PUBLICATION.REQUEST_ID,
-               TO_CHAR(DATE_ACCESSIONED, 'YYYY-MM-DD HH24:MI:SS') DATE_ACCESSIONED,
-               TO_CHAR(DATE_AVAILABLE, 'YYYY-MM-DD HH24:MI:SS') DATE_AVAILABLE,
-               TO_CHAR(DATE_CREATED, 'YYYY-MM-DD HH24:MI:SS') DATE_CREATED,
-               DATE_ISSUED,
-               TO_CHAR(DATE_SUBMITTED, 'YYYY-MM-DD HH24:MI:SS') DATE_SUBMITTED,
-               IDENTIFIER_CITATION,
-               IDENTIFIER_ISBN,
-               IDENTIFIER_ISSN,
-               DESCRIPTION_ABSTRACT,
-               DESCRIPTION_SPONSORSHIP,
-               FORMAT_MEDIUM,
-               LANGUAGE,
-               PUBLISHER,
-               RELATION_ISPARTOFSERIES,
-               TITLE,
-               ID_TYPE,
-               TYPE,
-			   PUBLICATION_TYPE,
-               IDENTIFIER_DOI,
-               ID_APPEARS_COLLECTION,
-               APPEARS_COLLECTION,
-               SCIENCE_AREAS,
-               RESEARCH_TOPICS,
-               KEYWORDS,
-               IDENTITIES                                        
-             FROM 
-               V_SHP_PUBLICATION
-             ORDER BY
-               DATE_ACCESSIONED DESC
+			       SELECT * FROM (
+               SELECT
+                 V_SHP_PUBLICATION.REQUEST_ID,
+                 TO_CHAR(DATE_ACCESSIONED, 'YYYY-MM-DD HH24:MI:SS') DATE_ACCESSIONED,
+                 TO_CHAR(DATE_AVAILABLE, 'YYYY-MM-DD HH24:MI:SS') DATE_AVAILABLE,
+                 TO_CHAR(DATE_CREATED, 'YYYY-MM-DD HH24:MI:SS') DATE_CREATED,
+                 DATE_ISSUED,
+                 TO_CHAR(DATE_SUBMITTED, 'YYYY-MM-DD HH24:MI:SS') DATE_SUBMITTED,
+                 IDENTIFIER_CITATION,
+                 IDENTIFIER_ISBN,
+                 IDENTIFIER_ISSN,
+                 DESCRIPTION_ABSTRACT,
+                 DESCRIPTION_SPONSORSHIP,
+                 FORMAT_MEDIUM,
+                 LANGUAGE,
+                 PUBLISHER,
+                 RELATION_ISPARTOFSERIES,
+                 TITLE,
+                 ID_TYPE,
+                 TYPE,
+                 PUBLICATION_TYPE,
+                 IDENTIFIER_DOI,
+                 ID_APPEARS_COLLECTION,
+                 APPEARS_COLLECTION,
+                 SCIENCE_AREAS,
+                 RESEARCH_TOPICS,
+                 KEYWORDS,
+                 IDENTITIES
+               FROM
+                 V_SHP_PUBLICATION
+               ORDER BY
+                 DATE_ACCESSIONED DESC)
+               WHERE ROWNUM <=500
      	     ";
     $count_query = "SELECT COUNT(*) FROM V_SHP_PUBLICATION";
 

@@ -296,3 +296,24 @@ function jrc_sh_core_update_7023(&$sandbox) {
   $sandbox['progress']++;
   $sandbox['#finished'] = $sandbox['progress'] / $sandbox['max'];
 }
+
+/**
+ * Remove corrupted file.
+ */
+function jrc_sh_core_update_7024() {
+  db_delete('file_managed')
+    ->condition('fid', '175604')
+    ->execute();
+}
+
+/**
+ * Disable token_custom module.
+ */
+function jrc_sh_core_update_7025() {
+  module_disable(array(
+    'token_custom',
+  ), FALSE);
+  drupal_uninstall_modules(array(
+    'token_custom',
+  ), FALSE);
+}
