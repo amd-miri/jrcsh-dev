@@ -1,0 +1,1 @@
+window.CKEDITOR_BASEPATH = '/jrcsh/profiles/multisite_drupal_standard/libraries/ckeditor/';
