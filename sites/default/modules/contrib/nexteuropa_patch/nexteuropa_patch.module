@@ -1,0 +1,22 @@
+<?php
+/**
+ * @file
+ * Code for the NextEuropa Multilingual feature.
+ */
+
+/**
+ * Implements hook_entity_info_alter().
+ */
+function nexteuropa_patch_entity_info_alter(&$entity_info) {
+  if (module_exists('file_entity')) {
+    if (!isset($entity_info['file']['translation']['entity_translation'])) {
+      $entity_info['file']['translation']['entity_translation'] = array(
+        'class' => 'EntityTranslationFileHandler',
+        'edit form' => 'file',
+      );
+    }
+    else {
+      $entity_info['file']['translation']['entity_translation']['class'] = 'EntityTranslationFileHandler';
+    }
+  }
+}

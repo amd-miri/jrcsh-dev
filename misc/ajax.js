@@ -131,7 +131,7 @@ Drupal.ajax = function (base, element, element_settings) {
   //      E.g.: ?q=path/nojs&destination=foobar
   // 5. /nojs# - Followed by a fragment.
   //      E.g.: path/nojs#myfragment
-  this.url = element_settings.url.replace(/\/nojs(\/|$|\?|&|#)/g, '/ajax$1');
+  this.url = element_settings.url.replace(/\/nojs(\/|$|\?|&|#|_)/g, '/ajax$1');
   // If the 'nojs' version of the URL is trusted, also trust the 'ajax' version.
   if (Drupal.settings.urlIsAjaxTrusted[element_settings.url]) {
     Drupal.settings.urlIsAjaxTrusted[this.url] = true;
@@ -476,7 +476,7 @@ Drupal.ajax.prototype.getEffect = function (response) {
  * Handler for the form redirection error.
  */
 Drupal.ajax.prototype.error = function (xmlhttprequest, uri, customMessage) {
-  alert(Drupal.ajaxError(xmlhttprequest, uri, customMessage));
+  Drupal.displayAjaxError(Drupal.ajaxError(xmlhttprequest, uri, customMessage));
   // Remove the progress element.
   if (this.progress.element) {
     $(this.progress.element).remove();
