@@ -1,1 +1,2 @@
-
+# Ignore paths that contain user-generated content.
+tmp/
