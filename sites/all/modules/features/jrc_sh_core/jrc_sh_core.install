@@ -319,11 +319,27 @@ function jrc_sh_core_update_7025() {
 }
 
 /**
- * Enable Apachesolr realtime module.
+ * Enable term_reference_tree module.
  */
 function jrc_sh_core_update_7026() {
+  module_enable(array('term_reference_tree'), TRUE);
+}
+
+/**
+ * Enable Apachesolr realtime module.
+ */
+function jrc_sh_core_update_7027() {
   module_enable(array(
     'apachesolr_realtime',
     'apachesolr_realtime_reports',
   ), TRUE);
+}
+
+/**
+ * Remove entity ignored by Pubsy migrate import.
+ */
+function jrc_sh_core_update_7028() {
+  db_delete('migrate_map_pubsypublications')
+  ->condition('destid1', '181661')
+  ->execute();
 }
