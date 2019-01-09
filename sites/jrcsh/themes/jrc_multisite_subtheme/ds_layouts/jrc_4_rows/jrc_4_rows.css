@@ -1,0 +1,19 @@
+/**
+ * @file
+ * Styling for the ds-2col-stacked-fluid template.
+ */
+
+.node-type-interlaboratory-comparisons .rows-group {
+  border-bottom: 1px solid #5389b5;
+  border-top: 1px solid #5389b5;
+  margin: 10px 0 0;
+}
+.node-type-interlaboratory-comparisons .field:nth-child(odd) {
+  background: #eef3f7 none repeat scroll 0 0;
+}
+.node-type-interlaboratory-comparisons .field-label {
+  width: 20% !important;
+}
+.node-type-interlaboratory-comparisons .field-items {
+  width: 80% !important;
+}

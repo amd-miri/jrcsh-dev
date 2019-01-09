@@ -1,0 +1,336 @@
+<?php
+
+/**
+ * @file
+ * This file contains the jrc_sh_core feature install functions.
+ */
+
+/**
+ * Implements hook_enable().
+ */
+function jrc_sh_core_enable() {
+  drupal_set_message(t("The feature JRC SH Core has been enabled."), 'status');
+}
+
+/**
+ * Implements hook_disable().
+ */
+function jrc_sh_core_disable() {
+  drupal_set_message(t("The feature JRC SH Core has been disabled."), 'status');
+}
+
+/**
+ * Enable and disable some modules.
+ */
+function jrc_sh_core_update_7001() {
+  module_enable(array('node_revision_delete'), TRUE);
+  module_disable(array('bundle_copy', 'media_browser_plus', 'views_tree'), FALSE);
+}
+
+/**
+ * Uninstall bundle_copy, media_browser_plus and views_tree.
+ */
+function jrc_sh_core_update_7002() {
+  drupal_uninstall_modules(array('bundle_copy',
+    'media_browser_plus',
+    'views_tree',
+  ), FALSE);
+}
+
+/**
+ * Enable match_redirect module.
+ */
+function jrc_sh_core_update_7003() {
+  module_enable(array('match_redirect'), TRUE);
+}
+
+/**
+ * Enable apachesolr_sort module.
+ */
+function jrc_sh_core_update_7004() {
+  module_enable(array('apachesolr_sort'), TRUE);
+}
+
+/**
+ * Enable entityreference_prepopulate module.
+ */
+function jrc_sh_core_update_7005() {
+  module_enable(array('entityreference_prepopulate'), TRUE);
+}
+
+/**
+ * Disable unused modules of the past migration.
+ */
+function jrc_sh_core_update_7006() {
+  module_disable(array('jrc_menu_import',
+    'jrc_file_fields_import',
+    'jrc_d2d_import_modif',
+  ), FALSE);
+  drupal_uninstall_modules(array('jrc_menu_import',
+    'jrc_file_fields_import',
+    'jrc_d2d_import_modif',
+  ), FALSE);
+}
+
+/**
+ * Enable views_rss module.
+ */
+function jrc_sh_core_update_7007() {
+  module_enable(array('views_rss'), TRUE);
+  module_enable(array('views_rss_core'), TRUE);
+  module_enable(array('views_rss_dc'), TRUE);
+}
+
+/**
+ * Enables workbench_og module.
+ */
+function jrc_sh_core_update_7008() {
+  module_enable(array('workbench_og'), TRUE);
+  module_enable(array('multisite_og_button'), TRUE);
+}
+
+/**
+ * Enables metatag module.
+ */
+function jrc_sh_core_update_7009() {
+  module_enable(array('metatag',
+    'metatag_context',
+    'metatag_facebook',
+    'metatag_google_plus',
+    'metatag_mobile',
+    'metatag_opengraph',
+    'metatag_twitter_cards',
+    'metatag_views',
+  ), TRUE);
+}
+
+/**
+ * Enables menu default link module.
+ */
+function jrc_sh_core_update_7010() {
+  module_enable(array(
+    'og_menu_default_links',
+  ), TRUE);
+}
+
+/**
+ * Enables Imagecache_Token module.
+ */
+function jrc_sh_core_update_7011() {
+  module_enable(array(
+    'imagecache_token',
+  ), TRUE);
+}
+
+/**
+ * Enables jrc_news_to_su_import feature.
+ */
+function jrc_sh_core_update_7012() {
+  module_enable(array(
+    'jrc_news_to_su_import',
+  ), TRUE);
+}
+
+/**
+ * Enables better_exposed_filters module.
+ */
+function jrc_sh_core_update_7013() {
+  module_enable(array(
+    'better_exposed_filters',
+  ), TRUE);
+}
+
+/**
+ * Enables apachesolr_autocomplete module.
+ */
+function jrc_sh_core_update_7014() {
+  module_enable(array(
+    'apachesolr_autocomplete',
+  ), TRUE);
+}
+
+/**
+ * Enables og_vocab and disable jrc_news_to_su_import.
+ */
+function jrc_sh_core_update_7015() {
+  module_enable(array(
+    'og_vocab',
+  ), TRUE);
+  module_disable(array(
+    'jrc_news_to_su_import',
+  ), FALSE);
+  drupal_uninstall_modules(array(
+    'jrc_news_to_su_import',
+  ), FALSE);
+}
+
+/**
+ * Enables facetapi_bonus.
+ */
+function jrc_sh_core_update_7016() {
+  module_enable(array(
+    'facetapi_bonus',
+  ), TRUE);
+}
+
+/**
+ * Enables xmlsitemap module.
+ */
+function jrc_sh_core_update_7017() {
+  module_enable(array(
+    'xmlsitemap',
+    'xmlsitemap_custom',
+    'xmlsitemap_engines',
+    'xmlsitemap_menu',
+    'xmlsitemap_node',
+    'xmlsitemap_taxonomy',
+    'xmlsitemap_user',
+  ), TRUE);
+}
+
+/**
+ * Remove the corrupted file (NEMA-1350).
+ */
+function jrc_sh_core_update_7018() {
+  db_delete('file_managed')
+    ->condition('filename', 'encr.jpg')
+    ->execute();
+}
+
+/**
+ * Remove css and js injector.
+ */
+function jrc_sh_core_update_7019() {
+  module_enable(array(
+    'feeds',
+    'feeds_ui',
+    'feeds_tamper',
+    'feeds_tamper_ui',
+    'feeds_et',
+    'nexteuropa_newsroom',
+  ), TRUE);
+  module_disable(array(
+    'js_injector',
+    'css_injector',
+  ), FALSE);
+  drupal_uninstall_modules(array(
+    'js_injector',
+    'css_injector',
+    'apachesolr_autocomplete',
+  ), FALSE);
+}
+
+/**
+ * Remove the corrupted file (NEMA-1514).
+ */
+function jrc_sh_core_update_7020() {
+  db_delete('file_managed')
+    ->condition('fid', '174010')
+    ->execute();
+}
+
+/**
+ * Enable nexteuropa_patch.
+ */
+function jrc_sh_core_update_7021() {
+  module_enable(array(
+    'nexteuropa_patch',
+  ), TRUE);
+}
+
+/**
+ * Enable cacheflush.
+ */
+function jrc_sh_core_update_7022() {
+  module_enable(array(
+    'cacheflush',
+  ), TRUE);
+}
+
+/**
+ * Fix undefined language in body after upgrade.
+ */
+function jrc_sh_core_update_7023(&$sandbox) {
+  if (empty($sandbox)) {
+    $sandbox['progress'] = 0;
+
+    // How many entities will need processing?
+    // Select all nodes that don't have en content but und.
+    $subquery = db_select('field_data_body', 'b')
+      ->fields('b', array('entity_id'))
+      ->condition('b.language', 'en', '=');
+    $res = db_select('field_data_body', 'b')
+      ->fields('b', array('entity_id'))
+      ->condition('b.language', 'und', '=')
+      ->condition('b.entity_id', $subquery, 'NOT IN')
+      ->execute();
+    $count = $res->rowCount();
+
+    if (intval($count) === 0) {
+      // Nothing to do.
+      $sandbox['#finished'] = 1;
+      return;
+    }
+    // Batch 100 items in one go.
+    $sandbox['max'] = ceil($count / 100);
+    $sandbox['chunks'] = array_chunk($res->fetchCol(), 100);
+  }
+
+  $offset = $sandbox['progress'];
+  $batch = $sandbox['chunks'][$offset];
+  foreach ($batch as $nid) {
+    $node = node_load($nid);
+
+    if (!empty($node) && isset($node->body[LANGUAGE_NONE]) && !empty($node->body[LANGUAGE_NONE])) {
+      // Do the old switcheroo!
+      $body = $node->body[LANGUAGE_NONE];
+      unset($node->body[LANGUAGE_NONE]);
+      $node->body['en'] = $body;
+      $node->language = 'en';
+      $node->revision = 1;
+      $node->workbench_modetation_state_new = workbench_moderation_state_published();
+      node_save($node);
+    }
+  }
+  // Are we done ?
+  $sandbox['progress']++;
+  $sandbox['#finished'] = $sandbox['progress'] / $sandbox['max'];
+}
+
+/**
+ * Remove corrupted file.
+ */
+function jrc_sh_core_update_7024() {
+  db_delete('file_managed')
+    ->condition('fid', '175604')
+    ->execute();
+}
+
+/**
+ * Disable token_custom module.
+ */
+function jrc_sh_core_update_7025() {
+  module_disable(array(
+    'token_custom',
+  ), FALSE);
+  drupal_uninstall_modules(array(
+    'token_custom',
+  ), FALSE);
+}
+
+/**
+ * Enable term_reference_tree module.
+ */
+function jrc_sh_core_update_7026() {
+  module_enable(array('term_reference_tree'), TRUE);
+}
+
+/**
+ * Enable Apachesolr realtime module.
+ */
+function jrc_sh_core_update_7027() {
+  module_enable(array(
+    'apachesolr_realtime',
+    'apachesolr_realtime_reports',
+  ), TRUE);
+}

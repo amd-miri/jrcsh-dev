@@ -1,0 +1,44 @@
+name = jrc_multisite_subtheme
+description = Sub theme for JRC Multisite site
+package = Fpfis_cms_theme
+multisite_version = "2.3"
+core = "7.x"
+base theme = ec_resp
+php = 5.2.4
+
+scripts[] = "js/cookie_config.js"
+scripts[] = "js/jrc_multisite_dropdown_menu.js"
+scripts[] = "js/jrc_multisite_tablesorter.js"
+scripts[] = "js/jrc_multisite_reusable.js"
+scripts[] = "js/glossary.js"
+
+stylesheets[all][] = "css/glossary.css"
+stylesheets[all][] = "css/jrc_multisite_subtheme.css"
+stylesheets[all][] = "css/jrc_multisite_reusable.css"
+stylesheets[all][] = "css/jrc_multisite_specific.css"
+stylesheets[all][] = "css/jrc_multisite_dropdown_menu.css"
+stylesheets[all][] = "css/jrc_multisite_fixes.css"
+
+regions[header_top] = "Header Top"
+regions[header_right] = "Header Right"
+
+regions[featured] = "Featured"
+regions[tools] = "Tools"
+regions[help] = "Help"
+
+regions[sidebar_left] = "Sidebar Left"
+regions[sidebar_right] = "Sidebar Right"
+
+regions[landing_page_banner] = "Homepage banner"
+regions[landing_page_banner_text] = "Homepage banner text"
+
+regions[page_header] = "Page Header"
+
+regions[content_top] = "Content Top"
+regions[content] = "Content"
+regions[content_right] = "Content Right"
+regions[content_bottom] = "Content Bottom"
+
+regions[footer] = "Footer"
+
+settings[shortcut_module_link] = 0
