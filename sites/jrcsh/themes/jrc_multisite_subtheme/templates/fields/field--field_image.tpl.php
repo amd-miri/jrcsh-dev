@@ -51,14 +51,14 @@
         <?php foreach ($items as $delta => $item): ?>
           <div class="field-item <?php print $delta % 2 ? 'odd' : 'even'; ?>"<?php print $item_attributes[$delta]; ?>>
             <?php print render($item); ?>
-            <?php if(isset($item['#item']['field_file_image_caption'][LANGUAGE_NONE][0]['safe_value'])): ?>
-              <span class="below-image-text">
-                <?php print $item['#item']['field_file_image_caption'][LANGUAGE_NONE][0]['safe_value']; ?>
-                <?php if(isset($item["img_copyright"])): ?>
-                  <br /> &copy;<span class="copyright"><?php print $item["img_copyright"]; ?></span>
-                <?php endif; ?>
-              </span>
-            <?php endif; ?>
+            <span class="below-image-text">
+              <?php if(isset($item['#item']['field_file_image_caption'][LANGUAGE_NONE][0]['safe_value'])): ?>
+              <div class="caption"><?php print $item['#item']['field_file_image_caption'][LANGUAGE_NONE][0]['safe_value']; ?></div>
+              <?php endif; ?>
+              <?php if(isset($item["img_copyright"])): ?>
+               <div class="copyright">&copy;<?php print $item["img_copyright"]; ?></div>
+              <?php endif; ?>
+            </span>
           </div>
         <?php endforeach; ?>
       <div class="clear"></div>

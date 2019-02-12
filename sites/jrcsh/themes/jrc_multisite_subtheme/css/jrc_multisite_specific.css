@@ -427,7 +427,7 @@ form#contact ol ol li {
 form#contact label {
   float: left;
   font-size: 13px;
-  width: 110px;
+  width: 195px;
   margin-bottom: 0;
 }
 
@@ -660,4 +660,90 @@ a.feed-icon {
 }
 .views-exposed-form .form-item {
   min-width: 150px;
+}
+
+.page-node-177888 .node-unpublished {
+  background-color: #fff !important;
+}
+
+.page-node-177888 ul.open-access-calls li.open-access-call h3 {
+  margin-top: 0;
+}
+
+.page-node-177888 ul.open-access-calls li.open-access-call {
+  clear: both;
+}
+
+.page-node-177888 ul.open-access-calls .call-status {
+  font-size: .8em;
+}
+
+.page-node-177888 ul.open-access-calls .call-status.closed {
+  background-color: #fee;
+  color: #f55;
+}
+
+.page-node-177888 ul.open-access-calls p.open-call-link {
+  margin-bottom: 0;
+}
+
+.page-node-68084 .media-youtube-video {
+  position: relative;
+  padding-bottom: 56.25%; /* 16:9 */
+  padding-top: 25px;
+  height: 0;
+}
+.page-node-68084 .media-youtube-video iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+
+/* mars bulletins */
+.thumbs-mb {
+  width: 100%;
+  border: 1px dotted #e0e0e0;
+  border-radius: 10px;
+  background-color: #f8f8f5 !important;
+  padding: 10px !important;
+  margin: 0 !important;
+  display: inline;
+  background-image: none !important;
+  float: left;
+  text-decoration: none;
+}
+.thumbs-mb:hover {
+  border-style: solid;
+  background-color: #ffffff !important;
+}
+.thumbs-mb span {
+  display: block;
+}
+.thumbs-mb span.title {
+  font-weight: bold;
+  margin: 10px 0;
+}
+.thumbs-mb:hover span.title {
+  text-decoration: underline;
+}
+/* Visistors centre */
+.visitor-centre iframe {
+  border: none;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  min-height: 6645px;
+}
+@media screen and (min-width: 576px) {
+  .visitor-centre iframe {
+    min-height: 9130px;
+  }
+}
+@media screen and (min-width: 768px) {
+  .visitor-centre iframe {
+    min-height: 4070px;
+  }
 }

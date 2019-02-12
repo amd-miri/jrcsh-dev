@@ -78,6 +78,15 @@
           }
         }
       );
+      // Make radio button remember option after issues in submissions.
+      $("input[type='radio']").click(function () {
+        var radioValue = $("input[name='form_tools_form_id']:checked").attr('id');
+        if (radioValue) {
+          localStorage.setItem('radioValue', radioValue);
+        }
+      });
+      var givenRadioValue = localStorage.getItem('radioValue');
+      $("#" + givenRadioValue).attr('checked', true);
     }
   };
 })(jQuery);

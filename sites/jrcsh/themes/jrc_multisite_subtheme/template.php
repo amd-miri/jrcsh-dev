@@ -18,12 +18,12 @@ function jrc_multisite_subtheme_preprocess_node(&$variables, $hook) {
       $variables['content']['field_image'][0]['#item'] = (array) file_load($variables['field_image'][0]['field_file_image_thumbnail'][LANGUAGE_NONE][0]['fid']);
     }
     elseif (isset($variables['field_big_image'][0]['field_file_image_thumbnail'][LANGUAGE_NONE][0]['filename']) &&
-         trim($variables['field_big_image'][0]['field_file_image_thumbnail'][LANGUAGE_NONE][0]['filename']) != '') {
+      trim($variables['field_big_image'][0]['field_file_image_thumbnail'][LANGUAGE_NONE][0]['filename']) != '') {
       // Replace the field_big_image if thumbnail available.
       $variables['content']['field_big_image'][0]['#item'] = (array) file_load($variables['field_big_image'][0]['field_file_image_thumbnail'][LANGUAGE_NONE][0]['fid']);
     }
     elseif (isset($variables['field_jrc_staff_image'][0]['field_file_image_thumbnail'][LANGUAGE_NONE][0]['filename']) &&
-         trim($variables['field_jrc_staff_image'][0]['field_file_image_thumbnail'][LANGUAGE_NONE][0]['filename']) != '') {
+      trim($variables['field_jrc_staff_image'][0]['field_file_image_thumbnail'][LANGUAGE_NONE][0]['filename']) != '') {
       // Replace the field_jrc_staff_image if thumbnail available.
       $variables['content']['field_jrc_staff_image'][0]['#item'] = (array) file_load($variables['field_jrc_staff_image'][0]['field_file_image_thumbnail'][LANGUAGE_NONE][0]['fid']);
     }
@@ -273,7 +273,7 @@ function jrc_multisite_subtheme_preprocess_field(&$variables) {
  */
 function jrc_multisite_subtheme_preprocess_page(&$variables) {
   $title = drupal_get_title();
-
+  $node = menu_get_object();
   // Format regions.
   $regions = array();
   $regions['header_right'] = (isset($variables['page']['header_right']) ? render($variables['page']['header_right']) : '');
@@ -404,6 +404,9 @@ function jrc_multisite_subtheme_preprocess_page(&$variables) {
   // Adding pathToTheme for Drupal.settings to be used in js files.
   $base_theme = multisite_drupal_toolbox_get_base_theme();
   drupal_add_js('jQuery.extend(Drupal.settings, { "pathToTheme": "' . drupal_get_path('theme', $base_theme) . '" });', 'inline');
+  if ($node && $node->nid == 68390) {
+    drupal_add_js('https://webtools.ec.europa.eu/captcha/js/captcha.js', external);
+  }
 }
 
 /**

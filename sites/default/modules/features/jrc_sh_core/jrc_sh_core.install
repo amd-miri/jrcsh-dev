@@ -334,3 +334,38 @@ function jrc_sh_core_update_7027() {
     'apachesolr_realtime_reports',
   ), TRUE);
 }
+
+/**
+ * Disable metatag_mobile module.
+ */
+function jrc_sh_core_update_7030() {
+  module_disable(array(
+    'metatag_mobile',
+  ), FALSE);
+  drupal_uninstall_modules(array(
+    'metatag_mobile',
+  ), FALSE);
+}
+
+/**
+ * Disable cacheflush module.
+ */
+function jrc_sh_core_update_7031() {
+  module_disable(array(
+    'cacheflush_entity',
+    'cacheflush',
+  ), FALSE);
+  drupal_uninstall_modules(array(
+    'cacheflush_entity',
+    'cacheflush',
+  ), FALSE);
+}
+
+/**
+ * Enable Contextual View Modes realtime module.
+ */
+function jrc_sh_core_update_7032() {
+  module_enable(array(
+    'contextual_view_modes',
+  ), TRUE);
+}

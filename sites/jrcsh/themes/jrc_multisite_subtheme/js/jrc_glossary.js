@@ -180,4 +180,5 @@
   function isPropertyMissingOnEitherObjects(key, a ,b) {
     return (!a.hasOwnProperty(key) || !b.hasOwnProperty(key));
   }
+
 }(jQuery));

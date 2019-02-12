@@ -16,9 +16,10 @@
   <!--[if lt IE 9]>
     <script src="<?php print url(drupal_get_path('theme', 'ec_resp') . '/scripts/html5shiv.min.js', array('language' => (object) array('language' => FALSE))); ?>"></script>
     <script src="<?php print url(drupal_get_path('theme', 'ec_resp') . '/scripts/respond.min.js', array('language' => (object) array('language' => FALSE))); ?>"></script>
-  <![endif]--> 
+  <![endif]-->
   <?php print $scripts; ?>
   <script src="//ec.europa.eu/wel/cookie-consent/consent.js" type="text/javascript"></script>
+  <script src="//ec.europa.eu/wel/surveys/wr_survey01/wr_survey.js" type="text/javascript"></script>
 </head>
 <body class="<?php print $classes; ?>" <?php print $attributes;?>>
   <div id="skip-link">
