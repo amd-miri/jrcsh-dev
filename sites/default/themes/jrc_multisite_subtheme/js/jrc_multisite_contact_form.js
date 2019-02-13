@@ -28,6 +28,7 @@
       var obj, objt;
       var group = (URL["g"] && (obj = $("#top-" + URL["g"])).length);
       var topic = (URL["t"] && (objt = $("#topic_" + URL["t"])).length);
+      // Get a possible selected radio option (if browser back function is used)
       if (group || topic) {
         var newTopic = $('li#topic').clone().html("");
         newTopic.append("<div class='radioboxes'>");
@@ -61,11 +62,25 @@
         }
         $('li#topic').html(newTopic.html());
       }
+
+      // If a radio button was checked, rechek after HTML changes.
+      if (window.location.hash) {
+          $("input#topic_" + window.location.hash.substring(1)).prop('checked', true);
+      }
+
       else {
         $("#top-more").append(" <em>(click to expand)</em>");
         $(".othertopic").prepend("<span>+</span> ").next("div").hide();
       }
+
       $('input[type=radio]').change(changeTopic);
+
+      // Helps to understand the context of the request, if available.
+      ref = $("input#url_referer");
+      if (document.referrer && ref && !ref.val()) {
+          ref.val(document.referrer);
+      }
+
       // Expand the choices.
       $('#contact .othertopic').click(
         function (e) {
@@ -78,15 +93,13 @@
           }
         }
       );
-      // Make radio button remember option after issues in submissions.
-      $("input[type='radio']").click(function () {
-        var radioValue = $("input[name='form_tools_form_id']:checked").attr('id');
-        if (radioValue) {
-          localStorage.setItem('radioValue', radioValue);
+        $("input[type='radio']").click(
+        function () {
+          window.location.hash = $(this).val();
         }
-      });
-      var givenRadioValue = localStorage.getItem('radioValue');
-      $("#" + givenRadioValue).attr('checked', true);
+     );
+
     }
+
   };
 })(jQuery);
