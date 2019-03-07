@@ -369,3 +369,12 @@ function jrc_sh_core_update_7032() {
     'contextual_view_modes',
   ), TRUE);
 }
+
+/**
+ * Disable Contextual View Modes realtime module.
+ */
+function jrc_sh_core_update_7033() {
+  module_disable(array(
+    'contextual_view_modes',
+  ), TRUE);
+}

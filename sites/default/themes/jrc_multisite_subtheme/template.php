@@ -108,6 +108,18 @@ function jrc_multisite_subtheme_preprocess_node(&$variables, $hook) {
       drupal_add_js(drupal_get_path('theme', 'jrc_multisite_subtheme') . '/js/jrc_multisite_contact_form.js');
     }
   }
+
+  // Switch between open access call templates based on status field.
+  $node = $variables['node'];
+
+  if ($node->type == 'open_access_call') {
+    if ($node->field_openaccess_call_status[LANGUAGE_NONE][0]['value'] == 1) {
+      $variables['theme_hook_suggestion'] = 'ds_1col__node_open_access_call_open';
+    }
+    else {
+      $variables['theme_hook_suggestion'] = 'ds_1col__node_open_access_call_closed';
+    }
+  }
 }
 
 /**
@@ -407,6 +419,13 @@ function jrc_multisite_subtheme_preprocess_page(&$variables) {
   if ($node && $node->nid == 68390) {
     drupal_add_js('https://webtools.ec.europa.eu/captcha/js/captcha.js', external);
   }
+
+  // Add css class "node--NODETYPE--VIEWMODE" to nodes.
+  $variables['classes_array'][] = 'node--' . $variables['type'] . '--' . $variables['view_mode'];
+
+  // Make "node--NODETYPE--VIEWMODE.tpl.php" templates available for nodes.
+  $variables['theme_hook_suggestions'][] = 'node__' . $variables['type'] . '__' . $variables['view_mode'];
+
 }
 
 /**

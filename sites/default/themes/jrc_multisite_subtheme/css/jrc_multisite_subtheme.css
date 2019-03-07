@@ -1270,27 +1270,25 @@ p.apply-button a:hover {
 
 /* Ellipsis ... for Chrome and IE. */
 
-#path .menu-breadcrumb,
 #path .easy-breadcrumb {
   display: inline-block;
   margin-bottom: -5px;
 }
 
-#path .menu-breadcrumb a:after {
-  content: " > ";
+#path .menu-breadcrumb::after {
   display: inline-block;
   margin-bottom: -5px;
 }
 
 .easy-breadcrumb {
   text-overflow: ellipsis;
-  max-width: 860px;
+  max-width: 800px;
   white-space: nowrap;
   overflow: hidden;
 }
 
-div.easy-breadcrumb a:after {
-  content: " > ";
+span.easy-breadcrumb_segment.easy-breadcrumb_segment-1::after {
+  width: 15px;
 }
 
 /* Ellipsis ... for Firefox */
@@ -1298,7 +1296,7 @@ div.easy-breadcrumb a:after {
 @supports (-moz-appearance:none) {
   #path .menu-breadcrumb,
   #path .easy-breadcrumb {
-    max-width: 862px;
+    max-width: 800px;
   }
 
   div.easy-breadcrumb {
@@ -1307,21 +1305,34 @@ div.easy-breadcrumb a:after {
     text-overflow: ellipsis;
   }
 
-  div.easy-breadcrumb a,
   div.easy-breadcrumb span {
     display: inline-flex;
     text-decoration: none;
   }
 
-  div.easy-breadcrumb a:after {
-    content: " > ";
-    display: inline-block;
-    color: #fff;
+  span.easy-breadcrumb_segment.easy-breadcrumb_segment-1::after {
+    width: 15px;
+  }
+
+  span.easy-breadcrumb_segment.easy-breadcrumb_segment-title {
+    max-width: 648px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-bottom: -5px;
+  }
+
+  .easy-breadcrumb_segment-separator {
+    width: 15px;
+  }
+
+  menu.menu-breadcrumb {
+    margin-bottom: -15px;
   }
 
 }
 
-/* bckground colors for tables */
+/* background colors for tables */
 
 table tr.color118,
 table th.color118,
@@ -1357,4 +1368,12 @@ table tr.color122,
 table th.color122,
 table td.color122 {
   background-color: #c2b262;
+}
+
+/* make banner image fit the display */
+
+.opencall-banner {
+  width: 100%;
+  height: auto;
+  padding-bottom: 15px;
 }
