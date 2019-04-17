@@ -8,6 +8,6 @@ multisite_version = 2.5
 
 dependencies[] = ecas
 dependencies[] = ecas_group_sync
-dependencies[] = tokens
+dependencies[] = token
 
 configure = admin/config/ecas/group_sync/taxonomy

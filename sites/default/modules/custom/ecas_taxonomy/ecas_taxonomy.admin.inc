@@ -62,7 +62,7 @@ function ecas_taxonomy_admin() {
       '#type' => 'textfield',
       '#title' => t('Regex matching term from vocabulary'),
       '#default_value' => variable_get('ecas_taxonomy_voc_regex', '^[ecas:dg]\.[ecas:directorate]$'),
-      '#description' => t('by default looks for a full match amoungs terms but this can be customised. uses tokens'),
+      '#description' => t('What to search in the terms of the vocabulary. uses tokens'),
     );
 
     $form['taxonomy']['token_help'] = array(
