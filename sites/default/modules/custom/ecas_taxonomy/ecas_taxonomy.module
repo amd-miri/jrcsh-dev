@@ -1,0 +1,140 @@
+<?php
+
+/**
+ * @file
+ * Extension of ecas_group_sync, allowing taxonomic mapping of users.
+ */
+
+/**
+ * Implements hook_menu().
+ */
+function ecas_taxonomy_menu() {
+  $items = array();
+
+  $items['admin/config/ecas/group_sync/taxonomy'] = array(
+    'title' => 'Taxonomy mapping',
+    'description' => 'Configure EU Login taxonomy mapping',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('ecas_taxonomy_admin'),
+    'access arguments' => array('administer ecas'),
+    'type' => MENU_NORMAL_ITEM | MENU_LOCAL_TASK,
+    'file' => 'ecas_taxonomy.admin.inc',
+  );
+  return $items;
+}
+
+/**
+ * Implements hook_menu_alter().
+ */
+function ecas_taxonomy_menu_alter(&$items) {
+  $items['admin/people/permissions/group_sync'] = $items['admin/config/ecas/group_sync'];
+}
+
+/**
+ * Implements hook_token_info().
+ */
+function ecas_taxonomy_token_info() {
+  $info = array();
+
+  $info['types'] = array(
+    'ecas' => array(
+      'name' => t('EU login'),
+      'description' => t('EU login user and departement information'),
+    ),
+  );
+
+  $info['tokens'] = array(
+    'ecas' => array(
+      'full_name' => array(
+        'name' => t('Full Name'),
+        'description' => t('The full string of EU Login user_info'),
+      ),
+      'dg' => array(
+        'name' => t('DG'),
+        'description' => t('The name of the EU Login DG'),
+      ),
+      'directorate' => array(
+        'name' => t('Directorate'),
+        'description' => t('The directorate from EU login'),
+      ),
+      'unit' => array(
+        'name' => t('Unit'),
+        'description' => t('The unit from EU login'),
+      ),
+      'sub_unit' => array(
+        'name' => t('Sub-unit'),
+        'description' => t('The sub-unit from EU login'),
+      ),
+    ),
+  );
+
+  return $info;
+}
+
+/**
+ * Implements hook_tokens().
+ */
+function ecas_taxonomy_tokens($type, $tokens, array $data = array(), array $options = array()) {
+  $replacements = array();
+  if ($type == 'ecas') {
+    foreach ($tokens as $name => $original) {
+      $replacements[$original] = $data[$name];
+    }
+  }
+  return $replacements;
+}
+
+/**
+ * Implements hook_info_ecas_update().
+ */
+function ecas_taxonomy_info_ecas_update($user, $user_info, $args) {
+  $active = variable_get('ecas_taxonomy_assign_voc', FALSE);
+
+  if ($active &&  $vid = variable_get('ecas_taxonomy_voc', NULL)) {
+    $tid_assign = NULL;
+    // Get the vocabulary terms.
+    $terms = _ecas_role_taxonomy_get_terms($vid);
+    // And what we have to find.
+    $match = variable_get('ecas_taxonomy_voc_regex', NULL);
+
+    if ($match != NULL) {
+      $match = token_replace($match, ecas_get_user_department($user_info));
+      foreach ($terms as $key => $value) {
+        if (preg_match('/' . $match . '/', $value)) {
+          $tid_assign = $key;
+          break;
+        }
+      }
+    }
+
+    // Value found or we got default ?
+    if ($tid_assign || $tid_assign = variable_get('ecas_taxonomy_voc_default', 0)) {
+      $voc = taxonomy_vocabulary_load($vid);
+      // One value possible so override.
+      $user->{'field_' . $voc->machine_name} = array(
+        LANGUAGE_NONE => array(
+          0 => array('tid' => $tid_assign),
+        ),
+      );
+      // Update user fields.
+      user_save($user);
+    }
+  }
+}
+
+/**
+ * Helper to retrieve terms for a vocab.
+ *
+ * @param int $vid
+ *   The vid of the vocabulary to get terms from.
+ *
+ * @return array
+ *   a keyed array of the terms tid => value.
+ */
+function _ecas_role_taxonomy_get_terms($vid) {
+  $terms = array();
+  foreach (taxonomy_term_load_multiple(NULL, array('vid' => $vid)) as $key => $value) {
+    $terms[$key] = $value->name;
+  }
+  return $terms;
+}
