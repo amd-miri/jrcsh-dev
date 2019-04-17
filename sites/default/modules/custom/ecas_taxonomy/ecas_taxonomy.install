@@ -1,0 +1,16 @@
+<?php
+
+/**
+ * @file
+ * Installation file for Ecas taxonomy module.
+ */
+
+ /**
+  * Implements hook_uninstall().
+  */
+function ecas_taxonomy_uninstall() {
+  variable_del('ecas_taxonomy_assign_voc');
+  variable_del('ecas_taxonomy_voc');
+  variable_del('ecas_taxonomy_voc_regex');
+  variable_del('ecas_taxonomy_voc_default');
+}
