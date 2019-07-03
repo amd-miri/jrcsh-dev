@@ -316,7 +316,7 @@ h3 {
 
 .field-type-image .field-item  img,
 .media-element-container .file-image img {
-  width: 100%;
+  max-width: 100%;
   height: auto;
 }
 
@@ -1370,10 +1370,55 @@ table td.color122 {
   background-color: #c2b262;
 }
 
-/* make banner image fit the display */
-
-.opencall-banner {
+/* Opencall */
+.field-name-field-openaccess-banner.field-type-image .field-item {
+  margin: 0;
+  float: none;
   width: 100%;
-  height: auto;
-  padding-bottom: 15px;
+  padding: 0 0 5px;
+  border: 0;
+  box-shadow: none;
+}
+
+.opencall-date {
+  margin: 10px 0;
+}
+
+.field-name-opencall-blue-box {
+  float: right;
+  width: 250px;
+  font-size: .9em;
+  margin: 15px;
+  background-color: #d3ebfd;
+  padding: 0;
+  border: 15px solid #d3ebfd;
+  border-image-source: none;
+  border-image-slice: 100%;
+  border-image-width: 1;
+  border-image-outset: 0;
+  border-image-repeat: stretch;
+  border-image: url("../images/blue-border-gradient-bg.png") 20 20 20 20 repeat stretch;
+}
+
+.field-name-opencall-blue-box h2 {
+  margin-top: 0;
+}
+
+.field-name-opencall-blue-box .button {
+  float: right;
+  margin-top: 8px;
+}
+
+.field-name-opencall-blue-box .button.closed {
+  background-color: #fee;
+  color: #f55;
+}
+
+.views-field-field-openaccess-thumb {
+  float: right;
+  line-height: 1em;
+  border: 1px solid #ddd;
+  padding: 5px;
+  margin: 0 5px;
+  box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.25);
 }

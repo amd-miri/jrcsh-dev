@@ -44,7 +44,7 @@ function redirect_schema() {
         'description' => 'The source path to redirect from.',
       ),
       'source_options' => array(
-        'type' => 'text',
+        'type' => 'blob',
         'not null' => TRUE,
         'serialize' => TRUE,
         'description' => 'A serialized array of source options.',
@@ -56,7 +56,7 @@ function redirect_schema() {
         'description' => 'The destination path to redirect to.',
       ),
       'redirect_options' => array(
-        'type' => 'text',
+        'type' => 'blob',
         'not null' => TRUE,
         'serialize' => TRUE,
         'description' => 'A serialized array of redirect options.',
@@ -352,7 +352,7 @@ function redirect_update_7102() {
 /**
  * Adds the {redirect}.created field.
  */
-function redirect_update_7103() {
+function redirect_update_7105() {
   db_add_field('redirect', 'created', array(
     'type' => 'int',
     'unsigned' => TRUE,
@@ -455,4 +455,12 @@ function _redirect_migrate_path_redirect_variables() {
     // Delete the old path redirect variable.
     variable_del($old_variable);
   }
+}
+
+/**
+ * Change fields 'redirect_options', 'source_options' to blob type.
+ */
+function redirect_update_7103() {
+  db_change_field('redirect', 'redirect_options', 'redirect_options', array('type' => 'blob'));
+  db_change_field('redirect', 'source_options', 'source_options', array('type' => 'blob'));
 }

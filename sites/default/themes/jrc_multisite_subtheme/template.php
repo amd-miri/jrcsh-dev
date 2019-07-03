@@ -5,25 +5,25 @@
  * Default theme functions.
  */
 
- /**
-  * Implements template_preprocess_node().
-  */
+/**
+ * Implements template_preprocess_node().
+ */
 function jrc_multisite_subtheme_preprocess_node(&$variables, $hook) {
   // For all content types.
   // On ApacheSolr pages.
   if ($variables['view_mode'] == 'apache_solr_mode') {
     if (isset($variables['field_image'][0]['field_file_image_thumbnail'][LANGUAGE_NONE][0]['filename']) &&
-      trim($variables['field_image'][0]['field_file_image_thumbnail'][LANGUAGE_NONE][0]['filename']) != '') {
+    trim($variables['field_image'][0]['field_file_image_thumbnail'][LANGUAGE_NONE][0]['filename']) != '') {
       // Replace field_image if thumbnail available.
       $variables['content']['field_image'][0]['#item'] = (array) file_load($variables['field_image'][0]['field_file_image_thumbnail'][LANGUAGE_NONE][0]['fid']);
     }
     elseif (isset($variables['field_big_image'][0]['field_file_image_thumbnail'][LANGUAGE_NONE][0]['filename']) &&
-      trim($variables['field_big_image'][0]['field_file_image_thumbnail'][LANGUAGE_NONE][0]['filename']) != '') {
+    trim($variables['field_big_image'][0]['field_file_image_thumbnail'][LANGUAGE_NONE][0]['filename']) != '') {
       // Replace the field_big_image if thumbnail available.
       $variables['content']['field_big_image'][0]['#item'] = (array) file_load($variables['field_big_image'][0]['field_file_image_thumbnail'][LANGUAGE_NONE][0]['fid']);
     }
     elseif (isset($variables['field_jrc_staff_image'][0]['field_file_image_thumbnail'][LANGUAGE_NONE][0]['filename']) &&
-      trim($variables['field_jrc_staff_image'][0]['field_file_image_thumbnail'][LANGUAGE_NONE][0]['filename']) != '') {
+    trim($variables['field_jrc_staff_image'][0]['field_file_image_thumbnail'][LANGUAGE_NONE][0]['filename']) != '') {
       // Replace the field_jrc_staff_image if thumbnail available.
       $variables['content']['field_jrc_staff_image'][0]['#item'] = (array) file_load($variables['field_jrc_staff_image'][0]['field_file_image_thumbnail'][LANGUAGE_NONE][0]['fid']);
     }
@@ -37,7 +37,7 @@ function jrc_multisite_subtheme_preprocess_node(&$variables, $hook) {
       }
       // Then check if there is thumbnail in the first image.
       if (isset($variables['field_images'][0]['field_file_image_thumbnail'][LANGUAGE_NONE][0]['filename']) &&
-            trim($variables['field_images'][0]['field_file_image_thumbnail'][LANGUAGE_NONE][0]['filename']) != '') {
+          trim($variables['field_images'][0]['field_file_image_thumbnail'][LANGUAGE_NONE][0]['filename']) != '') {
         // Replace the field_big_image if thumbnail available.
         $variables['content']['field_images'][0]['#item'] = (array) file_load($variables['field_images'][0]['field_file_image_thumbnail'][LANGUAGE_NONE][0]['fid']);
       }
@@ -45,15 +45,15 @@ function jrc_multisite_subtheme_preprocess_node(&$variables, $hook) {
   }
   else {
     // Then we proceed for other view_modes than ApacheSolr one.
-    // On Image Galleries,
-    // if the Normal image exist,
-    // then show the Normal image instead of the ORIGINAL.
+    // On Image Galleries,.
+    // If the Normal image exist,
+    // Then show the Normal image instead of the ORIGINAL.
     if ($variables['type'] == 'image_gallery') {
       if (isset($variables['field_images']) && !empty($variables['field_images'])) {
         $image_links = array();
         foreach ($variables['field_images'] as $id => $image) {
           if (isset($variables['field_images'][$id]['field_file_image_normal'][LANGUAGE_NONE][0]['filename']) &&
-            trim($variables['field_images'][$id]['field_file_image_normal'][LANGUAGE_NONE][0]['filename']) != '') {
+          trim($variables['field_images'][$id]['field_file_image_normal'][LANGUAGE_NONE][0]['filename']) != '') {
             // Replace the image thumbnail on the Image Gallery page.
             $variables['content']['field_images'][$id]['#item'] = (array) file_load($variables['field_images'][$id]['field_file_image_normal'][LANGUAGE_NONE][0]['fid']);
             // But keep the ORIGINAL image for colorbox.
@@ -66,10 +66,10 @@ function jrc_multisite_subtheme_preprocess_node(&$variables, $hook) {
       }
     }
     // Then for ALL other node pages,
-    // if the NORMAL image exist,
-    // then show the NORMAL image instead of the ORIGINAL.
+    // If the NORMAL image exist,
+    // Then show the NORMAL image instead of the ORIGINAL.
     elseif (isset($variables['field_image'][0]['field_file_image_normal'][LANGUAGE_NONE][0]['filename']) &&
-          trim($variables['field_image'][0]['field_file_image_normal'][LANGUAGE_NONE][0]['filename']) != '') {
+        trim($variables['field_image'][0]['field_file_image_normal'][LANGUAGE_NONE][0]['filename']) != '') {
       $image_link = '';
       // Replace the image thumbnail on the Node page.
       $variables['content']['field_image'][0]['#item'] = (array) file_load($variables['field_image'][0]['field_file_image_normal'][LANGUAGE_NONE][0]['fid']);
@@ -93,8 +93,8 @@ function jrc_multisite_subtheme_preprocess_node(&$variables, $hook) {
   }
   // Add specific JS files to specific sections of the website.
   if ($variables['type'] == 'page') {
-    // For all "Migration and demography" subsite pages
-    // or "Territorial policies" subsite pages.
+    // For all "Migration and demography" subsite pages.
+    // Or "Territorial policies" subsite pages.
     if ((drupal_substr($variables['path']['alias'], 0, drupal_strlen('migration-and-demography')) === 'migration-and-demography')
     || (drupal_substr($variables['path']['alias'], 0, drupal_strlen('territorial-policies')) === 'territorial-policies')) {
       drupal_add_js('https://visualise.jrc.ec.europa.eu/javascripts/api/viz_v1.js', 'external');
@@ -108,18 +108,11 @@ function jrc_multisite_subtheme_preprocess_node(&$variables, $hook) {
       drupal_add_js(drupal_get_path('theme', 'jrc_multisite_subtheme') . '/js/jrc_multisite_contact_form.js');
     }
   }
-
-  // Switch between open access call templates based on status field.
-  $node = $variables['node'];
-
-  if ($node->type == 'open_access_call') {
-    if ($node->field_openaccess_call_status[LANGUAGE_NONE][0]['value'] == 1) {
-      $variables['theme_hook_suggestion'] = 'ds_1col__node_open_access_call_open';
-    }
-    else {
-      $variables['theme_hook_suggestion'] = 'ds_1col__node_open_access_call_closed';
-    }
+  // Add a js to Open access call pages.
+  if ($variables['type'] == 'open_access_call') {
+    drupal_add_js(drupal_get_path('theme', 'jrc_multisite_subtheme') . '/js/jrc_multisite_opencall.js');
   }
+  return $variables;
 }
 
 /**
@@ -130,6 +123,7 @@ function jrc_multisite_subtheme_preprocess_field(&$variables) {
   switch ($variables['element']['#field_name']) {
     case 'field_country_iso':
       $variables['items'][0]['#markup'] = "(" . $variables['element']['#items'][0]['value'] . ")";
+
       break;
 
     case 'field_dc_contributor_author':
@@ -140,6 +134,7 @@ function jrc_multisite_subtheme_preprocess_field(&$variables) {
           $variables['items'][$delta]['#markup'] = l($author_name, 'node/' . $id);
         }
       }
+
       break;
 
     case 'field_dc_identifier_doi':
@@ -158,6 +153,7 @@ function jrc_multisite_subtheme_preprocess_field(&$variables) {
         }
         $variables['items'][$delta]['#markup'] = implode("<br />", $doi);
       }
+
       break;
 
     case 'field_dc_identifier_uri':
@@ -177,6 +173,7 @@ function jrc_multisite_subtheme_preprocess_field(&$variables) {
         unset($variables['items'][$delta]);
       }
       $variables['items'][0]['#markup'] = $html_to_render;
+
       break;
 
     case 'field_jrc_staff_image':
@@ -188,12 +185,11 @@ function jrc_multisite_subtheme_preprocess_field(&$variables) {
       // Always prepare IMG tag formating.
       // Get the image Alt.
       $img_alt = isset($field['field_file_image_alt_text'][LANGUAGE_NONE][0]['value']) ? $field['field_file_image_alt_text'][LANGUAGE_NONE][0]['value'] : '';
-
       // Get the image Title.
       $img_title = isset($field['field_file_image_title_text'][LANGUAGE_NONE][0]['value']) ? $field['field_file_image_title_text'][LANGUAGE_NONE][0]['value'] : '';
-      // If the image title is empty,
-      // and it's a publication content type,
-      // then set the default title for image title.
+      // If the image title is empty,.
+      // And it's a publication content type,
+      // Then set the default title for image title.
       if ($img_title == '' && $variables['element']['#bundle'] == 'publication') {
         if ($variables['element']['#view_mode'] == 'apache_solr_mode') {
           $img_title = $variables['element']['#object']->title;
@@ -206,16 +202,14 @@ function jrc_multisite_subtheme_preprocess_field(&$variables) {
       if ($img_title != '') {
         $variables['items'][0]['img_title'] = $img_title;
       }
-
       $img_title = $variables['items'][0]['#item']['field_file_image_title_text']['en'][0]['safe_value'];
       $img_alt = $variables['items'][0]['#item']['field_file_image_alt_text']['en'][0]['safe_value'];
-
       $img_copyright = isset($field['field_file_copyright_info'][LANGUAGE_NONE][0]['value']) ? $field['field_file_copyright_info'][LANGUAGE_NONE][0]['value'] : '';
       // Remove copyright sign if present, template is doing this.
       $img_copyright = trim(preg_replace("/^(©|\&copy\;)/", "", $img_copyright));
-      // If the image copyright is empty,
-      // and it's a publication content type,
-      // then set the EU value for image copyright.
+      // If the image copyright is empty,.
+      // And it's a publication content type,
+      // Then set the EU value for image copyright.
       if ($img_copyright == '' && $variables['element']['#bundle'] == 'publication') {
         $img_copyright = "EU";
       }
@@ -223,11 +217,11 @@ function jrc_multisite_subtheme_preprocess_field(&$variables) {
       if ($img_copyright != '') {
         $variables['items'][0]['img_copyright'] = $img_copyright;
       }
-
       // Update variables for template.
       $variables['items'][0]['#item']['field_file_image_caption'][LANGUAGE_NONE][0]['safe_value'];
       $variables['items'][0]['#item']['title'] = $img_title;
       $variables['items'][0]['#item']['alt'] = $img_alt;
+
       break;
 
     case 'field_pubsy_doc_links':
@@ -243,6 +237,7 @@ function jrc_multisite_subtheme_preprocess_field(&$variables) {
           $variables['items'][$delta]['#markup'] = l($t, $l, array('attributes' => array('class' => 'uri-link'))) . $pdficon . "<br />";
         }
       }
+
       break;
 
     case 'field_research_areas':
@@ -252,6 +247,7 @@ function jrc_multisite_subtheme_preprocess_field(&$variables) {
           $variables['items'][$delta]['#href'] = $base_url . '/' . $language->language . '/' . drupal_get_path_alias('node/' . $nid);
         }
       }
+
       break;
 
     case 'field_research_topics':
@@ -261,21 +257,25 @@ function jrc_multisite_subtheme_preprocess_field(&$variables) {
           $variables['items'][$delta]['#href'] = $base_url . '/' . $language->language . '/' . drupal_get_path_alias('node/' . $nid);
         }
       }
+
       break;
 
     case 'field_tags':
       foreach ($variables['items'] as $delta => $item) {
         $variables['items'][$delta]['#href'] = $base_url . '/' . $language->language . '/search/site?f' . urlencode('[0]') . '=im_field_tags:' . $item['#options']['entity']->tid;
       }
+
       break;
 
     case 'field_rm_an_documents':
       $variables = _jrc_multisite_subtheme_convert_into_multilangual_pdf($variables);
+
       break;
 
     case 'field_related_documents':
     case 'field_publication_files':
       $variables = _jrc_multisite_subtheme_convert_related_docs_and_publication_files_into_multilangual_pdf($variables);
+
       break;
   }
 }
@@ -303,10 +303,8 @@ function jrc_multisite_subtheme_preprocess_page(&$variables) {
   $regions['page_header'] = (isset($variables['page']['page_header']) ? render($variables['page']['page_header']) : '');
   $regions['landing_page_banner'] = (isset($variables['page']['landing_page_banner']) ? render($variables['page']['landing_page_banner']) : '');
   $regions['landing_page_banner_text'] = (isset($variables['page']['landing_page_banner_text']) ? render($variables['page']['landing_page_banner_text']) : '');
-
   // Check if there is a responsive sidebar or not.
   $has_responsive_sidebar = ($regions['header_right'] || $regions['sidebar_left'] || $regions['sidebar_right'] ? 1 : 0);
-
   // Calculate size of regions.
   $cols = array();
   // Sidebars.
@@ -322,7 +320,6 @@ function jrc_multisite_subtheme_preprocess_page(&$variables) {
     'sm' => 0,
     'xs' => 0,
   );
-
   // Page header.
   $cols['page_header'] = array(
     'lg' => 12 - $cols['sidebar_left']['lg'],
@@ -330,7 +327,6 @@ function jrc_multisite_subtheme_preprocess_page(&$variables) {
     'sm' => 12,
     'xs' => 12,
   );
-
   // Page header.
   $cols['landing_page_banner'] = array(
     'lg' => 12 - $cols['sidebar_left']['lg'],
@@ -338,7 +334,6 @@ function jrc_multisite_subtheme_preprocess_page(&$variables) {
     'sm' => 12,
     'xs' => 12,
   );
-
   // Page header.
   $cols['landing_page_banner_text'] = array(
     'lg' => 12 - $cols['sidebar_left']['lg'],
@@ -346,7 +341,6 @@ function jrc_multisite_subtheme_preprocess_page(&$variables) {
     'sm' => 12,
     'xs' => 12,
   );
-
   // Content.
   $cols['content_main'] = array(
     'lg' => 12 - $cols['sidebar_left']['lg'] - $cols['sidebar_right']['lg'],
@@ -366,19 +360,14 @@ function jrc_multisite_subtheme_preprocess_page(&$variables) {
     'sm' => 12,
     'xs' => 12,
   );
-
   // Tools.
-  $cols['sidebar_button'] = array(
-    'sm' => ($has_responsive_sidebar ? 2 : 0),
-    'xs' => ($has_responsive_sidebar ? 2 : 0),
-  );
+  $cols['sidebar_button'] = array('sm' => ($has_responsive_sidebar ? 2 : 0), 'xs' => ($has_responsive_sidebar ? 2 : 0));
   $cols['tools'] = array(
     'lg' => (empty($title) ? 12 : 4),
     'md' => (empty($title) ? 12 : 4),
     'sm' => 12,
     'xs' => 12,
   );
-
   // Title.
   $cols['title'] = array(
     'lg' => 12 - $cols['tools']['lg'],
@@ -386,12 +375,10 @@ function jrc_multisite_subtheme_preprocess_page(&$variables) {
     'sm' => 12,
     'xs' => 12,
   );
-
   // Add variables to template file.
   $variables['regions'] = $regions;
   $variables['cols'] = $cols;
   $variables['has_responsive_sidebar'] = $has_responsive_sidebar;
-
   $variables['menu_visible'] = FALSE;
   if (!empty($variables['page']['featured'])) {
     foreach ($variables['page']['featured'] as $key => $value) {
@@ -401,7 +388,6 @@ function jrc_multisite_subtheme_preprocess_page(&$variables) {
       }
     }
   }
-
   // Hide the node_export tab
   // It's breaking the theme and it's not useful for JRC website.
   // (Solution suggested by Digit).
@@ -412,7 +398,6 @@ function jrc_multisite_subtheme_preprocess_page(&$variables) {
       }
     }
   }
-
   // Adding pathToTheme for Drupal.settings to be used in js files.
   $base_theme = multisite_drupal_toolbox_get_base_theme();
   drupal_add_js('jQuery.extend(Drupal.settings, { "pathToTheme": "' . drupal_get_path('theme', $base_theme) . '" });', 'inline');
@@ -420,12 +405,12 @@ function jrc_multisite_subtheme_preprocess_page(&$variables) {
     drupal_add_js('https://webtools.ec.europa.eu/captcha/js/captcha.js', external);
   }
 
-  // Add css class "node--NODETYPE--VIEWMODE" to nodes.
-  $variables['classes_array'][] = 'node--' . $variables['type'] . '--' . $variables['view_mode'];
-
-  // Make "node--NODETYPE--VIEWMODE.tpl.php" templates available for nodes.
-  $variables['theme_hook_suggestions'][] = 'node__' . $variables['type'] . '__' . $variables['view_mode'];
-
+  if (isset($variables['view_mode'])) {
+    // Add css class "node--NODETYPE--VIEWMODE" to nodes.
+    $variables['classes_array'][] = 'node--' . $variables['type'] . '--' . $variables['view_mode'];
+    // Make "node--NODETYPE--VIEWMODE.tpl.php" templates available for nodes.
+    $variables['theme_hook_suggestions'][] = 'node__' . $variables['type'] . '__' . $variables['view_mode'];
+  }
 }
 
 /**
@@ -433,7 +418,6 @@ function jrc_multisite_subtheme_preprocess_page(&$variables) {
  */
 function jrc_multisite_subtheme_preprocess_views_view(&$variables) {
   $view = $variables['view'];
-
   if ($view->name == 'jrc_glossary') {
     $result = $variables['view']->result;
     $alpha_rows = array();
@@ -454,7 +438,6 @@ function jrc_multisite_subtheme_preprocess_views_view(&$variables) {
     $variables['header'] = urldecode($variables['header']);
     $variables['alpha_rows'] = $alpha_rows;
   }
-
   if ($view->name == 'jrc_carousel' && $view->current_display == 'block_1') {
     $tid = (int) arg(2);
     $term = taxonomy_term_load($tid);
@@ -464,7 +447,6 @@ function jrc_multisite_subtheme_preprocess_views_view(&$variables) {
     $variables['institute_carousel_bg'] = $institute_carousel_bg;
     $variables['institute_carousel_bullet'] = $institute_carousel_bullet;
   }
-
   if ($view->name == 'jrc_news' && $view->current_display == 'page_1') {
     $tid = (int) arg(2);
     $term = taxonomy_term_load($tid);
@@ -474,11 +456,9 @@ function jrc_multisite_subtheme_preprocess_views_view(&$variables) {
     $variables['field_institute_central_news_lab'] = $field_institute_central_news_lab;
     $variables['field_institute_news_button'] = $field_institute_news_button;
   }
-
   if ($view->name == 'jrc_publication_k4p') {
     drupal_add_js(drupal_get_path('theme', 'jrc_multisite_subtheme') . '/js/jrc_multisite_publication_redirect.js');
   }
-
 }
 
 /**
@@ -491,11 +471,7 @@ function jrc_multisite_subtheme_preprocess_views_view(&$variables) {
  *   The entity_id of the related author name.
  */
 function _jrc_multisite_subtheme_get_author_id_by_name($author_name) {
-  $record = db_select('field_data_field_pubsy_author', 'f')
-    ->fields('f', array('entity_id'))
-    ->condition('field_pubsy_author_value', $author_name, '=')
-    ->execute()
-    ->fetchAssoc();
+  $record = db_select('field_data_field_pubsy_author', 'f')->fields('f', array('entity_id'))->condition('field_pubsy_author_value', $author_name, '=')->execute()->fetchAssoc();
   $id = NULL;
   if (!empty($record)) {
     $id = $record['entity_id'];
@@ -518,9 +494,7 @@ function _jrc_multisite_subtheme_get_author_id_by_name($author_name) {
  */
 function _jrc_multisite_subtheme_field_research_areas_node($item) {
   $query = new EntityFieldQuery();
-  $query->entityCondition('entity_type', 'node', '=')
-    ->propertyCondition('type', 'research_area', '=')
-    ->fieldCondition('field_research_areas', 'tid', array($item['#options']['entity']->tid), 'IN');
+  $query->entityCondition('entity_type', 'node', '=')->propertyCondition('type', 'research_area', '=')->fieldCondition('field_research_areas', 'tid', array($item['#options']['entity']->tid), 'IN');
   $result = $query->execute();
   $nodes = array();
   if (!empty($result['node'])) {
@@ -544,9 +518,7 @@ function _jrc_multisite_subtheme_field_research_areas_node($item) {
  */
 function _jrc_multisite_subtheme_field_research_topics_nodes($item) {
   $query = new EntityFieldQuery();
-  $query->entityCondition('entity_type', 'node', '=')
-    ->propertyCondition('type', 'topic', '=')
-    ->propertyCondition('title', $item['#title'], '=');
+  $query->entityCondition('entity_type', 'node', '=')->propertyCondition('type', 'topic', '=')->propertyCondition('title', $item['#title'], '=');
   $result = $query->execute();
   $nodes = array();
   if (!empty($result['node'])) {
@@ -569,9 +541,9 @@ function jrc_multisite_subtheme_menu_link(array $variables) {
   if (preg_match('@^node/(\d+)$@', $element['#href'], $matches)) {
     $node = node_load((int) $matches[1]);
     if ($node && $node->status == NODE_NOT_PUBLISHED) {
-      // There appear to be some inconsistency
-      // sometimes the classes come through
-      // as an array and sometimes as a string.
+      // There appear to be some inconsistency.
+      // Sometimes the classes come through
+      // As an array and sometimes as a string.
       if (empty($element['#localized_options']['attributes']['class'])) {
         $element['#localized_options']['attributes']['class'] = array();
       }
@@ -590,8 +562,8 @@ function jrc_multisite_subtheme_menu_link(array $variables) {
  * Implements hook_form_FORM_ID_alter().
  */
 function jrc_multisite_subtheme_form_views_exposed_form_alter(&$form, &$form_state, $form_id) {
-  // We still need to check
-  // if we're calling the right page of the "views exposed form" view.
+  // We still need to check.
+  // If we're calling the right page of the "views exposed form" view.
   if ($form['#id'] == 'views-exposed-form-jrc-rss-feed-page-1') {
     $form['#action'] = 'rss.xml';
   }
@@ -621,19 +593,15 @@ function _jrc_multisite_subtheme_convert_into_multilangual_pdf(array $variables)
   $pdf_titles_array = array();
   $file_types = array();
   $file_sizes = array();
-
   // Go through all documents.
   foreach ($variables['items'] as $item) {
-
     $pdf = file_create_url($item['#file']->uri);
     $parts = explode('.', $pdf);
     $ext = end($parts);
-
     // Skip the file if url is not available.
     if (!isset($item['#file']->uri)) {
       continue;
     }
-
     // Get the language from the filename.
     $count = count($parts);
     if ($count >= 2) {
@@ -649,10 +617,9 @@ function _jrc_multisite_subtheme_convert_into_multilangual_pdf(array $variables)
     else {
       $lang = 'en';
     }
-
     // In case a file in this language doesn't exist yet in the array.
     $pdf_array[$lang] = $pdf;
-    // If the file is properly attached to a content,
+    // If the file is properly attached to a content,.
     // Then get the title from the content.
     if (isset($variables['element']['#object']->title)) {
       $pdf_titles_array[$lang] = $variables['element']['#object']->title;;
@@ -666,16 +633,13 @@ function _jrc_multisite_subtheme_convert_into_multilangual_pdf(array $variables)
     $file_types[$lang] = $ext;
     $file_sizes[$lang] = _jrc_multisite_subtheme_ec_size_convert($item['#file']->filesize);
   }
-
   // Sorting the pdf_array by key using case-insensitive string comparison.
   uksort($pdf_array, "strcasecmp");
-
-  // We set EN as the default lang for files,
-  // if there's no file in the current lang.
+  // We set EN as the default lang for files,.
+  // If there's no file in the current lang.
   if (count($pdf_array) && !isset($pdf_array[$current_lang])) {
     $current_lang = 'en';
   }
-
   // Let's put the images values in a variable for theme_image().
   $popup_gif = array(
     'path' => path_to_theme() . '/images/popup.gif',
@@ -693,7 +657,6 @@ function _jrc_multisite_subtheme_convert_into_multilangual_pdf(array $variables)
     'height' => '16px',
     'attributes' => array('class' => 'pdf-gif'),
   );
-
   // Send variables to the template.
   $variables['current_lang'] = $current_lang;
   $variables['pdf_titles_array'] = $pdf_titles_array;
@@ -702,7 +665,6 @@ function _jrc_multisite_subtheme_convert_into_multilangual_pdf(array $variables)
   $variables['pdf_array'] = $pdf_array;
   $variables['popup_gif'] = $popup_gif;
   $variables['doc_gif'] = $doc_gif;
-
   return $variables;
 }
 
@@ -730,18 +692,15 @@ function _jrc_multisite_subtheme_convert_related_docs_and_publication_files_into
   $pdf_titles_array = array();
   $file_types = array();
   $file_sizes = array();
-
   // Go through all documents.
   foreach ($variables['items'] as $item) {
     $filename = $item['#file']->filename;
     $parts = explode('.', $filename);
     $ext = end($parts);
-
     // Skip the file if url is not available.
     if (!isset($item['#file']->uri)) {
       continue;
     }
-
     $lang = 'en';
     $count = count($parts);
     // Check if the file is a valid file and has an extention.
@@ -752,7 +711,6 @@ function _jrc_multisite_subtheme_convert_related_docs_and_publication_files_into
         $lang = $filename_parts[3];
       }
     }
-
     // In case a file in this language doesn't exist yet in the array.
     $pdf_links_array[$filename_parts[1]][$lang] = file_create_url($item['#file']->uri);
     $pdf_titles_array[$filename_parts[1]][$lang] = $item['#file']->title;
@@ -768,10 +726,8 @@ function _jrc_multisite_subtheme_convert_related_docs_and_publication_files_into
       'attributes' => array('class' => 'pdf-gif'),
     );
   }
-
   // Sorting the pdf_array by key using case-insensitive string comparison.
   uksort($pdf_links_array, "strcasecmp");
-
   // Let's put the popup images values in a variable for theme_image().
   $popup_gif = array(
     'path' => path_to_theme() . '/images/popup.gif',
@@ -781,7 +737,6 @@ function _jrc_multisite_subtheme_convert_related_docs_and_publication_files_into
     'height' => '13px',
     'attributes' => array('class' => 'popup-gif'),
   );
-
   // Send variables to the template.
   $variables['current_lang'] = $current_lang;
   $variables['pdf_titles_array'] = $pdf_titles_array;
@@ -790,7 +745,6 @@ function _jrc_multisite_subtheme_convert_related_docs_and_publication_files_into
   $variables['file_sizes'] = $file_sizes;
   $variables['popup_gif'] = $popup_gif;
   $variables['doc_gif'] = $doc_gif;
-
   return $variables;
 }
 

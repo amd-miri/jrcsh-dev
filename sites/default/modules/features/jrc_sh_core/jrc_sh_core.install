@@ -378,3 +378,63 @@ function jrc_sh_core_update_7033() {
     'contextual_view_modes',
   ), TRUE);
 }
+
+/**
+ * Enable some modules and remove some corrupted tags.
+ */
+function jrc_sh_core_update_7034() {
+  module_enable(array(
+    'conditional_fields',
+    'brexit',
+  ), TRUE);
+  module_disable(array(
+    'contextual_view_modes',
+  ), FALSE);
+  drupal_uninstall_modules(array(
+    'contextual_view_modes',
+  ), FALSE);
+  // Remove the corrupted tags from DB.
+  db_delete('field_data_field_research_areas')
+    ->condition('field_research_areas_tid', array(2191, 2192, 2193), 'IN')
+    ->execute();
+}
+
+/**
+ * Disable nexteuropa_scheduler_message module.
+ */
+function jrc_sh_core_update_7035() {
+  module_disable(array(
+    'nexteuropa_scheduler_message',
+  ), FALSE);
+  drupal_uninstall_modules(array(
+    'nexteuropa_scheduler_message',
+  ), FALSE);
+}
+
+/**
+ * Enable ecas_group_sync and field_collection modules.
+ */
+function jrc_sh_core_update_7036() {
+  module_enable(array(
+    'ecas_group_sync',
+    'field_collection',
+  ), TRUE);
+}
+
+/**
+ * Enable ecas_taxonomy module.
+ */
+function jrc_sh_core_update_7037() {
+  module_enable(array(
+    'ecas_taxonomy',
+  ), TRUE);
+}
+
+/**
+ * Remove corrupted file.
+ */
+function jrc_sh_core_update_7038() {
+  db_delete('file_managed')
+    ->condition('fid', '180079')
+    ->execute();
+}

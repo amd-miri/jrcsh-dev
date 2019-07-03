@@ -39,7 +39,7 @@ function ecas_taxonomy_token_info() {
   $info['types'] = array(
     'ecas' => array(
       'name' => t('EU login'),
-      'description' => t('EU login user and departement information'),
+      'description' => t('EU login user and department information'),
     ),
   );
 

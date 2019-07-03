@@ -158,7 +158,7 @@ function redirect_list_form($form, &$form_state) {
     ),
   );
   if (redirect_access('create', 'redirect')) {
-    $form['rids']['#empty'] .= ' ' . l(t('Add URL redirect.'), 'admin/config/search/redirect/add', array('query' => $destination));
+    $form['rids']['#empty'] .= ' ' . l(t('Add URL redirect'), 'admin/config/search/redirect/add', array('query' => $destination));
   }
   $form['pager'] = array('#theme' => 'pager');
   return $form;
@@ -307,12 +307,13 @@ function redirect_list_form_operations_confirm_form($form, &$form_state, $operat
   $form['operation'] = array('#type' => 'hidden', '#value' => $form_state['values']['operation']);
   $form['#submit'][] = 'redirect_list_form_operations_submit';
   $confirm_question = format_plural(count($rids), 'Are you sure you want to @action this redirect?', 'Are you sure you want to @action these redirects?', array('@action' => drupal_strtolower($operation['action'])));
+  $confirm_desc = $form_state['values']['operation'] === 'delete' ? t('This action cannot be undone.') : ' ';
 
   return confirm_form(
     $form,
     $confirm_question,
     'admin/config/search/redirect', // @todo This does not redirect back to filtered page.
-    t('This action cannot be undone.'),
+    $confirm_desc,
     $operation['action'],
     t('Cancel')
   );
@@ -638,6 +639,11 @@ function redirect_settings_form($form, &$form_state) {
     '#default_value' => variable_get('redirect_passthrough_querystring', 1),
     '#description' => t('For example, given a redirect from %source to %redirect, if a user visits %sourcequery they would be redirected to %redirectquery. The query strings in the redirection will always take precedence over the current query string.', array('%source' => 'source-path', '%redirect' => 'node?a=apples', '%sourcequery' => 'source-path?a=alligators&b=bananas', '%redirectquery' => 'node?a=apples&b=bananas')),
   );
+  $form['redirect_delete_by_source_path'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Automatically delete redirects when an entity with the redirect\'s source has been deleted.'),
+    '#default_value' => variable_get('redirect_delete_by_source_path', TRUE),
+  );
   $form['redirect_warning'] = array(
     '#type' => 'checkbox',
     '#title' => t('Display a warning message to users when they are redirected.'),
@@ -744,21 +750,26 @@ function redirect_404_list($form = NULL) {
     array('data' => t('Operations')),
   );
 
+  // Filter on current domain with like in the queries.
+  global $base_url;
+
   $count_query = db_select('watchdog', 'w');
   $count_query->addExpression('COUNT(DISTINCT(w.message))');
   $count_query->leftJoin('redirect', 'r', 'w.message = r.source');
   $count_query->condition('w.type', 'page not found');
+  $count_query->condition('w.location', '%' . db_like($base_url) . '%', 'LIKE');
   $count_query->isNull('r.rid');
   redirect_build_filter_query($count_query, array('w.message'), $keys);
 
   $query = db_select('watchdog', 'w')->extend('PagerDefault')->extend('TableSort');
-  $query->fields('w', array('message'));
+  $query->fields('w', array('message', 'location'));
   $query->addExpression('COUNT(wid)', 'count');
   $query->addExpression('MAX(timestamp)', 'timestamp');
   $query->leftJoin('redirect', 'r', 'w.message = r.source');
   $query->isNull('r.rid');
   $query->condition('w.type', 'page not found');
-  $query->groupBy('w.message');
+  $query->condition('w.location', '%' . db_like($base_url) . '%', 'LIKE');
+  $query->groupBy('w.location');
   $query->orderByHeader($header);
   $query->limit(25);
   redirect_build_filter_query($query, array('w.message'), $keys);
@@ -768,7 +779,7 @@ function redirect_404_list($form = NULL) {
   $rows = array();
   foreach ($results as $result) {
     $row = array();
-    $row['source'] = l($result->message, $result->message, array('query' => $destination));
+    $row['source'] = l($result->location, $result->location, array('query' => $destination));
     $row['count'] = $result->count;
     $row['timestamp'] = format_date($result->timestamp, 'short');
 

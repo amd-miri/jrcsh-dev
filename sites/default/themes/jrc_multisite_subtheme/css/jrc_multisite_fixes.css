@@ -228,3 +228,43 @@ div#completed a {
 .node-type-topic .region-sidebar-left .item-list ul {
   list-style: none;
 }
+
+/* Square collapsible boxes */
+.html.square-collapsible fieldset.collapsible.collapsed legend,
+.html.square-collapsible fieldset.collapsible legend {
+  float: none !important;
+  width: 100%;
+}
+
+.html.square-collapsible .collapse-text-fieldset.collapsed .fieldset-legend {
+  border-radius: 0 !important;
+  margin-bottom: 10px !important;
+  background-color: #d1e6fa !important;
+  border: 1px solid #888;
+  padding: 8px 0 8px 17px;
+}
+
+.html.square-collapsible .collapse-text-fieldset .fieldset-legend {
+  padding: 8px 15px 8px 17px;
+  border: none;
+  line-height: 1.3em;
+}
+
+.html.square-collapsible .collapse-text-fieldset .fieldset-wrapper {
+  margin-bottom: 10px !important;
+}
+
+.html.square-collapsible .collapse-text-fieldset .fieldset-legend {
+  border-radius: 10px 10px 0 0;
+}
+
+/* helpers */
+table.bg-white {
+  background-color: #fff;
+}
+
+table tr.bg-lightblue,
+table td.bg-lightblue,
+table th.bg-lightblue {
+  background-color: #d1e6fa;
+}

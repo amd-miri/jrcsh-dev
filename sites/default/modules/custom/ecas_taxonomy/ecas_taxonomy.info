@@ -3,11 +3,9 @@ description = Allow automatic assignement of user taxonomies based on EU Login i
 
 core = 7.x
 package = ECAS
-php = 5.2.4
+php = 5.6
 multisite_version = 2.5
 
 dependencies[] = ecas
 dependencies[] = ecas_group_sync
-dependencies[] = tokens
-
-configure = admin/config/ecas/group_sync/taxonomy
+dependencies[] = token
