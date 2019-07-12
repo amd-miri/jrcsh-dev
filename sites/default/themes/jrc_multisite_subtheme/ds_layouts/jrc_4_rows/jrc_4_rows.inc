@@ -1,9 +1,9 @@
 <?php
 
- /**
-  * @file
-  * File for defining new DS templates.
-  */
+/**
+ * @file
+ * File for defining new DS templates.
+ */
 
 /**
  * Implements a new DS template.

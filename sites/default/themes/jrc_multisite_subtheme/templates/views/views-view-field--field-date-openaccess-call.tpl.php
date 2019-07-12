@@ -24,20 +24,20 @@
 ?>
 
 <div class="opencall-date">
-<?php if (isset($row->field_field_date_openaccess_call[0]['raw']['value2']) && $row->field_field_date_openaccess_call[0]['raw']['value'] != $row->field_field_date_openaccess_call[0]['raw']['value2']) : ?>
+<?php if (isset($row->field_field_date_openaccess_call[0]['raw']['value2']) && $row->field_field_date_openaccess_call[0]['raw']['value'] != $row->field_field_date_openaccess_call[0]['raw']['value2']): ?>
   <div class="date-cont start-date-with-end">
-<?php elseif (isset($row->field_field_date_openaccess_call[0]['raw']['value']) && !empty($row->field_field_date_openaccess_call[0]['raw']['value'])) : ?>
+<?php elseif (isset($row->field_field_date_openaccess_call[0]['raw']['value']) && !empty($row->field_field_date_openaccess_call[0]['raw']['value'])): ?>
   <div class="date-cont start-date-without-end">
 <?php endif; ?>
 
-<?php if (isset($row->field_field_date_openaccess_call[0]['raw']['value']) && !empty($row->field_field_date_openaccess_call[0]['raw']['value'])) : ?>
+<?php if (isset($row->field_field_date_openaccess_call[0]['raw']['value']) && !empty($row->field_field_date_openaccess_call[0]['raw']['value'])): ?>
     <span class="month"><?php print format_date(strtotime(check_plain($row->field_field_date_openaccess_call[0]['raw']['value'])), 'jrc_month'); ?></span>
     <span class="day"><?php print format_date(strtotime(check_plain($row->field_field_date_openaccess_call[0]['raw']['value'])), 'jrc_day'); ?></span>
     <span class="year"><?php print format_date(strtotime(check_plain($row->field_field_date_openaccess_call[0]['raw']['value'])), 'jrc_year'); ?></span>
   </div>
 <?php endif; ?>
 
-<?php if (isset($row->field_field_date_openaccess_call[0]['raw']['value2']) && $row->field_field_date_openaccess_call[0]['raw']['value'] != $row->field_field_date_openaccess_call[0]['raw']['value2']) : ?>
+<?php if (isset($row->field_field_date_openaccess_call[0]['raw']['value2']) && $row->field_field_date_openaccess_call[0]['raw']['value'] != $row->field_field_date_openaccess_call[0]['raw']['value2']): ?>
   <div class="event-dates-arrow"></div>
   <div class="date-cont end-date">
     <span class="month"><?php print format_date(strtotime(check_plain($row->field_field_date_openaccess_call[0]['raw']['value2'])), 'jrc_month'); ?></span>

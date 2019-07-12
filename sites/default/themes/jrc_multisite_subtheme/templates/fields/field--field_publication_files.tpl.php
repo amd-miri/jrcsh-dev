@@ -48,12 +48,12 @@
       <div class="field-label"<?php print $title_attributes; ?>><?php print $label ?>:&nbsp;</div>
     <?php endif; ?>
     <div class="field-items">
-    <?php foreach ($pdf_titles_array as $filename => $file_titles) : ?>
+    <?php foreach ($pdf_titles_array as $filename => $file_titles): ?>
       <div>
         <a id="link-<?php print $filename; ?>" href="<?php print $pdf_links_array[$filename][$current_lang]; ?>">
           <?php if (!empty($file_titles[$current_lang])): ?>
             <span><?php print $file_titles[$current_lang]; ?></span>
-          <?php else : ?>
+          <?php else: ?>
             <span><?php print $filename; ?></span>
           <?php endif; ?>
           <?php print theme('image', $doc_gif[$filename][$current_lang]); ?>
@@ -62,12 +62,12 @@
           <?php endif; ?>
         </a>
 
-        <?php if (count($pdf_links_array[$filename]) > 1) : ?>
+        <?php if (count($pdf_links_array[$filename]) > 1): ?>
         <span class="popup">
           <span id="popup-icon_<?php print $pdf_links_array[$filename][$current_lang]; ?>" title="<?php print t('Choose translations of the previous link'); ?>">
           <?php print theme('image', $popup_gif); ?>
             <span id="popup-links_<?php print $filename; ?>">
-              <?php foreach ($pdf_links_array[$filename] as $lang => $link) : ?>
+              <?php foreach ($pdf_links_array[$filename] as $lang => $link): ?>
               <a class="lang" lang="<?php print $lang; ?>" title="<?php print $pdf_titles_array[$filename][$lang] . '(' . $lang . ')'; ?>" href="<?php print $link; ?>">
                 <span><?php print $lang; ?></span>
               </a>

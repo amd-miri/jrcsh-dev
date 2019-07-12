@@ -24,7 +24,7 @@
 ?>
 
 <div class="date-cont">
-  <?php if (isset($row->field_field_news_date[0]['raw']['value']) && !empty($row->field_field_news_date[0]['raw']['value'])) : ?>
+  <?php if (isset($row->field_field_news_date[0]['raw']['value']) && !empty($row->field_field_news_date[0]['raw']['value'])): ?>
     <span class="month"><?php print format_date(strtotime($row->field_field_news_date[0]['raw']['value']), 'jrc_month'); ?></span>
     <span class="day"><?php print format_date(strtotime($row->field_field_news_date[0]['raw']['value']), 'jrc_day'); ?></span>
     <span class="year"><?php print format_date(strtotime($row->field_field_news_date[0]['raw']['value']), 'jrc_year'); ?></span>

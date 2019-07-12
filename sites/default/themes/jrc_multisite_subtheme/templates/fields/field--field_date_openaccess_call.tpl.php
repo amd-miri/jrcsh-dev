@@ -43,20 +43,20 @@
 ?>
 
 <div class="opencall-date">
-<?php if (isset($variables['element']['#items'][0]['value2']) && $variables['element']['#items'][0]['value'] != $variables['element']['#items'][0]['value2']) : ?>
+<?php if (isset($variables['element']['#items'][0]['value2']) && $variables['element']['#items'][0]['value'] != $variables['element']['#items'][0]['value2']): ?>
   <div class="date-cont start-date-with-end">
-<?php elseif (isset($variables['element']['#items'][0]['value']) && !empty($variables['element']['#items'][0]['value'])) : ?>
+<?php elseif (isset($variables['element']['#items'][0]['value']) && !empty($variables['element']['#items'][0]['value'])): ?>
   <div class="date-cont start-date-without-end">
 <?php endif; ?>
 
-<?php if (isset($variables['element']['#items'][0]['value']) && !empty($variables['element']['#items'][0]['value'])) : ?>
+<?php if (isset($variables['element']['#items'][0]['value']) && !empty($variables['element']['#items'][0]['value'])): ?>
     <span class="month"><?php print format_date(strtotime($variables['element']['#items'][0]['value']), 'jrc_month'); ?></span>
     <span class="day"><?php print format_date(strtotime($variables['element']['#items'][0]['value']), 'jrc_day'); ?></span>
     <span class="year"><?php print format_date(strtotime($variables['element']['#items'][0]['value']), 'jrc_year'); ?></span>
   </div>
 <?php endif; ?>
 
-<?php if (isset($variables['element']['#items'][0]['value2']) && $variables['element']['#items'][0]['value'] != $variables['element']['#items'][0]['value2']) : ?>
+<?php if (isset($variables['element']['#items'][0]['value2']) && $variables['element']['#items'][0]['value'] != $variables['element']['#items'][0]['value2']): ?>
   <div class="event-dates-arrow"></div>
   <div class="date-cont end-date">
     <span class="month"><?php print format_date(strtotime($variables['element']['#items'][0]['value2']), 'jrc_month'); ?></span>

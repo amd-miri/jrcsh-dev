@@ -49,12 +49,12 @@
     <span class="link-size">[<?php print $file_sizes[$current_lang]; ?>]</span>
   </a>
 
-<?php if (count($pdf_array) > 1) : ?>
+<?php if (count($pdf_array) > 1): ?>
   <span class="popup">
     <span id="popup-icon_<?php print $pdf_titles_array[$current_lang]; ?>" title="<?php print t('Choose translations of the previous link'); ?>">
     <?php print theme('image', $popup_gif); ?>
       <span id="popup-links_<?php print $pdf_titles_array[$current_lang]; ?>">
-        <?php foreach ($pdf_array as $lang => $val) : ?>
+        <?php foreach ($pdf_array as $lang => $val): ?>
         <a class="lang" lang="<?php print $lang; ?>" title="<?php print $pdf_titles_array[$lang] . '(' . $lang . ')'; ?>" href="<?php print $val; ?>">
           <span><?php print $lang; ?></span>
         </a>

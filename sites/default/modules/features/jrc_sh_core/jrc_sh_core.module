@@ -46,7 +46,7 @@ function jrc_sh_core_facet_items_alter(&$build, &$settings) {
         '#item_children' => array(),
         '#query' => array(
           'f' => array(
-            '0' => 'dm_field_dc_date_issued:' . $override_string ,
+            '0' => 'dm_field_dc_date_issued:' . $override_string,
           ),
         ),
       );
@@ -1159,7 +1159,7 @@ function jrc_sh_core_entity_property_info_alter(&$info) {
 }
 
 /**
- *Implements hook_token_into().
+ * Implements hook_token_info().
  */
 function jrc_sh_core_token_info() {
   $info['tokens']['node']['creator-unit'] = array(
@@ -1197,7 +1197,7 @@ function jrc_sh_core_tokens($type, $tokens, array $data = array(), array $option
           case 'creator-unit':
             $account = user_load($user->uid);
             $creator_unit = check_plain($account->field_creator[LANGUAGE_NONE][0]['value']);
-            $replacements[$original] = drupal_substr($creator_unit, strrpos($creator_unit, '/' )+1);
+            $replacements[$original] = drupal_substr($creator_unit, strrpos($creator_unit, '/') + 1);
             break;
         }
       }

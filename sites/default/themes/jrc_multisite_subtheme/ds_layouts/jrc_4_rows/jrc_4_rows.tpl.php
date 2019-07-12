@@ -5,7 +5,7 @@
  * Display Suite JRC 4 rows template.
  */
 ?>
-<<?php print $layout_wrapper; print $layout_attributes; ?> class="jrc-4-rows <?php print $classes;?> clearfix">
+<<?php print $layout_wrapper; print $layout_attributes; ?> class="jrc-4-rows <?php print $classes; ?> clearfix">
 
   <?php if (isset($title_suffix['contextual_links'])): ?>
   <?php print render($title_suffix['contextual_links']); ?>
