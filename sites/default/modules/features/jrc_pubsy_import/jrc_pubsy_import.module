@@ -5,15 +5,15 @@
  * Custom functions of the module.
  */
 
- /**
-  * Converts uppercase names in Oracle columns to lowercase.
-  *
-  * @param object $record
-  *   An object containg all records of a query.
-  *
-  * @return object
-  *   An object with lowercase keys.
-  */
+/**
+ * Converts uppercase names in Oracle columns to lowercase.
+ *
+ * @param object $record
+ *   An object containg all records of a query.
+ *
+ * @return object
+ *   An object with lowercase keys.
+ */
 function _jrc_pubsy_import_lowercase(&$record) {
   if (!is_object($record)) {
     return FALSE;

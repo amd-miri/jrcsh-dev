@@ -22,7 +22,7 @@
   <script src="//ec.europa.eu/wel/cookie-consent/consent.js" type="text/javascript"></script>
   <script src="//ec.europa.eu/wel/surveys/wr_survey01/wr_survey.js" type="text/javascript"></script>
 </head>
-<body class="<?php print $classes; ?>" <?php print $attributes;?>>
+<body class="<?php print $classes; ?>" <?php print $attributes; ?>>
   <div id="skip-link">
     <a href="#main-content" class="element-invisible element-focusable"><?php print t('Skip to main content'); ?></a>
   </div>

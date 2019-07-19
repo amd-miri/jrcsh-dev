@@ -25,13 +25,13 @@
 
 <div class="date">
 <?php if (isset($row->field_field_event_date[0]['raw']['value2']) &&
-      format_date($row->field_field_event_date[0]['raw']['value'], 'jrc_date') != format_date($row->field_field_event_date[0]['raw']['value2'], 'jrc_date')) : ?>
+      format_date($row->field_field_event_date[0]['raw']['value'], 'jrc_date') != format_date($row->field_field_event_date[0]['raw']['value2'], 'jrc_date')): ?>
   <div class="date-cont date-cont-multiple">
-<?php else : ?>
+<?php else: ?>
   <div class="date-cont">  
 <?php endif; ?>
 
-<?php if (isset($row->field_field_event_date[0]['raw']['value']) && !empty($row->field_field_event_date[0]['raw']['value'])) : ?>
+<?php if (isset($row->field_field_event_date[0]['raw']['value']) && !empty($row->field_field_event_date[0]['raw']['value'])): ?>
     <span class="month"><?php print format_date($row->field_field_event_date[0]['raw']['value'], 'jrc_month'); ?></span>
     <span class="day"><?php print format_date($row->field_field_event_date[0]['raw']['value'], 'jrc_day'); ?></span>
     <span class="year"><?php print format_date($row->field_field_event_date[0]['raw']['value'], 'jrc_year'); ?></span>

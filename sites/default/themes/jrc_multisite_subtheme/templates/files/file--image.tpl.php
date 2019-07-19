@@ -76,7 +76,7 @@
     <div class="submitted">
       <?php print $submitted; ?>
     </div>
-  <?php endif;?>
+  <?php endif; ?>
 
   <div class="content"<?php print $content_attributes; ?>>
     <?php
@@ -91,7 +91,7 @@
       <?php endif; ?>
       <?php if(isset($content['file']['#item']['field_file_copyright_info'][LANGUAGE_NONE][0]['value'])): ?>
         <br /> &copy;<span class="copyright"><?php print $content['file']['#item']['field_file_copyright_info'][LANGUAGE_NONE][0]['value'] ?></span>
-      <?php endif;?>
+      <?php endif; ?>
       </span>
   </div>
   <?php print render($content['links']); ?>

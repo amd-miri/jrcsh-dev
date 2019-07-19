@@ -7,13 +7,13 @@
 ?>
 
 <div class="clear"></div>
-<?php if (count($rows) > 1) : ?>
+<?php if (count($rows) > 1): ?>
   <div class="span-footer">
     <div class="span-footer-left">
       <ul>
         <?php $i = 0; ?>
         <?php foreach ($rows as $id => $row): ?>
-          <?php if ($i == 0) : ?>
+          <?php if ($i == 0): ?>
             <li class="<?php print $classes_array[$id]; ?>">
               <?php print $row; ?>
               <div class="clear"></div>
@@ -27,7 +27,7 @@
       <ul>
         <?php $i = 0; ?>
         <?php foreach ($rows as $id => $row): ?>
-          <?php if ($i != 0) : ?>
+          <?php if ($i != 0): ?>
           <li class="<?php print $classes_array[$id]; ?>">
             <?php print $row; ?>
           </li>
