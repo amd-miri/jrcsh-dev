@@ -438,3 +438,12 @@ function jrc_sh_core_update_7038() {
     ->condition('fid', '180079')
     ->execute();
 }
+
+/**
+ * Remove corrupted file.
+ */
+function jrc_sh_core_update_7039() {
+  db_delete('file_managed')
+    ->condition('fid', '180643')
+    ->execute();
+}
