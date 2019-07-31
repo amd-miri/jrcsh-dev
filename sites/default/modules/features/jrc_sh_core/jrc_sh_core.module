@@ -12,6 +12,7 @@ function jrc_sh_core_facet_items_alter(&$build, &$settings) {
   if ($settings->facet == 'dm_field_dc_date_issued') {
     // First make sure to have an empty array.
     $all_years_array = array();
+    $new_build = array();
     foreach ($build as $key => $item) {
       // Then split the search values into two "year" part.
       // Example : [2004-01-01T00:00:00Z TO 2005-01-01T00:00:00Z]
