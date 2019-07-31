@@ -696,6 +696,11 @@ function _jrc_multisite_subtheme_convert_related_docs_and_publication_files_into
   foreach ($variables['items'] as $item) {
     $filename = $item['#file']->filename;
     $parts = explode('.', $filename);
+    // Use the uri, in case the filename is a string without an extention.
+    if (count($parts) <= 1 && isset($item['#file']->uri)) {
+      $filename = $item['#file']->uri;
+      $parts = explode('.', $filename);
+    }
     $ext = end($parts);
     // Skip the file if url is not available.
     if (!isset($item['#file']->uri)) {
@@ -703,6 +708,7 @@ function _jrc_multisite_subtheme_convert_related_docs_and_publication_files_into
     }
     $lang = 'en';
     $count = count($parts);
+    $filename_parts = array();
     // Check if the file is a valid file and has an extention.
     if ($count >= 2) {
       preg_match('/^(.*?)(_([a-z]{2}))?\.[a-z]+$/', $filename, $filename_parts);
@@ -711,20 +717,23 @@ function _jrc_multisite_subtheme_convert_related_docs_and_publication_files_into
         $lang = $filename_parts[3];
       }
     }
-    // In case a file in this language doesn't exist yet in the array.
-    $pdf_links_array[$filename_parts[1]][$lang] = file_create_url($item['#file']->uri);
-    $pdf_titles_array[$filename_parts[1]][$lang] = $item['#file']->title;
-    $file_types[$filename_parts[1]][$lang] = $ext;
-    $file_sizes[$filename_parts[1]][$lang] = _jrc_multisite_subtheme_ec_size_convert($item['#file']->filesize);
-    // Let's put the document images values in a variable for theme_image().
-    $doc_gif[$filename_parts[1]][$lang] = array(
-      'path' => path_to_theme() . '/images/doc_icons/f_' . $file_types[$filename_parts[1]][$lang] . '_16.gif',
-      'alt' => 'Choose translations of the previous link',
-      'title' => 'Choose translations of the previous link',
-      'width' => '16px',
-      'height' => '16px',
-      'attributes' => array('class' => 'pdf-gif'),
-    );
+
+    if (isset($filename_parts[1])) {
+      // In case a file in this language doesn't exist yet in the array.
+      $pdf_links_array[$filename_parts[1]][$lang] = file_create_url($item['#file']->uri);
+      $pdf_titles_array[$filename_parts[1]][$lang] = $item['#file']->title;
+      $file_types[$filename_parts[1]][$lang] = $ext;
+      $file_sizes[$filename_parts[1]][$lang] = _jrc_multisite_subtheme_ec_size_convert($item['#file']->filesize);
+      // Let's put the document images values in a variable for theme_image().
+      $doc_gif[$filename_parts[1]][$lang] = array(
+        'path' => path_to_theme() . '/images/doc_icons/f_' . $file_types[$filename_parts[1]][$lang] . '_16.gif',
+        'alt' => 'Choose translations of the previous link',
+        'title' => 'Choose translations of the previous link',
+        'width' => '16px',
+        'height' => '16px',
+        'attributes' => array('class' => 'pdf-gif'),
+      );
+    }
   }
   // Sorting the pdf_array by key using case-insensitive string comparison.
   uksort($pdf_links_array, "strcasecmp");
