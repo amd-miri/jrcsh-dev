@@ -202,8 +202,12 @@ function jrc_multisite_subtheme_preprocess_field(&$variables) {
       if ($img_title != '') {
         $variables['items'][0]['img_title'] = $img_title;
       }
-      $img_title = $variables['items'][0]['#item']['field_file_image_title_text']['en'][0]['safe_value'];
-      $img_alt = $variables['items'][0]['#item']['field_file_image_alt_text']['en'][0]['safe_value'];
+      if (isset($variables['items'][0]['#item']['field_file_image_title_text']['en'][0]['safe_value'])) {
+        $img_title = $variables['items'][0]['#item']['field_file_image_title_text']['en'][0]['safe_value'];
+      }
+      if (isset($variables['items'][0]['#item']['field_file_image_alt_text']['en'][0]['safe_value'])) {
+        $img_alt = $variables['items'][0]['#item']['field_file_image_alt_text']['en'][0]['safe_value'];
+      }
       $img_copyright = isset($field['field_file_copyright_info'][LANGUAGE_NONE][0]['value']) ? $field['field_file_copyright_info'][LANGUAGE_NONE][0]['value'] : '';
       // Remove copyright sign if present, template is doing this.
       $img_copyright = trim(preg_replace("/^(©|\&copy\;)/", "", $img_copyright));
