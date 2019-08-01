@@ -440,10 +440,14 @@ function jrc_sh_core_update_7038() {
 }
 
 /**
- * Enable the feed_ex module.
+ * Enable the feed_ex module and delete a curropted file.
  */
 function jrc_sh_core_update_7039() {
   module_enable(array(
     'feeds_ex',
   ), TRUE);
+  
+  db_delete('file_managed')
+    ->condition('fid', '180643')
+    ->execute();
 }
