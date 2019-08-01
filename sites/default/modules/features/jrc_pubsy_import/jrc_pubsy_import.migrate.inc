@@ -268,7 +268,7 @@ class JrcPubsyImportPublicationsMigration extends Migration {
     $this->addFieldMapping('field_research_areas:source_type')->defaultValue('tid');
     $this->addFieldMapping('field_tags', 'KEYWORDS')->separator(',');
     $this->addFieldMapping('field_tags:source_type')->defaultValue('tid');
-    $this->addFieldMapping('field_research_topics_nodes', 'RESEARCH_TOPICS');
+    $this->addFieldMapping('field_related_topics', 'RESEARCH_TOPICS');
     $this->addFieldMapping('field_institutes', 'INSTITUTES');
     $this->addFieldMapping('field_institutes:source_type')->defaultValue('tid');
     $this->addFieldMapping('field_publication_type', 'PUBLICATION_TYPE');

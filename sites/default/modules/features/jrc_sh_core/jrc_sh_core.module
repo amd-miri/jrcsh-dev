@@ -5,6 +5,8 @@
  * Code for the JRC-SH-core feature.
  */
 
+module_load_include('inc', 'jrc_sh_core', 'jrc_sh_core.rules');
+
 /**
  * Implements hook_facet_items_alter().
  */
