@@ -446,7 +446,7 @@ function jrc_sh_core_update_7039() {
   module_enable(array(
     'feeds_ex',
   ), TRUE);
-  
+
   db_delete('file_managed')
     ->condition('fid', '180643')
     ->execute();
