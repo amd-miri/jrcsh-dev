@@ -746,3 +746,11 @@ a.feed-icon {
     min-height: 4070px;
   }
 }
+
+#priorities .content {
+  display: none;
+}
+
+#priorities h2 a {
+  cursor: pointer;
+}
