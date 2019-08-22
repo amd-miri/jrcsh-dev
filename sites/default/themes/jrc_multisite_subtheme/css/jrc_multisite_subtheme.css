@@ -370,6 +370,10 @@ h3 {
   width: 220px;
 }
 
+.page-node.node-type-jrc-staff .field-type-image .field-item {
+  width: auto;
+}
+
 .date-cont  span {
   display: block;
   text-align: center;
