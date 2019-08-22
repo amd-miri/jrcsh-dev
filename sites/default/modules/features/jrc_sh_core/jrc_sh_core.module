@@ -1226,3 +1226,66 @@ function jrc_sh_core_multisite_drupal_toolbox_filter_options_alter(&$filter_opti
   // Enable the <object> tag, strongly not advised of course.
   $filter_options['valid_elements']['iframe'] = array('*' => TRUE);
 }
+
+/**
+ * Implements hook_menu_alter().
+ */
+function jrc_sh_core_menu_alter(&$items) {
+  // Adds custom callback which will disable edit tab for some users
+  // or will do the default node_access logic otherwise.
+  $items['node/%node/edit']['access callback'] = 'jrc_sh_core_node_edit_callback';
+  $items['node/%node/edit']['access arguments'] = array('update', 1);
+}
+
+/**
+ * Custom access callback for node/%node/edit menu items.
+ *
+ * @param string $op
+ *   The operation.
+ * @param object $node
+ *   The node object.
+ *
+ * @return bool
+ *   Boolean specifying if the user can see the edit (New draft) tab.
+ */
+function jrc_sh_core_node_edit_callback($op, $node) {
+  global $user;
+  $system_nids = jrc_sh_core_get_403_404_nids();
+
+  if (in_array($node->nid, $system_nids) && !in_array('administrator', $user->roles)) {
+    return FALSE;
+  }
+  // Otherwise, proceed to the normal node_access.
+  return node_access($op, $node);
+}
+
+/**
+ * Helper function that returns cached the nids for 403/404 pages.
+ *
+ * @return array
+ *   An array of nids for 403 and 404 pages.
+ */
+function jrc_sh_core_get_403_404_nids() {
+  $nids = &drupal_static(__FUNCTION__);
+  if (!isset($nids)) {
+    if ($cache = cache_get('jrc_sh_core_cache_data')) {
+      $nids = $cache->data;
+    }
+
+    $nids = array();
+    $system_paths = array(
+      variable_get('site_403', ''),
+      variable_get('site_404', ''),
+    );
+
+    foreach ($system_paths as $path) {
+      if (preg_match('/node\/(\d+)/', $path, $matches)) {
+        $nids[] = $matches[1];
+      }
+    }
+    $paths = $nids;
+    cache_set('jrc_sh_core_cache_data', $paths, 'cache');
+
+  }
+  return $nids;
+}
