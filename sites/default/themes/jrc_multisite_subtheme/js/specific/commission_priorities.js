@@ -26,7 +26,7 @@
         }
       });
       $(".priority h2").append("<span>►</span>");
-      $(window).load(function() {
+      $(window).load(function () {
         if (document.location.hash) {
           var hash = document.location.hash;
           $(".priority" + hash + " div.content").slideDown();

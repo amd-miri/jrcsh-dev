@@ -1268,11 +1268,12 @@ function jrc_sh_core_node_edit_callback($op, $node) {
 function jrc_sh_core_get_403_404_nids() {
   $nids = &drupal_static(__FUNCTION__);
   if (!isset($nids)) {
+    $nids = array();
     if ($cache = cache_get('jrc_sh_core_cache_data')) {
       $nids = $cache->data;
+      return $nids;
     }
 
-    $nids = array();
     $system_paths = array(
       variable_get('site_403', ''),
       variable_get('site_404', ''),
@@ -1288,4 +1289,79 @@ function jrc_sh_core_get_403_404_nids() {
 
   }
   return $nids;
+}
+
+/**
+ * Implements hook_feeds_processor_targets_alter().
+ */
+function jrc_sh_core_feeds_processor_targets_alter(&$targets, $type, $bundle) {
+  $targets['field_dc_identifier_other']['callback'] = '_jrc_sh_core_identifier_feeds_set_target';
+  $targets['field_publication_type']['callback'] = '_jrc_sh_core_publication_type_feeds_set_target';
+}
+
+/**
+ * Callback for mapping to field_dc_identifier_other.
+ */
+function _jrc_sh_core_identifier_feeds_set_target(FeedsSource $source, $entity, $target, array $terms, array $mapping) {
+  // We add the existing value "during the same import process",
+  // instead of replacing it.
+  // Note : the old existing values of the field field_dc_identifier_other
+  // before begining the import is completely gone and replaced.
+  if (count($terms) > 1) {
+    foreach ($terms as $term) {
+      $entity->field_dc_identifier_other[LANGUAGE_NONE][] = array('value' => $term);
+    }
+  }
+  elseif (count($terms) == 1) {
+    $entity->field_dc_identifier_other[LANGUAGE_NONE][] = array('value' => array_values($terms));
+  }
+}
+
+/**
+ * Callback for mapping to field_publication_type.
+ */
+function _jrc_sh_core_publication_type_feeds_set_target(FeedsSource $source, $entity, $target, array $terms, array $mapping) {
+  if ($mapping['source'] == "category_id") {
+    $pubsy_category_id = implode($terms);
+    if ($pubsy_category_id != 17) {
+      $pub_types = array(
+        'Articles in books' => array(3),
+        'Articles in Journals' => array(4, 5, 26, 28),
+        'Books' => array(1, 2),
+        'Contributions to Conferences' => array(10, 11, 12, 32, 33),
+        'EUR - Scientific and Technical Research Reports'
+        => array(8, 9, 20, 21, 22, 23, 24, 25),
+        'Reference reports' => array(7),
+        'PhD Theses' => array(15),
+      );
+      foreach ($pub_types as $name => $category_ids) {
+        if (in_array($pubsy_category_id, $category_ids)) {
+          $term = taxonomy_get_term_by_name($name, 'publication_types');
+          if (!empty($term)) {
+            $entity->field_publication_type[LANGUAGE_NONE][] = array('tid' => implode(array_keys($term)));
+          }
+        }
+      }
+    }
+  }
+  elseif ($mapping['source'] == "publication_type") {
+    $pubsy_public_category = implode($terms);
+    // Publication type category 5 exception Array.
+    $pub_types_cat_5 = array(
+      'Annual reports' => 'Annual reports',
+      'Thematic reports' => 'Thematic reports',
+      'Evaluation reports' => 'Evaluation reports',
+      'Newsletters' => 'Newsletters',
+      'Thematic factsheets' => 'Brochures / Leaflets',
+      'JRC collaboration factsheets' => 'Brochures / Leaflets',
+      'Brochures and leaflets' => 'Brochures / Leaflets',
+    );
+    $publication_type = $pub_types_cat_5[$pubsy_public_category];
+    if (!empty($publication_type)) {
+      $term = taxonomy_get_term_by_name($publication_type, 'publication_types');
+      if (!empty($term)) {
+        $entity->field_publication_type[LANGUAGE_NONE][] = array('tid' => implode(array_keys($term)));
+      }
+    }
+  }
 }
