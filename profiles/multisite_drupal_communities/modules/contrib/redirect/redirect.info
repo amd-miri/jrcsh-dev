@@ -2,7 +2,6 @@ name = Redirect
 description = Allows users to redirect from old URLs to new URLs.
 core = 7.x
 files[] = redirect.controller.inc
-files[] = redirect.migrate.inc
 files[] = redirect.test
 files[] = views/redirect.views.inc
 ;files[] = views/redirect_handler_field_redirect_type.inc
@@ -15,7 +14,7 @@ files[] = views/redirect_handler_field_redirect_link_delete.inc
 configure = admin/config/search/redirect/settings
 suggests[] = mpac
 
-; Information added by drush on 2018-11-11
-version = "7.x-1.0-rc3+17-dev"
+; Information added by drush on 2018-10-13
+version = "7.x-1.0-rc3+8-dev"
 project = "redirect"
-datestamp = "1541976744"
+datestamp = "1539391080"

@@ -148,7 +148,7 @@ function redirect_menu() {
   // If the database logging module is enabled, add special 404 listing pages.
   if (module_exists('dblog')) {
     $items['admin/config/search/redirect/404'] = array(
-      'title' => 'Add redirects for 404 pages.',
+      'title' => 'Fix 404 pages',
       'description' => 'Add redirects for 404 pages.',
       'page callback' => 'redirect_404_list',
       'access arguments' => array('administer redirects'),
@@ -157,7 +157,7 @@ function redirect_menu() {
       'weight' => 20,
     );
     $items['admin/reports/page-not-found/redirect'] = array(
-      'title' => 'Fix file not found (404) errors with URL redirects',
+      'title' => 'Fix 404 pages with URL redirects',
       'page callback' => 'drupal_goto',
       'page arguments' => array('admin/config/search/redirect/404'),
       'access arguments' => array('administer redirects'),
@@ -1451,14 +1451,8 @@ function redirect_variables() {
 function redirect_parse_url($url) {
   $original_url = $url;
   $is_external = url_is_external($url);
-  if (!$is_external) {
-    // Include trailing slashes in character trim list.
-    $url = trim($url, " \t\n\r\0\x0B\/");
-  }
-  else {
-    // Use the default trim() $charlist parameter.
-    $url = trim($url);
-  }
+  
+  $url = trim($url, " \t\n\r\0\x0B\/");
   $parsed = parse_url($url);
 
   if (isset($parsed['fragment'])) {
@@ -1536,26 +1530,22 @@ function redirect_is_current_page_404() {
 function _redirect_uasort($a, $b) {
   $a_weight = isset($a->weight) ? $a->weight : 0;
   $b_weight = isset($b->weight) ? $b->weight : 0;
-
-  // First sort by weight (case sensitivity).
   if ($a_weight != $b_weight) {
-    return ($a_weight > $b_weight) ? -1 : 1;
+    // First sort by weight (case sensitivity).
+    return $a_weight > $b_weight;
   }
-
-  // Then sort by language specific over language neutral.
-  if ($a->language != $b->language) {
-    return ($a->language != LANGUAGE_NONE) ? -1 : 1;
+  elseif ($a->language != $b->language) {
+    // Then sort by language specific over language neutral.
+    return $a->language == LANGUAGE_NONE;
   }
-
-  // Prioritize redirects that have more query parameters over those with less.
-  $a_query_count = isset($a->source_options['query']) ? count($a->source_options['query']) : 0;
-  $b_query_count = isset($b->source_options['query']) ? count($b->source_options['query']) : 0;
-  if ($a_query_count != $b_query_count) {
-    return ($a_query_count > $b_query_count) ? -1 : 1;
+  elseif (!empty($a->source_options['query']) != !empty($b->source_options['query'])) {
+    // Then sort by redirects that do not have query strings over ones that do.
+    return empty($a->source_options['query']);
   }
-
-  // Lastly sort by the highest redirect ID.
-  return ($a->rid > $b->rid) ? -1 : 1;
+  else {
+    // Lastly sort by the highest redirect ID.
+    return $a->rid < $b->rid;
+  }
 }
 
 /**
@@ -1627,7 +1617,7 @@ function redirect_field_attach_form($entity_type, $entity, &$form, &$form_state,
   );
   if (redirect_access('create', 'redirect')) {
     $form['redirect']['actions']['#links']['add'] = array(
-      'title' => t('Add URL redirect'),
+      'title' => t('Add URL redirect to this @entitytype', array('@entitytype' => drupal_strtolower($info['label']))),
       'href' => 'admin/config/search/redirect/add',
       'query' => array_filter($redirect) + drupal_get_destination(),
     );
