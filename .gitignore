@@ -4,3 +4,13 @@ sites/*/settings*.php
 # Ignore paths that contain user-generated content.
 sites/*/files
 sites/*/private
+
+# Development customizations
+# Ignore PHPStorm	
+.idea/*
+
+ # Ignore temporary folder	
+sites/default/tmp/	
+
+ # Ignore custom features folder	
+sites/default/modules/features/jrc_debug/

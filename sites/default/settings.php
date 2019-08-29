@@ -718,13 +718,30 @@ $local_settings = dirname(__FILE__) . '/settings.local.php';
 if (file_exists($local_settings)) {
   include $local_settings;
 }
+
+// Error reporting.
+$conf['error_level'] = 2;
+$conf['views_ui_show_sql_query'] = 1;
+$conf['views_ui_show_performance_statistics'] = 1;
+$conf['views_show_additional_queries'] = 1;
+
+// File paths.
 $conf['file_public_path'] = 'sites/default/files';
+
+// Do not forget to create those directories, since they are ignored by default.
 $conf['file_private_path'] = 'sites/default/files/private_files';
 $conf['file_temporary_path'] = 'sites/default/tmp';
-$conf['stage_file_proxy_origin'] = 'https://ec.europa.eu/jrc';
-$conf['stage_file_proxy_origin_dir'] = 'sites/jrcsh/files';
-$conf['stage_file_proxy_hotlink'] = 1;
+
 $conf['multisite_toolbox_cs_whitelist'] = array('*.europa.eu');
 define('FPFIS_ECAS_URL', 'ecas.ec.europa.eu');
 define('FPFIS_ECAS_PORT', 443);
 define('FPFIS_ECAS_URI', '/cas');
+
+$base_url = 'https://localhost/jrcsh';
+
+// Config for stage file proxy. Do not forget to enable it !.
+$conf['stage_file_proxy_origin'] = 'https://ec.europa.eu/jrc';
+$conf['stage_file_proxy_use_imagecache_root'] = TRUE;
+$conf['stage_file_proxy_hotlink'] = FALSE;
+$conf['stage_file_proxy_origin_dir'] = 'sites/jrcsh/files';
+$conf['stage_file_proxy_sslversion'] = 3;
