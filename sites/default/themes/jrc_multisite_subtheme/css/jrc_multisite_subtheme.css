@@ -631,11 +631,16 @@ h3 {
   float: left;
   margin: 0 .4em 10px 0;
   font-weight: bold;
+  max-width: 145px;
 }
 .field-name-field-country-iso {
   margin-bottom: 10px;
 }
 
+.node-type-event .field-name-body {
+  padding-top: 8px;
+  clear: left;
+}
 
 /* Subsite Administrator panel */
 .group-panel-section {
