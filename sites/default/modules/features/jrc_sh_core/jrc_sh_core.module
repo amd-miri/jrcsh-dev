@@ -1365,3 +1365,15 @@ function _jrc_sh_core_publication_type_feeds_set_target(FeedsSource $source, $en
     }
   }
 }
+
+/**
+ * Implements hook_feeds_presave().
+ */
+function jrc_sh_core_feeds_presave(FeedsSource $source, $entity, $item, $entity_id) {
+  // For all imports, if the content is imported as published,
+  // then we set the moderation to published as well.
+  // This is not handled by Workbench_moderation module.
+  if ($entity->status == "1") {
+    $entity->workbench_moderation_state_new = workbench_moderation_state_published();
+  }
+}
