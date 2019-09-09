@@ -1250,7 +1250,7 @@ function jrc_sh_core_menu_alter(&$items) {
  */
 function jrc_sh_core_node_edit_callback($op, $node) {
   global $user;
-  $system_nids = jrc_sh_core_get_403_404_nids();
+  $system_nids = _jrc_sh_core_get_403_404_nids();
 
   if (in_array($node->nid, $system_nids) && !in_array('administrator', $user->roles)) {
     return FALSE;
@@ -1265,7 +1265,7 @@ function jrc_sh_core_node_edit_callback($op, $node) {
  * @return array
  *   An array of nids for 403 and 404 pages.
  */
-function jrc_sh_core_get_403_404_nids() {
+function _jrc_sh_core_get_403_404_nids() {
   $nids = &drupal_static(__FUNCTION__);
   if (!isset($nids)) {
     $nids = array();

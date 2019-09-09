@@ -279,8 +279,8 @@ function workbench_moderation_rules_condition_contents_current_state($node, $mod
     return FALSE;
   }
 
-  $currentState = (!empty($node->workbench_moderation_state_current)) ? $node->workbench_moderation_state_current : '';
-  $state = (!empty($node->workbench_moderation)) ? $node->workbench_moderation['current']->state : $currentState;
+  $current_state = (!empty($node->workbench_moderation_state_current)) ? $node->workbench_moderation_state_current : '';
+  $state = (!empty($node->workbench_moderation_state_new)) ? $node->workbench_moderation_state_new : $current_state;
 
   if ($state != $moderation_state) {
     return FALSE;
