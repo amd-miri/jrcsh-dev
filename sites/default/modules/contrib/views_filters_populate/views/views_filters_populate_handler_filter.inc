@@ -19,8 +19,6 @@ class views_filters_populate_handler_filter extends views_handler_filter {
     if (!empty($this->options['exposed'])) {
       return t('exposed');
     }
-
-    return $output;
   }
 
   function option_definition() {
