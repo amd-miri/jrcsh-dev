@@ -463,3 +463,18 @@ function jrc_sh_core_update_7040() {
     'property_validation',
   ), TRUE);
 }
+
+/**
+ * Disable and uninstall migrate modules.
+ */
+function jrc_sh_core_update_7041() {
+  $modules = array(
+    'migrate_d2d',
+    'migrate_d2d_ui',
+    'migrate',
+    'migrate_ui',
+    'migrate_extras',
+  );
+  module_disable($modules, FALSE);
+  drupal_uninstall_modules($modules, FALSE);
+}
