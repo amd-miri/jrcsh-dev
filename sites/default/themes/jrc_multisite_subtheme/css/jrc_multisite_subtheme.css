@@ -372,6 +372,7 @@ h3 {
 
 .page-node.node-type-jrc-staff .field-type-image .field-item {
   width: auto;
+  max-width: 220px;
 }
 
 .date-cont  span {
