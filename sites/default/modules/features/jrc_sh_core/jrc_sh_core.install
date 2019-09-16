@@ -478,3 +478,25 @@ function jrc_sh_core_update_7041() {
   module_disable($modules, FALSE);
   drupal_uninstall_modules($modules, FALSE);
 }
+
+/**
+ * Deleting fields of type jquery_colorpicker.
+ */
+function jrc_sh_core_update_7042() {
+  $fields = array_keys(field_read_fields(array('type' => 'jquery_colorpicker')));
+  foreach ($fields as $field) {
+    field_delete_field($field);
+  }
+  field_purge_batch(0);
+}
+
+/**
+ * Disable and uninstall jquery_colorpicker module.
+ */
+function jrc_sh_core_update_7043() {
+  $modules = array(
+    'jquery_colorpicker',
+  );
+  module_disable($modules, FALSE);
+  drupal_uninstall_modules($modules, FALSE);
+}
