@@ -1436,3 +1436,7 @@ table td.color122 {
 #views-exposed-form-jrc-publication-k4p-page {
   display: none;
 }
+
+#publication_result {
+  display: none;
+}
