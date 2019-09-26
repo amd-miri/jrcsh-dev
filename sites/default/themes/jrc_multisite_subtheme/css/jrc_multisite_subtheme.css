@@ -1432,3 +1432,7 @@ table td.color122 {
   margin: 0 5px;
   box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.25);
 }
+
+#views-exposed-form-jrc-publication-k4p-page {
+  display: none;
+}
