@@ -500,3 +500,14 @@ function jrc_sh_core_update_7043() {
   module_disable($modules, FALSE);
   drupal_uninstall_modules($modules, FALSE);
 }
+
+/**
+ * Disable and uninstall og_field_access module.
+ */
+function jrc_sh_core_update_7044() {
+  $modules = array(
+    'og_field_access',
+  );
+  module_disable($modules, FALSE);
+  drupal_uninstall_modules($modules, FALSE);
+}
