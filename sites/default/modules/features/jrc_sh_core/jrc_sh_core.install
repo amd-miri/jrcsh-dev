@@ -502,9 +502,18 @@ function jrc_sh_core_update_7043() {
 }
 
 /**
- * Disable and uninstall og_field_access module.
+ * Remove corrupted file with fid 181473.
  */
 function jrc_sh_core_update_7044() {
+  db_delete('file_managed')
+    ->condition('fid', '181473')
+    ->execute();
+}
+
+/**
+ * Disable and uninstall og_field_access module.
+ */
+function jrc_sh_core_update_7045() {
   $modules = array(
     'og_field_access',
   );
