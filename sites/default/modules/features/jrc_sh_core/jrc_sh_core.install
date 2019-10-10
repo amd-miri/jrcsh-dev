@@ -509,3 +509,14 @@ function jrc_sh_core_update_7044() {
     ->condition('fid', '181473')
     ->execute();
 }
+
+/**
+ * Disable and uninstall og_field_access module.
+ */
+function jrc_sh_core_update_7045() {
+  $modules = array(
+    'og_field_access',
+  );
+  module_disable($modules, FALSE);
+  drupal_uninstall_modules($modules, FALSE);
+}
