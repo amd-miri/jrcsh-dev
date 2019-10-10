@@ -500,3 +500,12 @@ function jrc_sh_core_update_7043() {
   module_disable($modules, FALSE);
   drupal_uninstall_modules($modules, FALSE);
 }
+
+/**
+ * Remove corrupted file with fid 181473.
+ */
+function jrc_sh_core_update_7044() {
+  db_delete('file_managed')
+    ->condition('fid', '181473')
+    ->execute();
+}
