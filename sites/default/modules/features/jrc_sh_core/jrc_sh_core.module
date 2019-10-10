@@ -1199,8 +1199,11 @@ function jrc_sh_core_tokens($type, $tokens, array $data = array(), array $option
 
           case 'creator-unit':
             $account = user_load($user->uid);
-            $creator_unit = check_plain($account->field_creator[LANGUAGE_NONE][0]['value']);
-            $replacements[$original] = drupal_substr($creator_unit, strrpos($creator_unit, '/') + 1);
+            $replacements[$original] = '';
+            if (!empty($account->field_creator[LANGUAGE_NONE][0]['value'])) {
+              $creator_unit = check_plain($account->field_creator[LANGUAGE_NONE][0]['value']);
+              $replacements[$original] = drupal_substr($creator_unit, strrpos($creator_unit, '/') + 1);
+            }
             break;
         }
       }
