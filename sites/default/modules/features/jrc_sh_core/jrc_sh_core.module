@@ -489,7 +489,42 @@ function jrc_sh_core_node_insert($node) {
       'description' => '',
     );
   }
+  jrc_sh_core_node_save($node);
 
+}
+
+/**
+ * Implements hook_node_update().
+ *
+ * Stores the moderation information for this node.
+ */
+function jrc_sh_core_node_update($node) {
+  jrc_sh_core_node_save($node);
+}
+
+/**
+ * Sets properly the workbench_moderation_node_history records.
+ *
+ * @param object $node
+ *   The node object that was updated/saved via Feeds.
+ */
+function jrc_sh_core_node_save($node) {
+  db_update('workbench_moderation_node_history')
+    ->fields(array('uid' => 1))
+    ->condition('uid', 0)
+    ->condition('nid', $node->nid)
+    ->execute();
+}
+
+/**
+ * Implements hook_module_implements_alter().
+ */
+function jrc_sh_core_module_implements_alter(&$implementations, $hook) {
+  if ($hook == 'node_update' || $hook == 'node_insert') {
+    $group = $implementations['jrc_sh_core'];
+    unset($implementations['jrc_sh_core']);
+    $implementations['jrc_sh_core'] = $group;
+  }
 }
 
 /**

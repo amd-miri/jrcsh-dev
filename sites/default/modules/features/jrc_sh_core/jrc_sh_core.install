@@ -520,3 +520,13 @@ function jrc_sh_core_update_7045() {
   module_disable($modules, FALSE);
   drupal_uninstall_modules($modules, FALSE);
 }
+
+/**
+ * Fix workbench_moderation_node_history table.
+ */
+function jrc_sh_core_update_7046() {
+  db_update('workbench_moderation_node_history')
+    ->fields(['uid' => 1])
+    ->condition('uid', 0)
+    ->execute();
+}
