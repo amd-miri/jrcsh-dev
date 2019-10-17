@@ -505,7 +505,7 @@ function jrc_sh_core_node_update($node) {
 /**
  * Sets properly the workbench_moderation_node_history records.
  *
- * @param $node
+ * @param object $node
  *   The node object that was updated/saved via Feeds.
  */
 function jrc_sh_core_node_save($node) {
@@ -519,7 +519,7 @@ function jrc_sh_core_node_save($node) {
 /**
  * Implements hook_module_implements_alter().
  */
-function  jrc_sh_core_module_implements_alter(&$implementations, $hook) {
+function jrc_sh_core_module_implements_alter(&$implementations, $hook) {
   if ($hook == 'node_update' || $hook == 'node_insert') {
     $group = $implementations['jrc_sh_core'];
     unset($implementations['jrc_sh_core']);
@@ -1415,6 +1415,3 @@ function jrc_sh_core_feeds_presave(FeedsSource $source, $entity, $item, $entity_
     $entity->workbench_moderation_state_new = workbench_moderation_state_published();
   }
 }
-
-
-
