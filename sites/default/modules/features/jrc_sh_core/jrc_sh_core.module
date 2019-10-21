@@ -1255,7 +1255,7 @@ function jrc_sh_core_linchecker_csv_export() {
   if ($results) {
     // Adds necessary headers for browsers.
     drupal_add_http_header('Content-Type', 'text/csv; utf-8');
-    drupal_add_http_header('Content-Disposition', 'attachment; filename = nodes.csv');
+    drupal_add_http_header('Content-Disposition', 'attachment; filename = linkchecker.csv');
 
     // Instead of writing down to a file we write to the output stream.
     $fh = fopen('php://output', 'w');
