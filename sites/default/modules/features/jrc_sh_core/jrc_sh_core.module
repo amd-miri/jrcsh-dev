@@ -1217,7 +1217,41 @@ function jrc_sh_core_menu() {
     'access arguments' => array('administer site configuration'),
     'type' => MENU_CALLBACK,
   );
+
+  $items['publication/redirect'] = array(
+    'page callback' => 'jrc_sh_core_redirect',
+    'access callback' => TRUE,
+  );
   return $items;
+}
+
+/**
+ * Redirect callback for old publications.
+ */
+function jrc_sh_core_redirect() {
+
+  $string = '<h3><strong>' . t('Sorry, we could not find what you were looking for.') . '</strong></h3>';
+  $string .= '<p>' . t('Please try the !publications to find your publication.', array(
+      '!publications' => l(t('JRC Science Hub main publication page'), 'publications')
+    )) . '<p>';
+
+  if (!isset(drupal_get_query_parameters()['field_dc_relation_ispartofseries_value'])) {
+    return $string;
+  }
+
+  // Get node id from the pubsy JRC number.
+  $query = db_select('field_data_field_dc_relation_ispartofseries', 'f')
+    ->fields('f', array('entity_id'))
+    ->condition('f.field_dc_relation_ispartofseries_value', drupal_get_query_parameters()['field_dc_relation_ispartofseries_value'])
+    ->range(0, 1);
+
+  $result = $query->execute()->fetchCol();
+
+  if ($result) {
+    drupal_goto('node/' .  reset($result), array(), 301);
+  }
+
+  return $string;
 }
 
 /**
