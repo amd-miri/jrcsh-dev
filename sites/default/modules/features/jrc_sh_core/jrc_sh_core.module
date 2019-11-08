@@ -1264,7 +1264,8 @@ function jrc_sh_core_linchecker_csv_export() {
        ll.lid AS LinkcheckerID,
        n.nid AS NodeID,
        n.vid as RevisionID,
-       CONCAT('https://ec.europa.eu/jrc/en/node/',ln.nid ) AS Page,
+       nt.name as NodeType,
+       CONCAT('https://ec.europa.eu/jrc/en/',ua.alias ) AS Page,
        ll.url AS BrokenLink,
        ll.code AS ErrorCode,
        ll.error AS ErrorMessage,
@@ -1281,8 +1282,13 @@ function jrc_sh_core_linchecker_csv_export() {
       INNER JOIN users AS u ON nh.uid = u.uid
       INNER JOIN field_data_field_creator AS fc ON u.uid = fc.entity_id
       INNER JOIN realname AS r ON u.uid = r.uid
+      INNER JOIN url_alias as ua ON CONCAT('node/',n.nid) = ua.source
+      INNER JOIN node_type as nt ON n.type = nt.type
       WHERE n.vid = nh.vid
-      AND nh.is_current = 1";
+      AND nh.is_current = 1
+      AND ll.code NOT IN (200,206,302,304,401,301,403)
+      ORDER BY nt.name
+      ";
 
   $results = db_query($sql)->fetchAll();
 
