@@ -531,11 +531,22 @@ function jrc_sh_core_update_7046() {
     ->execute();
 }
 
-
 /**
- * KNOW4POL-747 permission and role addition.
+ * Disable taxonomy_csv module.
  */
 function jrc_sh_core_update_7047() {
+  module_disable(array(
+    'taxonomy_csv',
+  ), FALSE);
+  drupal_uninstall_modules(array(
+    'taxonomy_csv',
+  ), FALSE);
+}
+
+/**
+ * JRCSH-144 webtool/openaccess roles.
+ */
+function jrc_sh_core_update_7048() {
   module_enable(array(
     'jrc_sh_permissions',
   ),

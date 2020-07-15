@@ -815,10 +815,10 @@ function jrc_sh_core_form_jrc_staff_node_form_alter(&$form, &$form_state, $form_
  */
 function jrc_sh_core_views_pre_view(&$view, &$display_id, &$args) {
   if (($view->name == 'jrc_news' && $view->current_display == 'block_related_news_on_basic') ||
-        ($view->name == 'jrc_events' && $view->current_display == 'block_related_events_on_basic') ||
-      ($view->name == 'jrc_related_content_new' && ($view->current_display == 'block_related_publications_on_basic' ||
-                                                     $view->current_display == 'block_related_sc_tools_on_basic' ||
-                                                     $view->current_display == 'related_facilities_on_basic'))) {
+    ($view->name == 'jrc_events' && $view->current_display == 'block_related_events_on_basic') ||
+    ($view->name == 'jrc_related_content_new' && ($view->current_display == 'block_related_publications_on_basic' ||
+        $view->current_display == 'block_related_sc_tools_on_basic' ||
+        $view->current_display == 'related_facilities_on_basic'))) {
     // If no keywords or no identities.
     if (empty($args)) {
       $node = menu_get_object('node', 1);
@@ -878,13 +878,13 @@ function jrc_sh_core_views_pre_view(&$view, &$display_id, &$args) {
  */
 function jrc_sh_core_views_query_alter(&$view, &$query) {
   if (($view->name == 'jrc_news' && ($view->current_display == 'block_related_news_on_basic' ||
-                                     $view->current_display == 'rel_news_on_page' ||
-                                     $view->current_display == 'block_related_science_updates_on_subsites')) ||
-      ($view->name == 'jrc_events' && ($view->current_display == 'block_related_events_on_basic' || $view->current_display == 'rel_events_on_page')) ||
-      ($view->name == 'jrc_related_content_new' && ($view->current_display == 'block_related_publications_on_basic' ||
-                                                      $view->current_display == 'block_related_sc_tools_on_basic' ||
-                                                      $view->current_display == 'related_facilities_on_basic')
-      )) {
+        $view->current_display == 'rel_news_on_page' ||
+        $view->current_display == 'block_related_science_updates_on_subsites')) ||
+    ($view->name == 'jrc_events' && ($view->current_display == 'block_related_events_on_basic' || $view->current_display == 'rel_events_on_page')) ||
+    ($view->name == 'jrc_related_content_new' && ($view->current_display == 'block_related_publications_on_basic' ||
+        $view->current_display == 'block_related_sc_tools_on_basic' ||
+        $view->current_display == 'related_facilities_on_basic')
+    )) {
     // First switch where clauses.
     $value0 = $query->where[0];
     $value1 = $query->where[1];
@@ -970,8 +970,8 @@ function jrc_sh_core_query_node_access_alter(QueryAlterableInterface $query) {
   // if the current user has the drupal 'menu view unpublished' permission
   // Or the organic group one which is 'menu OG view unpublished'.
   if (user_access('menu view unpublished')
-     || (!empty($gid) && (og_user_access('node', $gid, 'menu OG view unpublished')))
-     ) {
+    || (!empty($gid) && (og_user_access('node', $gid, 'menu OG view unpublished')))
+  ) {
     $c = &$query->conditions();
     // Remove the status condition if we suspect this query originates from
     // menu_tree_check_access().
@@ -1220,6 +1220,7 @@ function jrc_sh_core_menu() {
 
   $items['publication/redirect'] = array(
     'page callback' => 'jrc_sh_core_redirect',
+    // Open callback. Redirection from an old system.
     'access callback' => TRUE,
   );
   return $items;
@@ -1230,10 +1231,10 @@ function jrc_sh_core_menu() {
  */
 function jrc_sh_core_redirect() {
 
-  $string = '<h3><strong>' . t('Sorry, we could not find what you were looking for.') . '</strong></h3>';
+  $string = '<h3>' . t('<strong>Sorry, we could not find what you were looking for.</strong>') . '</h3>';
   $string .= '<p>' . t('Please try the !publications to find your publication.', array(
-      '!publications' => l(t('JRC Science Hub main publication page'), 'publications')
-    )) . '<p>';
+    '!publications' => l(t('JRC Science Hub main publication page'), 'publications'),
+  )) . '<p>';
 
   if (!isset(drupal_get_query_parameters()['field_dc_relation_ispartofseries_value'])) {
     return $string;
@@ -1248,7 +1249,7 @@ function jrc_sh_core_redirect() {
   $result = $query->execute()->fetchCol();
 
   if ($result) {
-    drupal_goto('node/' .  reset($result), array(), 301);
+    drupal_goto('node/' . reset($result), array(), 301);
   }
 
   return $string;
