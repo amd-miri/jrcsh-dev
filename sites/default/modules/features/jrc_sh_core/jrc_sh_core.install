@@ -530,3 +530,14 @@ function jrc_sh_core_update_7046() {
     ->condition('uid', 0)
     ->execute();
 }
+
+
+/**
+ * KNOW4POL-747 permission and role addition.
+ */
+function jrc_sh_core_update_7047() {
+  module_enable(array(
+    'jrc_sh_permissions',
+  ),
+    TRUE);
+}
