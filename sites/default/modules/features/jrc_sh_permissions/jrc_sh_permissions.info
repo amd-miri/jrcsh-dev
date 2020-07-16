@@ -1,8 +1,6 @@
 name = JRC SH permissions
 description = JRC Science Hub roles and permissions
 core = 7.x
-multisite_version = 2.5
-php = 5.6
 package = JRC
 dependencies[] = bean
 dependencies[] = ctools
@@ -31,3 +29,4 @@ features[user_permission][] = upload webtools custom js
 features[user_permission][] = view any webtools bean
 features[user_role][] = Open access editor
 features[user_role][] = Webtool creator
+multisite_version = 2.5
