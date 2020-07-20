@@ -1,3 +1,64 @@
+/* #EUwomen4future */
+.page-euwomen4future #block-jrc-sh-core-apachesolr-freetext-search-block {
+  float: left !important;
+  margin-top: 10px !important;
+  width: 50% !important;
+}
+.page-euwomen4future #block-facetapi-d335incfdcopuftsdti3iyj3gwzg2mpt {
+  float: left !important;
+  clear: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  border: none !important;
+}
+.page-euwomen4future #block-facetapi-d335incfdcopuftsdti3iyj3gwzg2mpt .panel-heading {
+  float: left !important;
+  margin: 12px !important;
+}
+.page-euwomen4future #block-facetapi-d335incfdcopuftsdti3iyj3gwzg2mpt .panel-body {
+  float: left !important;
+}
+.page-euwomen4future #block-om-maximenu-om-maximenu-2,
+.node-type-euwomen4future #block-om-maximenu-om-maximenu-2,
+.page-euwomen4future #path,
+.node-type-euwomen4future #path {
+  display: none !important;
+}
+.page-euwomen4future #sub-title,
+.node-type-euwomen4future #sub-title,
+.page-euwomen4future .title-page {
+  display: none !important;
+}
+.page-euwomen4future #main-title,
+.node-type-euwomen4future #main-title {
+  position: absolute;
+  visibility: hidden;
+}
+.page-euwomen4future #main-title:before,
+.node-type-euwomen4future #main-title:before {
+  content: '#EUwomen4future';
+  visibility: visible;
+}
+.node-type-euwomen4future .field-label-inline .field-label {
+  width: 50% !important;
+}
+.node-type-euwomen4future .field-label-inline .field-items {
+  margin-left: 50% !important;
+}
+.page-euwomen4future blockquote,
+.node-type-euwomen4future blockquote {
+  font-size: 14px;
+  border-left: .625rem solid #ffd617;
+  margin-bottom: 10px;
+  padding: 1rem 0 1rem 1.5rem;
+}
+.page-euwomen4future blockquote p,
+.node-type-euwomen4future blockquote p {
+  font-weight: bold;
+  font-style: italic;
+  color: #404040;
+}
+
 /* HOMEPAGE */
 body.front #page-title {
   display: none;

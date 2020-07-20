@@ -1173,22 +1173,22 @@ ul.selectpro li :hover .country {
 @media (max-width: 600px) {
   ul.selectpro li {
     flex: 1 50%;
-}
+  }
 }
 @media (max-width: 400px) {
   ul.selectpro {
     display: block;
-}
+  }
   ul.selectpro li {
     flex: none;
     clear: both;
     margin: 12px 0;
     display: block;
-}
+  }
   ul.selectpro li .country {
     padding: 4px;
     margin-top: -4px;
-}
+  }
 }
 
 p.apply-button {
