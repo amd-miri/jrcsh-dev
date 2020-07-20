@@ -84,6 +84,7 @@ function nexteuropa_varnish_permission() {
     'administer frontend cache purge rules' => array(
       'title' => 'Administer frontend cache purge rules',
       'description' => '',
+      'restrict access' => TRUE,
     ),
   );
 }
@@ -283,15 +284,14 @@ function nexteuropa_varnish_node_delete($node) {
  * Implements hook_file_delete().
  */
 function nexteuropa_varnish_file_delete($file) {
-  $scheme = file_uri_scheme($file->uri);
+  _nexteuropa_varnish_flush_file($file);
+}
 
-  if ($scheme !== FALSE && file_stream_wrapper_valid_scheme($scheme) === TRUE) {
-    // Get path on filesystem.
-    $wrapper = file_stream_wrapper_get_instance_by_scheme($scheme);
-    _nexteuropa_varnish_purge_paths(array(
-      'escaped_alias' => preg_quote($wrapper->getDirectoryPath($file) . '/' . $file->filename, '/'),
-    ));
-  }
+/**
+ * Implements hook_file_update().
+ */
+function nexteuropa_varnish_file_update($file) {
+  _nexteuropa_varnish_flush_file($file);
 }
 
 /**
@@ -433,7 +433,7 @@ function nexteuropa_varnish_query_allow_all_entity_alter(QueryAlterableInterface
 /**
  * Purges certain paths on the web frontend cache.
  */
-function _nexteuropa_varnish_purge_paths($paths) {
+function _nexteuropa_varnish_purge_paths($paths, $varnish_rules_uri = 'admin/config/system/nexteuropa-varnish/purge_rules') {
   // First clear the actual backend page cache (usually DrupalDatabaseCache).
   // Otherwise the web frontend cache will receive again
   // outdated cached versions of pages.
@@ -444,7 +444,7 @@ function _nexteuropa_varnish_purge_paths($paths) {
 
   // Escape the paths for usage in a regular expression.
   $escaped_paths = array_map(
-    function ($regex) {
+    function ($regex) use ($varnish_rules_uri) {
       // Check if the regular expression is valid.
       if (@preg_match('/' . $regex . '/', NULL) !== FALSE) {
         return $regex;
@@ -456,9 +456,9 @@ function _nexteuropa_varnish_purge_paths($paths) {
             array(
               '!check_config' => l(
                 t('check your varnish rules'),
-                'admin/config/system/nexteuropa-varnish/purge_rules'),
+                $varnish_rules_uri),
               '%regex' => $regex,
-              '@doc' => "https://github.com/ec-europa/platform-dev/tree/nept-1545-2.5/profiles/common/modules/custom/nexteuropa_varnish#purge-nodes-that-match-this-regex",
+              '@doc' => "https://github.com/ec-europa/platform-dev/tree/release-2.5/profiles/common/modules/custom/nexteuropa_varnish#purge-nodes-that-match-this-regex",
             )
             ),
         'error');
@@ -704,20 +704,20 @@ function _nexteuropa_varnish_get_node_paths($node) {
     else {
       // Content translation.
       $lang_code = entity_language('node', $node);
-      $all_languages = language_list();
+      $enabled_languages = language_list('enabled')[1];
       $alias = drupal_get_path_alias($entity_uri['path'], $lang_code);
       $original_alias = $alias;
 
       // Language is undefined, the content will show on all languages.
       if (LANGUAGE_NONE == $lang_code) {
-        foreach ($all_languages as $code => $data) {
-          $lang = $all_languages[$code];
+        foreach ($enabled_languages as $code => $data) {
+          $lang = $enabled_languages[$code];
           // Add the prefix or suffix.
           $paths[$code] = _nexteuropa_varnish_build_path($url_locale, $lang, $alias, $entity_uri);
         }
       }
       else {
-        $lang = $all_languages[$lang_code];
+        $lang = $enabled_languages[$lang_code];
         // Add the prefix or suffix.
         $paths[$lang_code] = _nexteuropa_varnish_build_path($url_locale, $lang, $alias, $entity_uri);
       }
@@ -941,4 +941,23 @@ function _nexteuropa_varnish_trim_base_path($path, $base_path = NULL) {
   }
 
   return $path;
+}
+
+/**
+ * Flushes the path on disk of a file entity.
+ *
+ * @param object $file
+ *   The file entity.
+ */
+function _nexteuropa_varnish_flush_file(&$file) {
+  $scheme = file_uri_scheme($file->uri);
+  $base_name = drupal_basename($file->uri);
+
+  if ($scheme !== FALSE && file_stream_wrapper_valid_scheme($scheme) === TRUE) {
+    // Get path on filesystem.
+    $wrapper = file_stream_wrapper_get_instance_by_scheme($scheme);
+    _nexteuropa_varnish_purge_paths(array(
+      'escaped_alias' => preg_quote($wrapper->getDirectoryPath($file) . '/' . $base_name, '/'),
+    ));
+  }
 }

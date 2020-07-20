@@ -11,6 +11,61 @@
 function jrc_sh_permissions_user_default_permissions() {
   $permissions = array();
 
+  // Exported permission: 'create topic content'.
+  $permissions['create topic content'] = array(
+    'name' => 'create topic content',
+    'roles' => array(
+      'administrator' => 'administrator',
+      'temp admin' => 'temp admin',
+      'webmaster' => 'webmaster',
+    ),
+    'module' => 'node',
+  );
+
+  // Exported permission: 'delete any topic content'.
+  $permissions['delete any topic content'] = array(
+    'name' => 'delete any topic content',
+    'roles' => array(
+      'administrator' => 'administrator',
+      'temp admin' => 'temp admin',
+      'webmaster' => 'webmaster',
+    ),
+    'module' => 'node',
+  );
+
+  // Exported permission: 'delete own topic content'.
+  $permissions['delete own topic content'] = array(
+    'name' => 'delete own topic content',
+    'roles' => array(
+      'administrator' => 'administrator',
+      'temp admin' => 'temp admin',
+      'webmaster' => 'webmaster',
+    ),
+    'module' => 'node',
+  );
+
+  // Exported permission: 'edit any topic content'.
+  $permissions['edit any topic content'] = array(
+    'name' => 'edit any topic content',
+    'roles' => array(
+      'administrator' => 'administrator',
+      'temp admin' => 'temp admin',
+      'webmaster' => 'webmaster',
+    ),
+    'module' => 'node',
+  );
+
+  // Exported permission: 'edit own topic content'.
+  $permissions['edit own topic content'] = array(
+    'name' => 'edit own topic content',
+    'roles' => array(
+      'administrator' => 'administrator',
+      'temp admin' => 'temp admin',
+      'webmaster' => 'webmaster',
+    ),
+    'module' => 'node',
+  );
+
   // Exported permission: 'create any webtools bean'.
   $permissions['create any webtools bean'] = array(
     'name' => 'create any webtools bean',

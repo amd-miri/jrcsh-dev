@@ -1,8 +1,0 @@
-<?php
-
-/**
- * @file
- * Contains main functionality of the nuts regions module.
- */
-
-include_once 'nuts_regions.features.inc';

@@ -1,0 +1,186 @@
+<?php
+
+/**
+ * @file
+ * Automated tests for the scheduler_workbench module.
+ */
+
+/**
+ * Tests the scheduling of content.
+ */
+class SchedulerWorkbenchTestCase extends DrupalWebTestCase {
+
+  /**
+   * A test user.
+   *
+   * @var object
+   */
+  protected $user;
+
+  /**
+   * A test content type.
+   *
+   * @var object
+   */
+  protected $contentType;
+
+  /**
+   * Returns test case metadata.
+   *
+   * @return array
+   *   The metadata.
+   */
+  public static function getInfo() {
+    return array(
+      'name' => 'Scheduler Workbench integration',
+      'description' => 'Tests the integration of Workbench Moderation with the Scheduler module.',
+      'group' => 'Workbench Moderation',
+    );
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setUp() {
+    parent::setUp('scheduler_workbench');
+
+    // Create a content type.
+    $this->contentType = $this->drupalCreateContentType(array());
+
+    // Create an administrator and log in.
+    $this->user = $this->drupalCreateUser(array(
+      'administer content types',
+      'create ' . $this->contentType->type . ' content',
+      'edit any ' . $this->contentType->type . ' content',
+      'schedule publishing of nodes',
+      'override default scheduler time',
+    ));
+
+    $this->drupalLogin($this->user);
+
+    // Configure the content type to use scheduling and moderation through the
+    // interface.
+    $edit = array(
+      'node_options[revision]' => TRUE,
+      'node_options[moderation]' => TRUE,
+      'scheduler_publish_enable' => TRUE,
+      'scheduler_unpublish_enable' => TRUE,
+    );
+    $this->drupalPost('admin/structure/types/manage/' . $this->contentType->type, $edit, t('Save content type'));
+    node_types_rebuild();
+  }
+
+  /**
+   * Test publishing and unpublishing of content.
+   */
+  public function testPublishing() {
+    // Define some combinations of publishing / unpublishing dates with an
+    // initial publication state and expected publication status and moderation
+    // state after scheduling.
+    $testcases = array(
+      array(
+        'description' => 'A published node with unpublication date in the past',
+        'publish_on' => 0,
+        'unpublish_on' => strtotime('-1 day'),
+        'status' => TRUE,
+        'expected_status' => FALSE,
+        'expected_state' => 'draft',
+      ),
+      array(
+        'description' => 'An unpublished node with publication date in the past and unpublication date in the future',
+        'publish_on' => strtotime('-1 day'),
+        'unpublish_on' => strtotime('+1 day'),
+        'status' => FALSE,
+        'expected_status' => TRUE,
+        'expected_state' => 'published',
+      ),
+      array(
+        'description' => 'A published node with both dates in the future',
+        'publish_on' => strtotime('+1 day'),
+        'unpublish_on' => strtotime('+2 day'),
+        'status' => TRUE,
+        'expected_status' => FALSE,
+        'expected_state' => 'draft',
+      ),
+    );
+
+    // Test each case.
+    foreach ($testcases as $testcase) {
+      // Create a node with the settings as defined in the test case.
+      $settings = $testcase + array('type' => $this->contentType->type);
+      $node = $this->drupalCreateNode($settings);
+
+      // Simulate a cron run.
+      scheduler_cron();
+
+      // Retrieve the current publication status of the node and check if it
+      // matches the expected result.
+      $current_status = db_select('node', 'n')
+        ->fields('n', array('status'))
+        ->condition('nid', $node->nid)
+        ->execute()
+        ->fetchColumn();
+      $this->assertEqual($testcase['expected_status'], $current_status, format_string('@description has its publication state set to %status after scheduling.' , array('@description' => $testcase['description'], '%status' => $testcase['expected_status'] ? 'TRUE' : 'FALSE')));
+
+      // Retrieve the current moderation state of the node and check if it
+      // matches the expected result.
+      $current_state = db_select('workbench_moderation_node_history', 'h')
+        ->fields('h', array('state'))
+        ->condition('nid', $node->nid)
+        ->range(0, 1)
+        ->orderBy('hid', 'DESC')
+        ->execute()
+        ->fetchColumn();
+      $this->assertEqual($testcase['expected_state'], $current_state, format_string('@description has its moderation state set to %state after scheduling', array('@description' => $testcase['description'], '%state' => $testcase['expected_state'])));
+    }
+  }
+
+  /**
+   * Test content type form options.
+   */
+  public function testContentTypeForm() {
+    $this->drupalGet('admin/structure/types/manage/' . $this->contentType->type);
+    $this->assertFieldByName('scheduler_publish_moderation_state', workbench_moderation_state_published(), 'The default "Publishing" moderation state is set correctly.');
+    $this->assertFieldByName('scheduler_unpublish_moderation_state', workbench_moderation_state_none(), 'The default "Unpublishing" moderation state is set correctly.');
+  }
+
+  /**
+   * Test that nodes are removed from scheduling after manual publishing.
+   */
+  public function testPrePublishedNodes() {
+    // Create a new node and make sure it is unpublished.
+    $body_name = 'body[' . LANGUAGE_NONE . '][0]';
+    $edit = array(
+      'title' => $this->randomName(),
+      "{$body_name}[value]" => 'A published node with publish date in the future',
+      "{$body_name}[format]" => filter_default_format(),
+      'publish_on' => strtotime('+1 day'),
+    );
+    $this->drupalPost("node/add/{$this->contentType->type}", $edit, t('Save'));
+
+    // Get the new node.
+    $node = $this->drupalGetNodeByTitle($edit['title']);
+
+    $this->assertFalse($node->status, t('New node is unpublished'));
+    $this->assertTrue(isset($node->workbench_moderation), t('Workbench moderation information is present on the node object'));
+    $this->assertFalse(isset($node->workbench_moderation['published']), t('Workbench moderation has no published revision'));
+
+    // Pre-publish the mode.
+    $node->publish_on = strtotime('-1 day');
+    $node->workbench_moderation_state_new = workbench_moderation_state_published();
+    node_save($node);
+
+    // Simulate a cron run.
+    scheduler_cron();
+
+    // Check that the node is not in the list anymore.
+    $id = db_select('scheduler', 's')
+      ->fields('s', array('nid'))
+      ->condition('nid', $node->nid)
+      ->execute()
+      ->fetchColumn();
+
+    $this->assertEqual(FALSE, $id, t('Pre-published node was removed.'));
+  }
+
+}

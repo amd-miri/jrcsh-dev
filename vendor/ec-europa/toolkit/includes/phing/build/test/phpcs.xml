@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<project name="PHPCS" description="Contains all PHPCS testing targets."  default="test-run-phpcs">
+
+    <property file="${phing.dir.phpcs}/phpcs.props" logoutput="false" />
+
+
+    <!-- Run a full static analysis with phpcs. -->
+    <target
+        name="test-run-phpcs"
+        description="Refresh configuration and run phpcs review."
+        depends="
+            test-phpcs-setup,
+            test-phpcs-exec" />
+
+    <!-- Run a full static analysis with phpcs compatiblity. -->
+    <target
+        name="test-run-phpcs-compatibility"
+        description="Refresh configuration and run phpcs compatibility review.">
+
+        <phingcall target="build-subsite-dist" />
+        <delete file="${phpcs.config}" failonerror="false" />
+        <phpcsconf
+            configFile="${phpcs.config}"
+            extensions="php inc module install test profile theme"
+            files="${build.dist.dir}"
+            ignorePatterns="${phpcs.ignore}"
+            reports="${phpcs.reports}"
+            showProgress="${phpcs.progress}"
+            showSniffCodes="${phpcs.sniffcodes}"
+            standards="PHP7"
+        />
+        <exec
+            command="${toolkit.dir.bin}/phpcs --config-set ignore_warnings_on_exit ${phpcs.passwarnings} >/dev/null"
+            passthru="true"
+            checkreturn="true"
+        />
+        <exec
+            command="${toolkit.dir.bin}/phpcs --runtime-set testVersion ${phpcs.compat.version}"
+            passthru="true"
+            checkreturn="true"
+        />
+    </target>
+
+    <!-- Do quality assurance checks. -->
+    <target name="test-phpcs-exec" hidden="true">
+        <exec
+            command="${toolkit.dir.bin}/phpcs"
+            passthru="true"
+            checkreturn="true"
+        />
+    </target>
+
+    <!-- Set up PHP CodeSniffer. -->
+    <target name="test-phpcs-setup" hidden="true">
+        <delete file="${phpcs.config}" failonerror="false" />
+        <phpcsconf
+            configFile="${phpcs.config}"
+            extensions="${phpcs.extensions}"
+            files="${phpcs.files}"
+            ignorePatterns="${phpcs.ignore}"
+            reports="${phpcs.reports}"
+            showProgress="${phpcs.progress}"
+            showSniffCodes="${phpcs.sniffcodes}"
+            standards="${phpcs.standards}"
+        />
+        <exec
+            command="${toolkit.dir.bin}/phpcs --config-set ignore_warnings_on_exit ${phpcs.passwarnings} >/dev/null"
+            passthru="true"
+            checkreturn="true"
+        />
+    </target>
+
+</project>

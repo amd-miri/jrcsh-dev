@@ -2145,4 +2145,63 @@ class RulesInvocationEnabledTestCase extends DrupalWebTestCase {
     $this->assertFalse(empty($result), 'Rules event was triggered and logged.');
   }
 
+  /**
+   * Tests creating a file rule.
+   */
+  public function testFileRuleCreation() {
+    $rule = rules_reaction_rule();
+    $rule->event('file_presave');
+    $rule->event('file_insert');
+    $rule->event('file_update');
+    $rule->action('rules_test_action');
+    $rule->integrityCheck()->save();
+
+    $file = $this->createFile();
+
+    $log = RulesLog::logger()->get();
+    $action_finished = array_pop($log);
+    $last = array_pop($log);
+    $last = array_pop($log);
+
+    $this->assertEqual($log[0][1]['%label'], 'Before saving file', 'Action for file_presave called');
+    $this->assertEqual($last[0], 'action called', 'Action called');
+    $this->assertEqual($action_finished[1]['%label'], 'After saving new file', 'Action for file_insert called');
+
+    $file = file_save($file);
+
+    $log = RulesLog::logger()->get();
+    $action_finished = array_pop($log);
+    $last = array_pop($log);
+    $last = array_pop($log);
+
+    $this->assertEqual($last[0], 'action called', 'Action called');
+    $this->assertEqual($action_finished[1]['%label'], 'After updating existing file', 'Action for file_update called');
+
+    RulesLog::logger()->checkLog();
+  }
+
+  /**
+   * Helper function to create a test file.
+   */
+  protected function createFile() {
+    $filepath = $this->randomName();
+    $scheme = file_default_scheme();
+    $filepath = $scheme . '://' . $filepath;
+    $contents = "Data here.";
+
+    file_put_contents($filepath, $contents);
+    $this->assertTrue(is_file($filepath), 'Rules test file exists on the disk.');
+
+    $file = new stdClass();
+    $file->uri = $filepath;
+    $file->filename = drupal_basename($file->uri);
+    $file->filemime = 'text/plain';
+    $file->uid = 1;
+    $file->timestamp = REQUEST_TIME;
+    $file->filesize = filesize($file->uri);
+    $file->status = 0;
+
+    return file_save($file);
+  }
+
 }

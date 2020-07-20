@@ -1,6 +1,0 @@
-name = "Multisite Media Gallery Standard"
-description = "Contributors can add video and pictures in galleries."
-core = 7.x
-package = "Multisite Features"
-dependencies[] = "multisite_mediagallery_core"
-files[] = tests/multisite_mediagallery_standard.extra.test
