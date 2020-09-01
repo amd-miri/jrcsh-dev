@@ -51,6 +51,8 @@ function jrc_sh_permissions_user_default_permissions() {
       'administrator' => 'administrator',
       'temp admin' => 'temp admin',
       'webmaster' => 'webmaster',
+      'contributor' => 'contributor',
+      'editor' => 'editor',
     ),
     'module' => 'node',
   );
@@ -62,6 +64,8 @@ function jrc_sh_permissions_user_default_permissions() {
       'administrator' => 'administrator',
       'temp admin' => 'temp admin',
       'webmaster' => 'webmaster',
+      'contributor' => 'contributor',
+      'editor' => 'editor',
     ),
     'module' => 'node',
   );

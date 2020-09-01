@@ -552,3 +552,12 @@ function jrc_sh_core_update_7048() {
   ),
     TRUE);
 }
+
+/**
+ * Remove corrupted file with fid 185018.
+ */
+function jrc_sh_core_update_7049() {
+  db_delete('file_managed')
+    ->condition('fid', '185018')
+    ->execute();
+}
