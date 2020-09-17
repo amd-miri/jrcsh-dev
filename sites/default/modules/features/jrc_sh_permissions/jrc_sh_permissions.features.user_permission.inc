@@ -536,5 +536,29 @@ function jrc_sh_permissions_user_default_permissions() {
     'module' => 'bean',
   );
 
+  // Exported permission: 'delete any training_programme content'.
+  $permissions['delete any training_programme content'] = array(
+    'name' => 'delete any training_programme content',
+    'roles' => array(
+      'administrator' => 'administrator',
+      'editor' => 'editor',
+      'temp admin' => 'temp admin',
+      'webmaster' => 'webmaster',
+    ),
+    'module' => 'node',
+  );
+
+  // Exported permission: 'edit any training_programme content'.
+  $permissions['edit any training_programme content'] = array(
+    'name' => 'edit any training_programme content',
+    'roles' => array(
+      'administrator' => 'administrator',
+      'editor' => 'editor',
+      'temp admin' => 'temp admin',
+      'webmaster' => 'webmaster',
+    ),
+    'module' => 'node',
+  );
+
   return $permissions;
 }

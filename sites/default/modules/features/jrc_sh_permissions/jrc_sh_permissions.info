@@ -51,5 +51,7 @@ features[user_permission][] = edit terms in euwomen4future_categories
 features[user_permission][] = edit terms in open_calls_section_labs
 features[user_permission][] = upload webtools custom js
 features[user_permission][] = view any webtools bean
+features[user_permission][] = delete any training_programme content
+features[user_permission][] = edit any training_programme content
 features[user_role][] = Open access editor
 features[user_role][] = Webtool creator
