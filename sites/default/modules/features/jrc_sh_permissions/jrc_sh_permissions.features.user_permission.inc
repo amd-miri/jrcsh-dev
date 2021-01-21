@@ -560,5 +560,68 @@ function jrc_sh_permissions_user_default_permissions() {
     'module' => 'node',
   );
 
+  // Exported permission: 'create science_updates content'.
+  $permissions['create science_updates content'] = array(
+    'name' => 'create science_updates content',
+    'roles' => array(
+      'administrator' => 'administrator',
+      'contributor' => 'contributor',
+      'editor' => 'editor',
+      'temp admin' => 'temp admin',
+      'webmaster' => 'webmaster',
+    ),
+    'module' => 'node',
+  );
+
+  // Exported permission: 'delete any science_updates content'.
+  $permissions['delete any science_updates content'] = array(
+    'name' => 'delete any science_updates content',
+    'roles' => array(
+      'administrator' => 'administrator',
+      'temp admin' => 'temp admin',
+      'webmaster' => 'webmaster',
+    ),
+    'module' => 'node',
+  );
+
+  // Exported permission: 'delete own science_updates content'.
+  $permissions['delete own science_updates content'] = array(
+    'name' => 'delete own science_updates content',
+    'roles' => array(
+      'administrator' => 'administrator',
+      'contributor' => 'contributor',
+      'editor' => 'editor',
+      'temp admin' => 'temp admin',
+      'webmaster' => 'webmaster',
+    ),
+    'module' => 'node',
+  );
+
+  // Exported permission: 'edit any science_updates content'.
+  $permissions['edit any science_updates content'] = array(
+    'name' => 'edit any science_updates content',
+    'roles' => array(
+      'administrator' => 'administrator',
+      'contributor' => 'contributor',
+      'editor' => 'editor',
+      'temp admin' => 'temp admin',
+      'webmaster' => 'webmaster',
+    ),
+    'module' => 'node',
+  );
+
+  // Exported permission: 'edit own science_updates content'.
+  $permissions['edit own science_updates content'] = array(
+    'name' => 'edit own science_updates content',
+    'roles' => array(
+      'administrator' => 'administrator',
+      'contributor' => 'contributor',
+      'editor' => 'editor',
+      'temp admin' => 'temp admin',
+      'webmaster' => 'webmaster',
+    ),
+    'module' => 'node',
+  );
+
   return $permissions;
 }
