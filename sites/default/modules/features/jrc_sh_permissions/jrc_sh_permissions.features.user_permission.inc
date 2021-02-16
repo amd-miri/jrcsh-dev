@@ -623,5 +623,60 @@ function jrc_sh_permissions_user_default_permissions() {
     'module' => 'node',
   );
 
+  // Exported permission: 'create scientific_tool content'.
+  $permissions['create scientific_tool content'] = array(
+    'name' => 'create scientific_tool content',
+    'roles' => array(
+      'administrator' => 'administrator',
+      'temp admin' => 'temp admin',
+      'webmaster' => 'webmaster',
+    ),
+    'module' => 'node',
+  );
+
+  // Exported permission: 'delete any scientific_tool content'.
+  $permissions['delete any scientific_tool content'] = array(
+    'name' => 'delete any scientific_tool content',
+    'roles' => array(
+      'administrator' => 'administrator',
+      'temp admin' => 'temp admin',
+      'webmaster' => 'webmaster',
+    ),
+    'module' => 'node',
+  );
+
+  // Exported permission: 'delete own scientific_tool content'.
+  $permissions['delete own scientific_tool content'] = array(
+    'name' => 'delete own scientific_tool content',
+    'roles' => array(
+      'administrator' => 'administrator',
+      'temp admin' => 'temp admin',
+      'webmaster' => 'webmaster',
+    ),
+    'module' => 'node',
+  );
+
+  // Exported permission: 'edit any scientific_tool content'.
+  $permissions['edit any scientific_tool content'] = array(
+    'name' => 'edit any scientific_tool content',
+    'roles' => array(
+      'administrator' => 'administrator',
+      'temp admin' => 'temp admin',
+      'webmaster' => 'webmaster',
+    ),
+    'module' => 'node',
+  );
+
+  // Exported permission: 'edit own scientific_tool content'.
+  $permissions['edit own scientific_tool content'] = array(
+    'name' => 'edit own scientific_tool content',
+    'roles' => array(
+      'administrator' => 'administrator',
+      'temp admin' => 'temp admin',
+      'webmaster' => 'webmaster',
+    ),
+    'module' => 'node',
+  );
+
   return $permissions;
 }
