@@ -561,3 +561,464 @@ function jrc_sh_core_update_7049() {
     ->condition('fid', '185018')
     ->execute();
 }
+
+/**
+ * Prepare EWPP migration.
+ */
+function jrc_sh_core_update_7050() {
+  module_enable(array(
+    'jrc_sh_content_types',
+  ),
+    TRUE);
+  features_revert_module('jrc_sh_content_types');
+}
+
+/**
+ * Update DB to configure data value for all instance of field_migration_status.
+ */
+function jrc_sh_core_update_7051() {
+  // Indexes.
+  $sql = "
+    INSERT INTO taxonomy_index
+    (nid, tid, created, sticky)
+
+    -- Content marked to be kept
+    SELECT
+    	ne.nid, 3337, UNIX_TIMESTAMP(), 0
+    FROM
+    	node ne
+    	LEFT JOIN field_data_field_event_date fed ON (
+    		fed.bundle = 'event'
+    		AND fed.entity_type = 'node'
+    		AND fed.entity_id = nid
+    		AND fed.revision_id = vid
+    	)
+    	LEFT JOIN field_data_field_news_date fnd ON (
+    		fnd.bundle IN ('news', 'science_updates')
+    		AND fnd.entity_type = 'node'
+    		AND fnd.entity_id = nid
+    		AND fnd.revision_id = vid
+    	)
+    WHERE
+    	-- not content already having a value
+    	nid NOT IN (
+    			SELECT
+    				DISTINCT nid
+    			FROM
+    				taxonomy_index ti
+    			WHERE
+    				ti.tid IN (3337, 3338, 3339)
+    		)
+    	AND (
+    		-- og groups
+    		(
+    			ne.nid IN (
+    				SELECT DISTINCT gid
+    				FROM og_membership
+    			)
+    			-- og group contents
+    			OR ne.nid IN (
+    				SELECT etid
+    				FROM og_membership
+    				WHERE
+    					group_type = 'node'
+    					AND entity_type = 'node'
+    			)
+    		)
+
+    		-- type where all can be published
+    		OR type IN ('evaluation_reports', 'interlaboratory_comparisons', 'open_access_call', 'open_access_project', 'patent', 'rm_application_notes', 'training_programme')
+
+    		-- Publication not imported from Pubsy
+    		OR (
+    			type = 'publication'
+    			AND NOT ne.uid = 1
+    		)
+
+    		-- content updated or modified after 01/03/2019
+    		OR (
+    			type = 'page'
+    			AND (
+    				created > 1551394800
+    				OR changed > 1551394800
+    			)
+    		)
+
+    		-- content updated or modified after 01/03/2020
+    		OR (
+    			type IN ('network_bureau', 'scientific_tool', 'research_facility')
+    			AND (
+    				created > 1583017200
+    				OR changed > 1583017200
+    			)
+    		)
+
+    		-- news date after 01/03/2017
+    		OR (
+    			type IN ('news', 'science_updates')
+    			AND field_news_date_value > DATE('2017-03-01')
+    		)
+
+    		-- event date after 01/03/2019
+    		OR (
+    			type = 'event'
+    			AND field_event_date_value > 1551394800
+    		)
+    	);";
+  db_query($sql);
+
+  $sql = "
+    INSERT INTO taxonomy_index
+    (nid, tid, created, sticky)
+
+    -- Content marked to be migrated as draft
+    SELECT
+    	ne.nid, 3339, UNIX_TIMESTAMP(), 0
+    FROM
+    	node ne
+    WHERE
+    	-- not content already having a value
+    	-- not from og groups: explicitly excluded because having a value from previous query
+    	nid NOT IN (
+    			SELECT
+    				DISTINCT nid
+    			FROM
+    				taxonomy_index ti
+    			WHERE
+    				ti.tid IN (3337, 3338, 3339)
+    		)
+    	-- published items
+    	AND ne.status = 1
+    	-- of all the rest for those contents
+    	AND type IN ('topic', 'page', 'network_bureau', 'scientific_tool', 'research_facility', 'news', 'science_updates');";
+  db_query($sql);
+
+  $sql = "
+    INSERT INTO taxonomy_index
+    (nid, tid, created, sticky)
+
+    -- Everyhting else can be marked for dropped as default.
+    SELECT
+    	ne.nid, 3338, UNIX_TIMESTAMP(), 0
+    FROM
+    	node ne
+    WHERE
+    	-- Exclude Pubsy publications.
+    	NOT (
+    		type = 'publication'
+    		AND ne.uid = 1
+    	)
+    	-- Only in content types that have the field instance.
+    	AND (
+    		type IN (
+    			SELECT bundle
+    			FROM field_config_instance
+    			WHERE
+    				entity_type = 'node'
+    				AND field_name = 'field_migration_status'
+    		)
+    	)
+    	-- Exclude content already having a value
+    	AND nid NOT IN (
+    		SELECT
+    			DISTINCT nid
+    		FROM
+    			taxonomy_index ti
+    		WHERE
+    			ti.tid IN (3337, 3338, 3339)
+    	);";
+  db_query($sql);
+
+  // Data of field.
+  $sql = "
+    INSERT INTO field_data_field_migration_status
+    (entity_type, deleted, delta, entity_id, bundle, field_migration_status_tid, language, revision_id)
+
+    -- Content marked to be kept
+    SELECT
+    	'node', 0, 0, ne.nid, ne.type, 3337, 'und', ne.vid
+    FROM
+    	node ne
+    	LEFT JOIN field_data_field_event_date fed ON (
+    		fed.bundle = 'event'
+    		AND fed.entity_type = 'node'
+    		AND fed.entity_id = nid
+    		AND fed.revision_id = vid
+    	)
+    	LEFT JOIN field_data_field_news_date fnd ON (
+    		fnd.bundle IN ('news', 'science_updates')
+    		AND fnd.entity_type = 'node'
+    		AND fnd.entity_id = nid
+    		AND fnd.revision_id = vid
+    	)
+    WHERE
+    	-- not content already having a value
+    	nid NOT IN (
+    			SELECT
+    				DISTINCT entity_id
+    			FROM
+    				field_data_field_migration_status
+    		)
+    	AND (
+    		-- og groups
+    		(
+    			ne.nid IN (
+    				SELECT DISTINCT gid
+    				FROM og_membership
+    			)
+    			-- og group contents
+    			OR ne.nid IN (
+    				SELECT etid
+    				FROM og_membership
+    				WHERE
+    					group_type = 'node'
+    					AND entity_type = 'node'
+    			)
+    		)
+
+    		-- type where all can be published
+    		OR type IN ('evaluation_reports', 'interlaboratory_comparisons', 'open_access_call', 'open_access_project', 'patent', 'rm_application_notes', 'training_programme')
+
+    		-- Publication not imported from Pubsy
+    		OR (
+    			type = 'publication'
+    			AND NOT ne.uid = 1
+    		)
+
+    		-- content updated or modified after 01/03/2019
+    		OR (
+    			type = 'page'
+    			AND (
+    				created > 1551394800
+    				OR changed > 1551394800
+    			)
+    		)
+
+    		-- content updated or modified after 01/03/2020
+    		OR (
+    			type IN ('network_bureau', 'scientific_tool', 'research_facility')
+    			AND (
+    				created > 1583017200
+    				OR changed > 1583017200
+    			)
+    		)
+
+    		-- news date after 01/03/2017
+    		OR (
+    			type IN ('news', 'science_updates')
+    			AND field_news_date_value > DATE('2017-03-01')
+    		)
+
+    		-- event date after 01/03/2019
+    		OR (
+    			type = 'event'
+    			AND field_event_date_value > 1551394800
+    		)
+    	);";
+  db_query($sql);
+
+  $sql = "
+    INSERT INTO field_data_field_migration_status
+    (entity_type, deleted, delta, entity_id, bundle, field_migration_status_tid, language, revision_id)
+
+    -- Content marked to be migrated as draft
+    SELECT
+    	'node', 0, 0, ne.nid, ne.type, 3339, 'und', ne.vid
+    FROM
+    	node ne
+    WHERE
+    	-- not content already having a value
+    	-- not from og groups: explicitly excluded because having a value from previous query
+    	nid NOT IN (
+    			SELECT
+    				DISTINCT entity_id
+    			FROM
+    				field_data_field_migration_status
+    		)
+    	-- published items
+    	AND ne.status = 1
+    	-- of all the rest for those contents
+    	AND type IN ('topic', 'page', 'network_bureau', 'scientific_tool', 'research_facility', 'news', 'science_updates');";
+  db_query($sql);
+
+  $sql = "
+    INSERT INTO field_data_field_migration_status
+    (entity_type, deleted, delta, entity_id, bundle, field_migration_status_tid, language, revision_id)
+
+    -- Everyhting else can be marked for dropped as default.
+    SELECT
+    	'node', 0, 0, ne.nid, ne.type, 3338, 'und', ne.vid
+    FROM
+    	node ne
+    WHERE
+    	-- Exclude Pubsy publications.
+    	NOT (
+    		type = 'publication'
+    		AND ne.uid = 1
+    	)
+    	-- Only in content types that have the field instance.
+    	AND (
+    		type IN (
+    			SELECT bundle
+    			FROM field_config_instance
+    			WHERE
+    				entity_type = 'node'
+    				AND field_name = 'field_migration_status'
+    		)
+    	)
+    	-- Exclude content already having a value
+    	AND nid NOT IN (
+    		SELECT
+    			DISTINCT entity_id
+    		FROM
+    			field_data_field_migration_status
+    	);";
+  db_query($sql);
+
+  // Revision data.
+  $sql = "
+    INSERT INTO field_revision_field_migration_status
+    (entity_type, deleted, delta, entity_id, bundle, field_migration_status_tid, language, revision_id)
+
+    -- Content marked to be kept
+    SELECT
+    	'node', 0, 0, ne.nid, ne.type, 3337, 'und', ne.vid
+    FROM
+    	node ne
+    	LEFT JOIN field_data_field_event_date fed ON (
+    		fed.bundle = 'event'
+    		AND fed.entity_type = 'node'
+    		AND fed.entity_id = nid
+    		AND fed.revision_id = vid
+    	)
+    	LEFT JOIN field_data_field_news_date fnd ON (
+    		fnd.bundle IN ('news', 'science_updates')
+    		AND fnd.entity_type = 'node'
+    		AND fnd.entity_id = nid
+    		AND fnd.revision_id = vid
+    	)
+    WHERE
+    	-- not content already having a value
+    	nid NOT IN (
+    			SELECT
+    				DISTINCT entity_id
+    			FROM
+    				field_revision_field_migration_status
+    		)
+    	AND (
+    		-- og groups
+    		(
+    			ne.nid IN (
+    				SELECT DISTINCT gid
+    				FROM og_membership
+    			)
+    			-- og group contents
+    			OR ne.nid IN (
+    				SELECT etid
+    				FROM og_membership
+    				WHERE
+    					group_type = 'node'
+    					AND entity_type = 'node'
+    			)
+    		)
+
+    		-- type where all can be published
+    		OR type IN ('evaluation_reports', 'interlaboratory_comparisons', 'open_access_call', 'open_access_project', 'patent', 'rm_application_notes', 'training_programme')
+
+    		-- Publication not imported from Pubsy
+    		OR (
+    			type = 'publication'
+    			AND NOT ne.uid = 1
+    		)
+
+    		-- content updated or modified after 01/03/2019
+    		OR (
+    			type = 'page'
+    			AND (
+    				created > 1551394800
+    				OR changed > 1551394800
+    			)
+    		)
+
+    		-- content updated or modified after 01/03/2020
+    		OR (
+    			type IN ('network_bureau', 'scientific_tool', 'research_facility')
+    			AND (
+    				created > 1583017200
+    				OR changed > 1583017200
+    			)
+    		)
+
+    		-- news date after 01/03/2017
+    		OR (
+    			type IN ('news', 'science_updates')
+    			AND field_news_date_value > DATE('2017-03-01')
+    		)
+
+    		-- event date after 01/03/2019
+    		OR (
+    			type = 'event'
+    			AND field_event_date_value > 1551394800
+    		)
+    	);";
+  db_query($sql);
+
+  $sql = "
+    INSERT INTO field_revision_field_migration_status
+    (entity_type, deleted, delta, entity_id, bundle, field_migration_status_tid, language, revision_id)
+
+    -- Content marked to be migrated as draft
+    SELECT
+    	'node', 0, 0, ne.nid, ne.type, 3339, 'und', ne.vid
+    FROM
+    	node ne
+    WHERE
+    	-- not content already having a value
+    	-- not from og groups: explicitly excluded because having a value from previous query
+    	nid NOT IN (
+    			SELECT
+    				DISTINCT entity_id
+    			FROM
+    				field_revision_field_migration_status
+    		)
+    	-- published items
+    	AND ne.status = 1
+    	-- of all the rest for those contents
+    	AND type IN ('topic', 'page', 'network_bureau', 'scientific_tool', 'research_facility', 'news', 'science_updates');";
+  db_query($sql);
+
+  $sql = "
+    INSERT INTO field_revision_field_migration_status
+    (entity_type, deleted, delta, entity_id, bundle, field_migration_status_tid, language, revision_id)
+
+    -- Everyhting else can be marked for dropped as default.
+    SELECT
+    	'node', 0, 0, ne.nid, ne.type, 3338, 'und', ne.vid
+    FROM
+    	node ne
+    WHERE
+    	-- Exclude Pubsy publications.
+    	NOT (
+    		type = 'publication'
+    		AND ne.uid = 1
+    	)
+    	-- Only in content types that have the field instance.
+    	AND (
+    		type IN (
+    			SELECT bundle
+    			FROM field_config_instance
+    			WHERE
+    				entity_type = 'node'
+    				AND field_name = 'field_migration_status'
+    		)
+    	)
+    	-- Exclude content already having a value
+    	AND nid NOT IN (
+    		SELECT
+    			DISTINCT entity_id
+    		FROM
+    			field_revision_field_migration_status
+    	);
+  ";
+  db_query($sql);
+}
