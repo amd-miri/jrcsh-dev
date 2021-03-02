@@ -363,6 +363,7 @@ function _jrc_sh_core_get_issues_from_a_research_topic($research_topic_id) {
       "name" => "Coastal and marine environment",
       "issues" => array(
         184250,
+        184248,
       ),
     ),
     113072 => array(
