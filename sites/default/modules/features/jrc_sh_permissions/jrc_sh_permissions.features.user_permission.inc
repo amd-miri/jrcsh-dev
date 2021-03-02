@@ -678,15 +678,5 @@ function jrc_sh_permissions_user_default_permissions() {
     'module' => 'node',
   );
 
-  // Exported permission: 'administer om maximenu'.
-  $permissions['administer om maximenu'] = array(
-    'name' => 'administer om maximenu',
-    'roles' => array(
-      'administrator' => 'administrator',
-      'webmaster' => 'webmaster',
-    ),
-    'module' => 'om_maximenu',
-  );
-
   return $permissions;
 }

@@ -5,6 +5,7 @@
  * Code for the JRC-SH-core feature.
  */
 
+include_once 'jrc_sh_core.features.inc';
 module_load_include('inc', 'jrc_sh_core', 'jrc_sh_core.rules');
 
 /**
