@@ -68,5 +68,6 @@ features[user_permission][] = delete any scientific_tool content
 features[user_permission][] = delete own scientific_tool content
 features[user_permission][] = edit any scientific_tool content
 features[user_permission][] = edit own scientific_tool contents
+features[user_permission][] = administer om maximenu
 features[user_role][] = Open access editor
 features[user_role][] = Webtool creator
