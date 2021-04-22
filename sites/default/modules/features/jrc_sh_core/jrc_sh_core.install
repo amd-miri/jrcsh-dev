@@ -1022,3 +1022,15 @@ function jrc_sh_core_update_7051() {
   ";
   db_query($sql);
 }
+
+/**
+ * Rules on Pubsy pulication redirect and message.
+ */
+function jrc_sh_core_update_7052() {
+  module_enable(array(
+    'jrc_sh_rules',
+  ),
+    TRUE);
+  features_revert_module('jrc_sh_rules');
+  features_revert(array('jrc_sh_core' => array('context')));
+}

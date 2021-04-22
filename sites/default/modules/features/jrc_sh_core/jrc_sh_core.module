@@ -684,32 +684,8 @@ function jrc_sh_core_form_jrc_staff_node_form_alter(&$form, &$form_state, $form_
   }
   $form['field_jrc_staff_delay'][LANGUAGE_NONE][0]['value']['#element_validate'] = array('element_validate_integer_positive');
 
-  // Publy link
-  // for insert, exclude all already added pubsy authors.
-  $subquery_result = db_select('field_data_field_pubsy_author', 'b')
-    ->fields('b', array('field_pubsy_author_value'));
-
-  $result = db_select('field_data_field_dc_contributor_author', 'a')
-    ->distinct()
-    ->fields('a', array('field_dc_contributor_author_value'))
-    ->condition('a.field_dc_contributor_author_value', $subquery_result, 'NOT IN')
-    ->orderBy('field_dc_contributor_author_value', 'ASC')
-    ->execute();
-
-  while ($record = $result->fetchAssoc()) {
-    $form['field_pubsy_author'][LANGUAGE_NONE]['#options'][$record['field_dc_contributor_author_value']] = $record['field_dc_contributor_author_value'];
-  }
-
-  // For update, exclude all but current.
-  if (isset($form['field_pubsy_author'][LANGUAGE_NONE]['#entity'])) {
-    $entity = $form['field_pubsy_author'][LANGUAGE_NONE]['#entity'];
-    if (!empty($entity->field_pubsy_author[LANGUAGE_NONE][0]['value'])) {
-      $current_author = $entity->field_pubsy_author[LANGUAGE_NONE][0]['value'];
-      $form['field_pubsy_author'][LANGUAGE_NONE]['#options'][$current_author] = $current_author;
-      asort($form['field_pubsy_author'][LANGUAGE_NONE]['#options']);
-      $form['field_pubsy_author'][LANGUAGE_NONE]['#default_value'][] = $current_author;
-    }
-  }
+  // Disable PUBSY Author field.
+  unset($form['field_pubsy_author']);
 }
 
 /**
