@@ -10,6 +10,26 @@
  */
 function jrc_sh_rules_default_rules_configuration() {
   $items = array();
+  $items['rules_assign_nexus_issues_on_content_update_creation'] = entity_import('rules_config', '{ "rules_assign_nexus_issues_on_content_update_creation" : {
+      "LABEL" : "Assign Nexus\\/issues on content update\\/creation",
+      "PLUGIN" : "reaction rule",
+      "OWNER" : "rules",
+      "REQUIRES" : [ "rules", "jrc_sh_core" ],
+      "ON" : { "node_insert" : [], "node_update" : [] },
+      "IF" : [
+        { "OR" : [
+            { "node_is_of_type" : { "node" : [ "node" ], "type" : { "value" : { "topic" : "topic" } } } },
+            { "entity_has_field" : { "entity" : [ "node" ], "field" : "field_related_topics" } }
+          ]
+        },
+        { "entity_has_field" : { "entity" : [ "node" ], "field" : "field_related_topics_nexus_issue" } },
+        { "data_is_empty" : { "data" : [ "node:field-related-topics-nexus-issue" ] } }
+      ],
+      "DO" : [
+        { "_jrc_sh_core_set_issues_from_research_topics" : { "node" : [ "node" ] } }
+      ]
+    }
+  }');
   $items['rules_notification_message_on_contents'] = entity_import('rules_config', '{ "rules_notification_message_on_contents" : {
       "LABEL" : "Notification message on contents",
       "PLUGIN" : "rule set",

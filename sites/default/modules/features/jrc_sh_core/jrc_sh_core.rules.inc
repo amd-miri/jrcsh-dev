@@ -31,17 +31,22 @@ function jrc_sh_core_rules_action_info() {
  *   The given node.
  */
 function _jrc_sh_core_set_issues_from_research_topics($node) {
-  $list_of_matched_issues = array();
-  if (count($node->field_related_topics[LANGUAGE_NONE])) {
-    foreach ($node->field_related_topics[LANGUAGE_NONE] as $old_research_topic) {
-      $new_issue_matches = _jrc_sh_core_get_issues_from_a_research_topic($old_research_topic['target_id']);
-      $list_of_matched_issues = array_unique(array_merge($new_issue_matches, $list_of_matched_issues));
+  $nexus_topics = [];
+  $nexus_list = [];
+
+  if ($node->type == 'topic') {
+    $nexus_topics = _jrc_sh_core_get_issues_from_a_research_topic($node->nid);
+  }
+  elseif (isset($node->field_related_topics[LANGUAGE_NONE])) {
+    foreach ($node->field_related_topics[LANGUAGE_NONE] as $topic) {
+      $nexus_topics = array_merge($nexus_topics, _jrc_sh_core_get_issues_from_a_research_topic($topic['target_id']));
     }
   }
-  foreach ($list_of_matched_issues as $key => $value) {
-    $list_of_matched_issues[$key] = array('target_id' => $value);
+  foreach (array_unique($nexus_topics) as $key => $value) {
+    $nexus_list[$key] = array('target_id' => $value);
   }
-  $node->field_related_topics_nexus_issue[LANGUAGE_NONE] = $list_of_matched_issues;
+
+  $node->field_related_topics_nexus_issue[LANGUAGE_NONE] = $nexus_list;
   field_attach_update('node', $node);
 }
 
