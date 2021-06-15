@@ -100,7 +100,8 @@ class DateExampleMigration extends XMLMigration {
 
     // Unmapped destination fields.
     $this->addUnmigratedDestinations(array('is_new', 'status', 'promote',
-      'revision', 'language', 'sticky', 'created', 'changed', 'revision_uid'));
+      'revision', 'language', 'sticky', 'created', 'changed', 'revision_uid',
+    ));
   }
 
   /**
@@ -135,4 +136,5 @@ class DateExampleMigration extends XMLMigration {
     $current_row->date_repeat_rrule
       = (string) $current_row->xml->date_repeat->rule[0];
   }
+
 }

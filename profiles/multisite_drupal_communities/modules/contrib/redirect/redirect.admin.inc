@@ -6,6 +6,7 @@
  */
 
 function redirect_list_form($form, &$form_state) {
+  $args = func_get_args();
   $form['#operations'] = redirect_get_redirect_operations();
   if (isset($form_state['values']['operation']) && empty($form_state['values']['confirm'])) {
     return redirect_list_form_operations_confirm_form($form, $form_state, $form_state['values']['operation'], array_filter($form_state['values']['rids']));
@@ -33,8 +34,7 @@ function redirect_list_form($form, &$form_state) {
   }
 
   // Get filter keys and add the filter form.
-  $keys = func_get_args();
-  $keys = array_splice($keys, 2); // Offset the $form and $form_state parameters.
+  $keys = array_slice($args, 2); // Offset the $form and $form_state parameters.
   $keys = implode('/', $keys);
   $form['redirect_list_filter_form'] = redirect_list_filter_form($keys);
 
@@ -84,6 +84,14 @@ function redirect_list_form($form, &$form_state) {
     $redirect_url = redirect_url($redirect->redirect, array_merge($redirect->redirect_options, array('alias' => TRUE)));
     drupal_alter('redirect_url', $redirect->source, $redirect->source_options);
     drupal_alter('redirect_url', $redirect->redirect, $redirect->redirect_options);
+    // Rewrite redirect URLs to absolute file URIs.
+    if ($scheme = file_uri_scheme($redirect->redirect)) {
+      if (file_stream_wrapper_valid_scheme($scheme)) {
+        if ($external_path = file_create_url($redirect->redirect)) {
+          $redirect->redirect = $external_path;
+        }
+      }
+    }
     $row['source'] = l($source_url, $redirect->source, $redirect->source_options);
     $row['redirect'] = l($redirect_url, $redirect->redirect, $redirect->redirect_options);
     $row['status'] = $redirect->status ? t('Enabled') : t('Disabled');
@@ -158,7 +166,7 @@ function redirect_list_form($form, &$form_state) {
     ),
   );
   if (redirect_access('create', 'redirect')) {
-    $form['rids']['#empty'] .= ' ' . l(t('Add URL redirect.'), 'admin/config/search/redirect/add', array('query' => $destination));
+    $form['rids']['#empty'] .= ' ' . l(t('Add URL redirect'), 'admin/config/search/redirect/add', array('query' => $destination));
   }
   $form['pager'] = array('#theme' => 'pager');
   return $form;
@@ -307,12 +315,13 @@ function redirect_list_form_operations_confirm_form($form, &$form_state, $operat
   $form['operation'] = array('#type' => 'hidden', '#value' => $form_state['values']['operation']);
   $form['#submit'][] = 'redirect_list_form_operations_submit';
   $confirm_question = format_plural(count($rids), 'Are you sure you want to @action this redirect?', 'Are you sure you want to @action these redirects?', array('@action' => drupal_strtolower($operation['action'])));
+  $confirm_desc = $form_state['values']['operation'] === 'delete' ? t('This action cannot be undone.') : ' ';
 
   return confirm_form(
     $form,
     $confirm_question,
     'admin/config/search/redirect', // @todo This does not redirect back to filtered page.
-    t('This action cannot be undone.'),
+    $confirm_desc,
     $operation['action'],
     t('Cancel')
   );
@@ -329,7 +338,7 @@ function redirect_list_form_operations_confirm_form($form, &$form_state, $operat
  * @ingroup forms
  */
 function redirect_edit_form($form, &$form_state, $redirect = NULL) {
-  if (!isset($redirect)) {
+  if (empty($redirect)) {
     $redirect = new stdClass();
   }
 
@@ -416,6 +425,17 @@ function redirect_edit_form($form, &$form_state, $redirect = NULL) {
     '#description' => t('You can find more information about HTTP redirect status codes at <a href="@status-codes">@status-codes</a>.', array('@status-codes' => 'http://en.wikipedia.org/wiki/List_of_HTTP_status_codes#3xx_Redirection')),
     '#default_value' => $redirect->status_code,
     '#options' => array(0 => t('Default (@default)', array('@default' => variable_get('redirect_default_status_code', 301)))) + redirect_status_code_options(),
+  );
+  $form['advanced']['passthrough_querystring'] = array(
+    '#type' => 'select',
+    '#title' => t('Retain query string through redirect.'),
+    '#default_value' => isset($redirect->redirect_options['passthrough_querystring']) ? $redirect->redirect_options['passthrough_querystring'] : '',
+    '#options' => array(
+      '' => 'Use global setting',
+      '0' => 'No',
+      '1' => 'Yes',
+    ),
+    '#description' => t('For example, given a redirect from %source to %redirect, if a user visits %sourcequery they would be redirected to %redirectquery. The query strings in the redirection will always take precedence over the current query string.', array('%source' => 'source-path', '%redirect' => 'node?a=apples', '%sourcequery' => 'source-path?a=alligators&b=bananas', '%redirectquery' => 'node?a=apples&b=bananas')),
   );
 
   $form['override'] = array(
@@ -543,7 +563,7 @@ function _redirect_extract_url_options(&$element, &$form_state) {
 }
 
 /**
- * Form validate handler; validate an URL redirect
+ * Form validate handler; validate an URL redirect.
  *
  * @see redirect_edit_form()
  */
@@ -565,7 +585,6 @@ function redirect_edit_form_validate($form, &$form_state) {
     if ($form['override']['#access']) {
       drupal_set_message('Did you read the warnings and click the checkbox?', 'error');
       $form_state['rebuild'] = TRUE;
-      //form_set_error('override', 'CLICK DA BUTTON!');
     }
   }
 
@@ -580,6 +599,18 @@ function redirect_edit_form_validate($form, &$form_state) {
 function redirect_edit_form_submit($form, &$form_state) {
   form_state_values_clean($form_state);
   $redirect = (object) $form_state['values'];
+
+  // Add passthrough_querystring configuration to redirect_options.
+  if (isset($redirect->passthrough_querystring) && in_array($redirect->passthrough_querystring, array('0', '1'))) {
+    $redirect->redirect_options['passthrough_querystring'] = (int) $redirect->passthrough_querystring;
+  }
+  else {
+    // Remove current configuration so that global configuration is used.
+    unset($redirect->redirect_options['passthrough_querystring']);
+  }
+  // Remove passthrough_querystring property from redirect object.
+  unset($redirect->passthrough_querystring);
+
   redirect_save($redirect);
   drupal_set_message(t('The redirect has been saved.'));
   $form_state['redirect'] = 'admin/config/search/redirect';
@@ -630,6 +661,12 @@ function redirect_settings_form($form, &$form_state) {
     '#type' => 'checkbox',
     '#title' => t('Automatically create redirects when URL aliases are changed.'),
     '#default_value' => variable_get('redirect_auto_redirect', TRUE),
+    '#disabled' => !module_exists('path'),
+  );
+  $form['redirect_auto_redirect_delete'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Automatically create redirects when URL aliases are deleted.'),
+    '#default_value' => variable_get('redirect_auto_redirect_delete', FALSE),
     '#disabled' => !module_exists('path'),
   );
   $form['redirect_passthrough_querystring'] = array(
@@ -738,7 +775,7 @@ function redirect_404_list($form = NULL) {
 
   // Get filter keys and add the filter form.
   $keys = func_get_args();
-  //$keys = array_splice($keys, 2); // Offset the $form and $form_state parameters.
+  // Offset the $form and $form_state parameters.
   $keys = implode('/', $keys);
   $build['redirect_list_404_filter_form'] = drupal_get_form('redirect_list_404_filter_form', $keys);
 
@@ -749,21 +786,26 @@ function redirect_404_list($form = NULL) {
     array('data' => t('Operations')),
   );
 
+  // Filter on current domain with like in the queries.
+  global $base_url;
+
   $count_query = db_select('watchdog', 'w');
   $count_query->addExpression('COUNT(DISTINCT(w.message))');
   $count_query->leftJoin('redirect', 'r', 'w.message = r.source');
   $count_query->condition('w.type', 'page not found');
+  $count_query->condition('w.location', '%' . db_like($base_url) . '%', 'LIKE');
   $count_query->isNull('r.rid');
   redirect_build_filter_query($count_query, array('w.message'), $keys);
 
   $query = db_select('watchdog', 'w')->extend('PagerDefault')->extend('TableSort');
-  $query->fields('w', array('message'));
+  $query->fields('w', array('message', 'location'));
   $query->addExpression('COUNT(wid)', 'count');
   $query->addExpression('MAX(timestamp)', 'timestamp');
   $query->leftJoin('redirect', 'r', 'w.message = r.source');
   $query->isNull('r.rid');
   $query->condition('w.type', 'page not found');
-  $query->groupBy('w.message');
+  $query->condition('w.location', '%' . db_like($base_url) . '%', 'LIKE');
+  $query->groupBy('w.location');
   $query->orderByHeader($header);
   $query->limit(25);
   redirect_build_filter_query($query, array('w.message'), $keys);
@@ -773,7 +815,7 @@ function redirect_404_list($form = NULL) {
   $rows = array();
   foreach ($results as $result) {
     $row = array();
-    $row['source'] = l($result->message, $result->message, array('query' => $destination));
+    $row['source'] = l($result->location, $result->location, array('query' => $destination));
     $row['count'] = $result->count;
     $row['timestamp'] = format_date($result->timestamp, 'short');
 
@@ -904,7 +946,6 @@ function redirect_list_table($redirects, $header) {
       'data' => t('@date', array('@date' => format_date($redirect->created))),
       'title' => t('Created !interval ago', array('!interval' => format_interval(REQUEST_TIME - $redirect->created))),
     );
-
     // Mark redirects that override existing paths with a warning in the table.
     if (drupal_valid_path($redirect->source)) {
       $row['class'][] = 'warning';

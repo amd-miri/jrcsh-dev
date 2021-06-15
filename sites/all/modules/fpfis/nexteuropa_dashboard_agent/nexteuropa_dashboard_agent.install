@@ -1,0 +1,53 @@
+<?php
+
+/**
+ * @file
+ * Install/Clean up file for nexteuropa_dashboard_agent.
+ */
+
+/**
+ * Implements hook_requirements().
+ */
+function nexteuropa_dashboard_agent_requirements($phase) {
+  $t = get_t();
+  $requirements = array();
+  $requirements['nexteuropa_dashboard_agent_private_file_system'] = array(
+    'title' => $t('Nexteuropa dashboard agent: Check private file system.'),
+  );
+
+  if (empty(variable_get('file_private_path'))) {
+    $requirements['nexteuropa_dashboard_agent_private_file_system']['description'] = 'Private file system is NOT set';
+    $requirements['nexteuropa_dashboard_agent_private_file_system']['severity'] = REQUIREMENT_ERROR;
+  }
+  else {
+    $requirements['nexteuropa_dashboard_agent_private_file_system']['description'] = 'Private file system is set';
+    $requirements['nexteuropa_dashboard_agent_private_file_system']['severity'] = REQUIREMENT_OK;
+  }
+
+  return $requirements;
+}
+
+/**
+ * Implements hook_install().
+ *
+ * Creates a unique set of tokens for this installation.
+ */
+function nexteuropa_dashboard_agent_install() {
+  _nexteuropa_dashboard_agent_set_token('nexteuropa_dashboard_agent_token', NextEuropaDashboardAgentEncryption::getToken());
+  _nexteuropa_dashboard_agent_set_token('nexteuropa_dashboard_agent_encrypt_token', NextEuropaDashboardAgentEncryption::getToken());
+  variable_set('nexteuropa_dashboard_agent_use_encryption', FALSE);
+  variable_set('nexteuropa_dashboard_agent_allowed_ip_range', '');
+}
+
+/**
+ * Implements hook_uninstall().
+ *
+ * Removes all settings used by the module.
+ */
+function nexteuropa_dashboard_agent_uninstall() {
+  module_load_include('module', 'nexteuropa_dashboard_agent', 'nexteuropa_dashboard_agent');
+  _nexteuropa_dashboard_agent_remove_token('nexteuropa_dashboard_agent_token');
+  _nexteuropa_dashboard_agent_remove_token('nexteuropa_dashboard_agent_encrypt_token');
+  variable_del('nexteuropa_dashboard_agent_use_encryption');
+  variable_del('nexteuropa_dashboard_agent_allowed_ip_range');
+}

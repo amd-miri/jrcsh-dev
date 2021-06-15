@@ -8,7 +8,7 @@
 /**
  * Implements hook_atomium_theme_hook().
  */
-function atomium_atomium_theme_username() {
+function atomium_atomium_theme_username(array $existing, $type, $theme, $path) {
   return array(
     'username' => array(
       'template' => 'username',
@@ -24,6 +24,7 @@ function atomium_preprocess_username(array &$variables, $hook) {
   if (isset($variables['uid'])) {
     $variables['theme_hook_suggestions'][] = 'username__uid_' . $variables['uid'];
   }
+
   if (isset($variables['name'])) {
     $variables['theme_hook_suggestions'][] = 'username__name_' . drupal_html_class($variables['name']);
   }

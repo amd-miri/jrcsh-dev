@@ -14,7 +14,7 @@
   <?php print render($content['field_biography_portrait']); ?>
   <div class="listing__top-footer">
     <?php print render($content['field_biography_email']); ?>
-    <?php print render($content['field_biography_phone']) ?>
+    <?php print render($content['field_biography_phone']); ?>
     <?php print render($content['field_social_networks']); ?>
   </div>
 </div>

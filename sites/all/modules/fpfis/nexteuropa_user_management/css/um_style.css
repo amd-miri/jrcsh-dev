@@ -1,0 +1,12 @@
+.um_role_add {
+  color: #008000;
+}
+
+.um_role_remove {
+  color: #f00;
+  text-decoration: line-through;
+}
+
+.um_role_result {
+  color: #00f;
+}

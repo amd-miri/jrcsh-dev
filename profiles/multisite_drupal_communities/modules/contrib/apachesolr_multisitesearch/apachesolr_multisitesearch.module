@@ -267,7 +267,9 @@ function apachesolr_multisitesearch_apachesolr_query_alter(DrupalSolrQueryInterf
     $query_exclusion_options = apachesolr_multisitesearch_query_bundles();
     // Map the excluded bundle keys to their values and bundle names.
     foreach ($excluded_bundles as $key) {
-      $excluded_bundles[$key] = $query_exclusion_options[$key];
+      if (isset($query_exclusion_options[$key])) {
+        $excluded_bundles[$key] = $query_exclusion_options[$key];
+      }
     }
     // Create filters for the flagged keys and exclude them from search.
     foreach ($excluded_bundles as $filtered_content) {
@@ -297,6 +299,10 @@ function apachesolr_multisitesearch_apachesolr_delete_by_query_alter(&$query) {
  * Implements hook_cron().
  */
 function apachesolr_multisitesearch_cron() {
+  // don't run unless the install is complete
+  if (variable_get('install_task') != 'done') {
+    return;
+  }
   module_load_include('inc', 'apachesolr_multisitesearch', 'apachesolr_multisitesearch.index');
   apachesolr_multisitesearch_refresh_metadata();
 }

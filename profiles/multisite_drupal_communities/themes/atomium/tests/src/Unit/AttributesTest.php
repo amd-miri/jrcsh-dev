@@ -8,9 +8,20 @@ use Symfony\Component\Yaml\Yaml;
 /**
  * Class AttributesTest.
  *
- * @package Drupal\Tests\atomium
+ * @internal
+ * @coversNothing
  */
-class AttributesTest extends AbstractUnitTest {
+final class AttributesTest extends AbstractUnitTest {
+
+  /**
+   * Methods provider.
+   *
+   * @return array
+   *   Test data.
+   */
+  public function methodsProvider() {
+    return Yaml::parse(\file_get_contents(__DIR__ . '/../../fixtures/attributes/attributes.yml'));
+  }
 
   /**
    * Test class methods.
@@ -43,8 +54,8 @@ class AttributesTest extends AbstractUnitTest {
   /**
    * Test class methods.
    *
-   * @covers Attributes::exists
-   * @covers Attributes::contains
+   * @covers \Attributes::contains
+   * @covers \Attributes::exists
    */
   public function testVariousMethod() {
     $attributes = array(
@@ -58,26 +69,16 @@ class AttributesTest extends AbstractUnitTest {
 
     $attributes = new Attributes($attributes);
 
-    self::assertEquals(TRUE, $attributes->exists('class', 'foo'));
-    self::assertEquals(FALSE, $attributes->exists('class', 'fooled'));
-    self::assertEquals(FALSE, $attributes->exists('foo', 'bar'));
-    self::assertEquals(FALSE, $attributes->exists('class', NULL));
-    self::assertEquals(TRUE, $attributes->exists('id', 'atomium'));
-    self::assertEquals(TRUE, $attributes->exists('data-closable', FALSE));
-    self::assertEquals(TRUE, $attributes->exists('data-closable'));
-    self::assertEquals(TRUE, $attributes->contains('class', 'fo'));
-    self::assertEquals(FALSE, $attributes->contains('role'));
-    self::assertEquals(TRUE, $attributes->contains('id', 'tomi'));
-  }
-
-  /**
-   * Methods provider.
-   *
-   * @return array
-   *   Test data.
-   */
-  public function methodsProvider() {
-    return Yaml::parse(\file_get_contents(__DIR__ . '/../../fixtures/attributes/attributes.yml'));
+    self::assertTrue($attributes->exists('class', 'foo'));
+    self::assertFalse($attributes->exists('class', 'fooled'));
+    self::assertFalse($attributes->exists('foo', 'bar'));
+    self::assertFalse($attributes->exists('class', NULL));
+    self::assertTrue($attributes->exists('id', 'atomium'));
+    self::assertTrue($attributes->exists('data-closable', FALSE));
+    self::assertTrue($attributes->exists('data-closable'));
+    self::assertTrue($attributes->contains('class', 'fo'));
+    self::assertFalse($attributes->contains('role'));
+    self::assertTrue($attributes->contains('id', 'tomi'));
   }
 
 }

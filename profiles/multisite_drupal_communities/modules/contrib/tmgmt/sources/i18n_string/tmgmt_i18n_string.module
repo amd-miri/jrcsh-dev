@@ -286,7 +286,7 @@ function tmgmt_i18n_string_get_wrapper($type, $i18n_string) {
 
   // Special handling if the object has two keys. Assume that they
   // mean type and object id.
-   if ($type == 'field') {
+  if ($type == 'field') {
     // Special case for fields which expect the type to be the identifier.
     $wrapper = i18n_get_object($type, $i18n_string->type);
     return $wrapper;
@@ -307,13 +307,15 @@ function tmgmt_i18n_string_get_wrapper($type, $i18n_string) {
       }
     }
   }
-  elseif (count($object_key) == 2) {
-    list($type_key, $objectid_key) = $object_key;
-    $wrapper = i18n_get_object($type, array(
-      $type_key => $i18n_string->type,
-      $objectid_key => $i18n_string->objectid
-    ));
-    return $wrapper;
+  elseif (is_array($object_key)) {
+    if (count($object_key) == 2) {
+      list($type_key, $objectid_key) = $object_key;
+      $wrapper = i18n_get_object($type, array(
+        $type_key => $i18n_string->type,
+        $objectid_key => $i18n_string->objectid
+      ));
+      return $wrapper;
+    }
   }
   else {
     // Otherwise, use the object id.

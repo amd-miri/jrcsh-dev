@@ -8,7 +8,7 @@
 /**
  * Implements hook_atomium_theme_hook().
  */
-function ec_europa_atomium_theme_page_header() {
+function ec_europa_atomium_theme_page_header(array $existing, $type, $theme, $path) {
   return array(
     'page_header' => array(
       'variables' => array(
@@ -39,8 +39,8 @@ function ec_europa_atomium_definition_page_header() {
         '#type' => 'News article',
         '#timestamp' => '2015-07-06T17:44:28+02:00',
         '#date' => '6 July 2015',
-        '#location'  => 'Brussels',
-        '#attributes'  => array(
+        '#location' => 'Brussels',
+        '#attributes' => array(
           'class' => array(
             'ecl-meta--header',
           ),
@@ -55,11 +55,8 @@ function ec_europa_atomium_definition_page_header() {
  */
 function ec_europa_preprocess_page_header(array &$variables, $hook) {
   $variables['ec_europa_basic_header'] = theme_get_setting('ec_europa_basic_header', 'ec_europa');
+
   if (module_exists('easy_breadcrumb')) {
-    // @TODO: The file includes/easy_breadcrumb.blocks.inc
-    // @TODO: only exists in easy_breadcrumb <= 7.x-2.12
-    // @TODO: Please refactor when upgrading easy_breadcrumb.
-    module_load_include('inc', 'easy_breadcrumb', 'includes/easy_breadcrumb.blocks');
-    $variables['breadcrumb'] = _easy_breadcrumb_block();
+    $variables['breadcrumb'] = _atomium_block_get_render_array('easy_breadcrumb', 'easy_breadcrumb');
   }
 }

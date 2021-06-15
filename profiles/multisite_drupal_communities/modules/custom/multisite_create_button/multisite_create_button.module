@@ -1,0 +1,62 @@
+<?php
+
+/**
+ * @file
+ * Multisite Create button module.
+ */
+
+/**
+ * Implements hook_block_info().
+ */
+function multisite_create_button_block_info() {
+  $blocks['create-content-button'] = array(
+    'info' => t('Create content button'),
+  );
+
+  return $blocks;
+}
+
+/**
+ * Implements hook_block_view().
+ */
+function multisite_create_button_block_view($delta = '') {
+  $block = array();
+
+  switch ($delta) {
+    case 'create-content-button':
+      $block['subject'] = t('Create content');
+      $block['content'] = _multisite_create_button_contextual_links();
+      break;
+  }
+
+  return $block;
+}
+
+/**
+ * Helper function to fetch the links.
+ */
+function _multisite_create_button_contextual_links() {
+  $element = NULL;
+  $content = system_admin_menu_block(menu_get_item('node/add'));
+
+  if (!empty($content)) {
+    $options = array(
+      '#' => t('Create content'),
+    );
+
+    foreach ($content as $content_type) {
+      $options[url($content_type['link_path'], array('absolute' => TRUE))] = $content_type['link_title'];
+    }
+
+    $element = array(
+      '#theme' => array('select__create_content_button'),
+      '#title' => t('Create content'),
+      '#options' => $options,
+      '#attributes' => array(
+        'onChange' => 'if (this.value) window.location.href=this.value;',
+      ),
+    );
+  }
+
+  return $element;
+}

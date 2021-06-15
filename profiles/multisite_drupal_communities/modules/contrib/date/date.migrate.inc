@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @file
  * Support for migration into Date fields.
@@ -9,16 +10,8 @@ if (!class_exists('MigrateFieldHandler')) {
 }
 
 /**
- * Implements hook_migrate_api().
+ * Support for migration into Date fields.
  */
-function date_migrate_api() {
-  $api = array(
-    'api' => 2,
-    'field handlers' => array('DateMigrateFieldHandler'),
-  );
-  return $api;
-}
-
 class DateMigrateFieldHandler extends MigrateFieldHandler {
 
   /**
@@ -130,9 +123,8 @@ class DateMigrateFieldHandler extends MigrateFieldHandler {
         }
       }
 
-      // Missing data? Create an empty value and return;
-      // Don't try to turn the empty value into a bogus
-      // timestamp for 'now'.
+      // Missing data? Create an empty value and return; Don't try to turn the
+      // empty value into a bogus timestamp for 'now'.
       if (empty($from)) {
         $return[$language][$delta]['value'] = NULL;
         $return[$language][$delta]['timezone'] = NULL;
@@ -174,9 +166,6 @@ class DateMigrateFieldHandler extends MigrateFieldHandler {
           if ($to) {
             $to = format_date($to, 'custom', 'Y-m-d\TH:i:s', $destination_timezone);
           }
-          break;
-
-        default:
           break;
       }
 

@@ -8,7 +8,7 @@
 /**
  * Implements hook_atomium_theme_hook().
  */
-function atomium_atomium_theme_comment() {
+function atomium_atomium_theme_comment(array $existing, $type, $theme, $path) {
   return array(
     'comment' => array(
       'render element' => 'elements',
@@ -23,10 +23,9 @@ function atomium_atomium_theme_comment() {
 function atomium_preprocess_comment(array &$variables, $hook) {
   if (isset($variables['elements']['#comment']->new) && $variables['elements']['#comment']->new) {
     $variables['classes_array'][] = 'new';
-
   }
 
-  if ('comment-unpublished' == $variables['status']) {
+  if ($variables['status'] === 'comment-unpublished') {
     $variables['classes_array'][] = 'unpublished';
   }
 
@@ -40,6 +39,7 @@ function atomium_preprocess_comment(array &$variables, $hook) {
   $variables['atomium']['attributes']['content']->append('class', 'content');
 
   $variables['picture'] = NULL;
+
   if (theme_get_setting('toggle_comment_user_picture')) {
     $variables['picture'] = array(
       '#theme' => _atomium_extend_theme_hook('user_picture', $variables['theme_hook_original']),

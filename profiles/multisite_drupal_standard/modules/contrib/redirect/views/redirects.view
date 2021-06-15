@@ -85,10 +85,10 @@ $handler->display->display_options['style_options']['info'] = array(
     'empty_column' => 0,
   ),
   'operations' => array(
-     'align' => '',
-     'separator' => '',
-     'empty_column' => 0,
-   ),
+    'align' => '',
+    'separator' => '',
+    'empty_column' => 0,
+  ),
 );
 $handler->display->display_options['style_options']['sticky'] = TRUE;
 /* No results behavior: Global: Text area */
@@ -96,7 +96,7 @@ $handler->display->display_options['empty']['area']['id'] = 'area';
 $handler->display->display_options['empty']['area']['table'] = 'views';
 $handler->display->display_options['empty']['area']['field'] = 'area';
 $handler->display->display_options['empty']['area']['content'] = 'No URL redirects found.';
-$handler->display->display_options['empty']['area']['format'] = '1';
+$handler->display->display_options['empty']['area']['format'] = 'plain_text';
 /* Field: Redirect: Redirect ID */
 $handler->display->display_options['fields']['rid']['id'] = 'rid';
 $handler->display->display_options['fields']['rid']['table'] = 'redirect';

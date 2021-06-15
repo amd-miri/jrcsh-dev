@@ -19,7 +19,7 @@
  */
 function hook_xml_field_api() {
   return array(
-    'api' => 1,
+    'api'  => 1,
     'path' => drupal_get_path('module', 'example') . '/includes/xml_field',
   );
 }
@@ -60,7 +60,7 @@ function hook_xml_field_defaults() {
 function hook_xml_field_validation_callbacks_alter(&$callbacks) {
   $callbacks['my_module_xml_validator'] = array(
     'callback' => 'my_module_xml_validator',
-    'title' => t('A superior xml validator'),
+    'title'    => t('A superior xml validator'),
   );
 }
 
@@ -86,7 +86,7 @@ function hook_xml_field_validation_callbacks_alter(&$callbacks) {
  * @see xml_field_xml_fields() for formatting.
  */
 function hook_xml_field_xml_fields_alter(&$entities, &$field_list) {
-  
+
   // You do not have to include a field definition, it will be loaded
   // for you if it's a valid field.
   $field_list['field_xml_metadata'] = array();

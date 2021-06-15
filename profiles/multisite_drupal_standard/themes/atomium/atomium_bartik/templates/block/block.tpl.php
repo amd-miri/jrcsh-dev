@@ -47,8 +47,8 @@
 <div<?php print $atomium['attributes']['wrapper']->append('class', 'block'); ?>>
   <?php print render($title_prefix); ?>
 <?php if ($block->subject): ?>
-  <h2<?php print $atomium['attributes']['subject']; ?>><?php print $block->subject ?></h2>
-<?php endif;?>
+  <h2<?php print $atomium['attributes']['subject']; ?>><?php print $block->subject; ?></h2>
+<?php endif; ?>
   <?php print render($title_suffix); ?>
 
   <div<?php print $atomium['attributes']['content']->append('class', 'content'); ?>>

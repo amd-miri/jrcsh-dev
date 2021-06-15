@@ -8,11 +8,27 @@
 /**
  * Implements hook_atomium_theme_hook().
  */
-function atomium_atomium_theme_textarea() {
+function atomium_atomium_theme_textarea(array $existing, $type, $theme, $path) {
   return array(
     'textarea' => array(
       'render element' => 'element',
       'template' => 'textarea',
+    ),
+  );
+}
+
+/**
+ * Implements hook_atomium_definition_hook().
+ */
+function atomium_atomium_definition_textarea() {
+  return array(
+    'label' => 'Textarea',
+    'description' => 'Textarea description.',
+    'preview' => array(
+      array(
+        'title' => 'Textarea title',
+        'description' => 'Textarea description',
+      ),
     ),
   );
 }
@@ -45,14 +61,17 @@ function atomium_preprocess_textarea(array &$variables, $hook) {
     $variables['theme_hook_suggestions'][] = 'textarea__' .
       $variables['element']['#field_name'];
   }
+
   if (isset($variables['element']['#entity_type'])) {
     $variables['theme_hook_suggestions'][] = 'textarea__' .
       $variables['element']['#entity_type'];
+
     if (isset($variables['element']['#field_name'])) {
       $variables['theme_hook_suggestions'][] = 'textarea__' .
         $variables['element']['#entity_type'] . '__' .
         $variables['element']['#field_name'];
     }
+
     if (isset($variables['element']['#bundle'])) {
       $variables['theme_hook_suggestions'][] = 'textarea__' .
         $variables['element']['#entity_type'] . '__' .
@@ -62,12 +81,16 @@ function atomium_preprocess_textarea(array &$variables, $hook) {
 
   if (isset($variables['element']['#atomium']['attributes']['element'])) {
     $variables['atomium']['attributes']['element']
-      ->merge($variables['element']['#atomium']['attributes']['element']);
+      ->merge(
+        $variables['element']['#atomium']['attributes']['element']->toArray()
+      );
   }
 
   if (isset($variables['element']['#atomium']['attributes']['wrapper'])) {
     $variables['atomium']['attributes']['wrapper']
-      ->merge($variables['element']['#atomium']['attributes']['wrapper']);
+      ->merge(
+        $variables['element']['#atomium']['attributes']['wrapper']->toArray()
+      );
   }
 
   $variables['atomium']['attributes']['wrapper']

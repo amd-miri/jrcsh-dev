@@ -16,6 +16,7 @@ use Symfony\Component\Cache\Simple\PhpFilesCache;
 
 /**
  * @group time-sensitive
+ * @group legacy
  */
 class PhpFilesCacheTest extends CacheTestCase
 {
@@ -25,10 +26,6 @@ class PhpFilesCacheTest extends CacheTestCase
 
     public function createSimpleCache()
     {
-        if (!PhpFilesCache::isSupported()) {
-            $this->markTestSkipped('OPcache extension is not enabled.');
-        }
-
         return new PhpFilesCache('sf-cache');
     }
 

@@ -12,11 +12,12 @@ function ec_europa_preprocess_views_view_table(array &$variables, $hook) {
   $variables['atomium']['attributes']['wrapper']->append('class', $variables['classes_array']);
 
   $i = 0;
+
   foreach ($variables['header'] as $rowid => $row) {
     if (isset($variables['header_classes'][$rowid])) {
       $variables['atomium']['attributes']['header-cell-0-' . $i]->append('class', $variables['header_classes'][$rowid]);
     }
-    $i++;
+    ++$i;
   }
 
   foreach ($variables['rows'] as $rowid => $row) {

@@ -39,9 +39,11 @@
       <span class="author"><?php print t('Written by !name', array('!name' => render($name))); ?></span>
       <span class="date">
             <?php print t('On the'); ?>
-        <time datetime="<?php print format_date($created,
-          $type = 'custom',
-          $format = 'Y-m-d\TH:i:sP') ?>"><?php print $date; ?></time>
+        <time datetime="<?php print format_date(
+    $created,
+    $type = 'custom',
+    $format = 'Y-m-d\TH:i:sP'
+  ); ?>"><?php print $date; ?></time>
           </span>
     </footer>
   <?php endif; ?>

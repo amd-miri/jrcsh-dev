@@ -17,7 +17,7 @@ use Symfony\Component\Cache\PruneableInterface;
 
 abstract class CacheTestCase extends SimpleCacheTest
 {
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -28,10 +28,6 @@ abstract class CacheTestCase extends SimpleCacheTest
 
     public static function validKeys()
     {
-        if (\defined('HHVM_VERSION')) {
-            return parent::validKeys();
-        }
-
         return array_merge(parent::validKeys(), [["a\0b"]]);
     }
 
@@ -136,14 +132,9 @@ abstract class CacheTestCase extends SimpleCacheTest
     }
 }
 
-class NotUnserializable implements \Serializable
+class NotUnserializable
 {
-    public function serialize()
-    {
-        return serialize(123);
-    }
-
-    public function unserialize($ser)
+    public function __wakeup()
     {
         throw new \Exception(__CLASS__);
     }

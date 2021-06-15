@@ -112,7 +112,17 @@ function advagg_missing_generate($input = '') {
   $uri = $GLOBALS['base_path'] . $_GET['q'];
   $created = FALSE;
   $files_to_save = array();
-  if (lock_acquire($lock_name, 10) || $redirect_counter > 4) {
+  if (variable_get('advagg_no_locks', ADVAGG_NO_LOCKS)) {
+    $return = advagg_missing_create_file($filename, FALSE, $data);
+    if (!is_array($return)) {
+      return $return;
+    }
+    else {
+      list($files_to_save, $type) = $return;
+      $created = TRUE;
+    }
+  }
+  elseif (lock_acquire($lock_name, 10) || $redirect_counter > 4) {
     if ($redirect_counter > 4) {
       $return = advagg_missing_create_file($filename, TRUE, $data);
     }
@@ -257,7 +267,9 @@ function advagg_missing_send_saved_file(array $files_to_save, $uri, $created, $f
     ob_end_clean();
   }
   // Set generic far future headers.
-  advagg_missing_set_farfuture_headers();
+  if (variable_get('advagg_farfuture_php', ADVAGG_FARFUTURE_PHP)) {
+    advagg_missing_set_farfuture_headers();
+  }
   // Return compressed content if we can.
   if ($return_compressed_br || $return_compressed_gz) {
     foreach ($files_to_save as $uri => $data) {
@@ -328,7 +340,9 @@ function advagg_missing_send_saved_file(array $files_to_save, $uri, $created, $f
       header('Last-Modified: ' . gmdate('D, d M Y H:i:s \G\M\T', REQUEST_TIME));
     }
     // Set the Expires date 1 month into the future.
-    header('Expires: ' . gmdate('D, d M Y H:i:s \G\M\T', REQUEST_TIME + 31 * 24 * 60 * 60));
+    if (variable_get('advagg_farfuture_php', ADVAGG_FARFUTURE_PHP)) {
+      header('Expires: ' . gmdate('D, d M Y H:i:s \G\M\T', REQUEST_TIME + 31 * 24 * 60 * 60));
+    }
     // Also send an etag out.
     header('Etag: ' . REQUEST_TIME . ' ' . $strlen);
 

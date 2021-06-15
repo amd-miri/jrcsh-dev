@@ -17,6 +17,7 @@ use Symfony\Component\Cache\Tests\Adapter\FilesystemAdapterTest;
 
 /**
  * @group time-sensitive
+ * @group legacy
  */
 class PhpArrayCacheWithFallbackTest extends CacheTestCase
 {
@@ -36,13 +37,15 @@ class PhpArrayCacheWithFallbackTest extends CacheTestCase
 
     protected static $file;
 
-    public static function setupBeforeClass()
+    public static function setUpBeforeClass(): void
     {
         self::$file = sys_get_temp_dir().'/symfony-cache/php-array-adapter-test.php';
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
+        $this->createSimpleCache()->clear();
+
         if (file_exists(sys_get_temp_dir().'/symfony-cache')) {
             FilesystemAdapterTest::rmdir(sys_get_temp_dir().'/symfony-cache');
         }

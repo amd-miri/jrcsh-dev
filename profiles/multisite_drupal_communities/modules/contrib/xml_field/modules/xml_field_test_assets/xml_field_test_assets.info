@@ -3,7 +3,6 @@ core = 7.x
 package = Testing
 dependencies[] = ctools
 dependencies[] = features
-dependencies[] = node_files_document
 dependencies[] = strongarm
 dependencies[] = text
 dependencies[] = xml_field
@@ -26,9 +25,9 @@ features[variable][] = node_options_xml_test
 features[variable][] = node_preview_xml_test
 features[variable][] = node_submitted_xml_test
 
-; Information added by Drupal.org packaging script on 2015-07-24
-version = "7.x-2.2"
+; Information added by Drupal.org packaging script on 2016-08-10
+version = "7.x-2.3"
 core = "7.x"
 project = "xml_field"
-datestamp = "1437778178"
+datestamp = "1470848340"
 

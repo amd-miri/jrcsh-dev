@@ -22,13 +22,14 @@ function atomium_preprocess_html(array &$variables, $hook) {
   ));
 
   // Return early, so the maintenance page does not call any of the code below.
-  if ('html' !== $hook) {
+  if ($hook !== 'html') {
     return;
   }
 
   // Serialize RDF Namespaces into an RDFa 1.1 prefix attribute.
   if ($variables['rdf_namespaces']) {
     $prefixes = array();
+
     foreach (\explode("\n  ", \ltrim($variables['rdf_namespaces'])) as $namespace) {
       // Remove xlmns: and ending quote and fix prefix formatting.
       $prefixes[] = \str_replace('="', ': ', drupal_substr($namespace, 6, -1));
@@ -44,13 +45,14 @@ function atomium_preprocess_html(array &$variables, $hook) {
     // Add unique class for each page.
     $path = drupal_get_path_alias($_GET['q']);
     // Add unique class for each website section.
-    list($section,) = \explode('/', $path, 2);
+    list($section) = \explode('/', $path, 1);
     $arg = \explode('/', $_GET['q']);
-    if ('node' === $arg[0] && isset($arg[1])) {
-      if ('add' === $arg[1]) {
+
+    if ($arg[0] === 'node' && isset($arg[1])) {
+      if ($arg[1] === 'add') {
         $section = 'node-add';
       }
-      elseif (isset($arg[2]) && \is_numeric($arg[1]) && ('edit' === $arg[2] || 'delete' === $arg[2])) {
+      elseif (isset($arg[2]) && \is_numeric($arg[1]) && ($arg[2] === 'edit' || $arg[2] === 'delete')) {
         $section = 'node-' . $arg[2];
       }
     }
@@ -59,6 +61,7 @@ function atomium_preprocess_html(array &$variables, $hook) {
 
   // Store the menu item since it has some useful information.
   $variables['menu_item'] = menu_get_item();
+
   if ($variables['menu_item']) {
     switch ($variables['menu_item']['page_callback']) {
       case 'views_page':
@@ -88,9 +91,11 @@ function atomium_preprocess_html(array &$variables, $hook) {
   }
 
   $headers = drupal_get_http_header();
+
   if (isset($headers['status'])) {
     $variables['classes_array'][] = 'status-' . $headers['status'];
-    if ('404 Not Found' === $headers['status']) {
+
+    if ($headers['status'] === '404 Not Found') {
       $variables['theme_hook_suggestions'][] = 'html__404';
     }
   }

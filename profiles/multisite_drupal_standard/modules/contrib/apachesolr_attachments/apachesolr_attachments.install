@@ -121,6 +121,8 @@ function apachesolr_attachments_schema() {
       ),
       'indexes' => array(
         'changed' => array('changed', 'status'),
+        'parent_entity_id' => array('parent_entity_id'),
+        'parent_entity_type' => array('parent_entity_type'),
       ),
       'primary key' => array('entity_id', 'parent_entity_id', 'parent_entity_type'),
     );
@@ -269,10 +271,10 @@ function apachesolr_attachments_update_7003() {
 
 /**
  * Change apachesolr_index_entities_file.body field to longblob.
- * 
+ *
  * Bypass PDOexception "Incorrect string value" and lost of the information
  * that is stored as UTF-8 4 bytes character(s) in MySQL.
- * 
+ *
  * @see https://drupal.org/node/1853836
  * @see https://drupal.org/node/2014889
  */
@@ -280,4 +282,15 @@ function apachesolr_attachments_update_7004() {
   $schema = apachesolr_attachments_schema();
   $field = $schema['apachesolr_index_entities_file']['fields']['body'];
   db_change_field('apachesolr_index_entities_file', 'body', 'body', $field);
+}
+
+/**
+ * Add database indexes for parent_entity_type and parent_entity_id.
+ */
+function apachesolr_attachments_update_7006() {
+  foreach (array('parent_entity_id', 'parent_entity_type') as $field) {
+    if (!db_index_exists('apachesolr_index_entities_file', $field)) {
+      db_add_index('apachesolr_index_entities_file', $field, array($field));
+    }
+  }
 }

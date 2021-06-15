@@ -5,6 +5,8 @@
  * Code for the NewsroomHelper class.
  */
 
+module_load_include('inc', 'feeds', 'mappers/file');
+
 /**
  * NexteuropaNewsroomImporterHelper class.
  */
@@ -287,7 +289,7 @@ class NexteuropaNewsroomImporterHelper {
       ],
       [
         'field' => 'field_newsroom_publication_date:start',
-        'query' => 'pubDate/text()',
+        'query' => 'infsonewsroom:BasicReferenceDate/text()',
         'tamper' => [
           'plugins' => [
             'find_replace' => [
@@ -300,10 +302,9 @@ class NexteuropaNewsroomImporterHelper {
       [
         'field' => 'field_newsroom_private_img:uri',
         'query' => 'enclosure[@type="image/jpeg" and @schema="Private"]/@url',
-      ],
-      [
-        'field' => 'field_newsroom_illustrative_img:uri',
-        'query' => 'enclosure[@type="image/jpeg" and @schema="Public"]/@url',
+        'options' => [
+          'file_exists' => FEEDS_FILE_EXISTS_SKIP,
+        ],
       ],
       [
         'field' => 'field_newsroom_private_img:title',
@@ -328,6 +329,9 @@ class NexteuropaNewsroomImporterHelper {
       [
         'field' => 'field_newsroom_illustrative_img:uri',
         'query' => 'enclosure[@type="image/jpeg" and @schema="Public"]/@url',
+        'options' => [
+          'file_exists' => FEEDS_FILE_EXISTS_SKIP,
+        ],
       ],
       [
         'field' => 'field_newsroom_illustrative_img:title',
@@ -435,7 +439,7 @@ class NexteuropaNewsroomImporterHelper {
       ],
       [
         'field' => 'created',
-        'query' => 'infsonewsroom:BasicReferenceDate/text()',
+        'query' => 'pubDate/text()',
         'tamper' => [
           'plugins' => [
             'find_replace' => [
@@ -458,12 +462,30 @@ class NexteuropaNewsroomImporterHelper {
         'query' => 'infsonewsroom:pubTeaserOnly/text()',
       ],
       [
-        'field' => 'field_newsroom_related_content',
+        'field' => 'field_newsroom_related_content:etid',
         'query' => 'infsonewsroom:slave/@id',
+        'tamper' => [
+          'plugins' => [
+            'efq_finder' => [
+              'entity_type' => 'node',
+              'bundle' => NEXTEUROPA_NEWSROOM_CONTENT_TYPE,
+              'field' => 'field_newsroom_item_id',
+            ],
+          ],
+        ],
       ],
       [
-        'field' => 'field_newsroom_parent_content',
+        'field' => 'field_newsroom_parent_content:etid',
         'query' => 'infsonewsroom:master/@id',
+        'tamper' => [
+          'plugins' => [
+            'efq_finder' => [
+              'entity_type' => 'node',
+              'bundle' => NEXTEUROPA_NEWSROOM_CONTENT_TYPE,
+              'field' => 'field_newsroom_item_id',
+            ],
+          ],
+        ],
       ],
       [
         'field' => 'field_newsroom_project_acr',
@@ -818,6 +840,9 @@ class NexteuropaNewsroomImporterHelper {
       [
         'field' => 'field_newsroom_service_image:uri',
         'query' => 'infsonewsroom:BasicSvVisuUrl/text()',
+        'options' => [
+          'file_exists' => FEEDS_FILE_EXISTS_SKIP,
+        ],
       ],
       [
         'field' => 'parentguid',
@@ -842,7 +867,7 @@ class NexteuropaNewsroomImporterHelper {
     $importers = self::returnImporters();
 
     foreach ($importers as $importer) {
-      // WE drop all tampers for the current importer.
+      // We drop all tampers for the current importer.
       db_delete('feeds_tamper')
         ->condition('importer', $importer)
         ->execute();

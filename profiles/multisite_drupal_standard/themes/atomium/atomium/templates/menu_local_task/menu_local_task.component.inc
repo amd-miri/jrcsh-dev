@@ -8,7 +8,7 @@
 /**
  * Implements hook_atomium_theme_hook().
  */
-function atomium_atomium_theme_menu_local_task() {
+function atomium_atomium_theme_menu_local_task(array $existing, $type, $theme, $path) {
   return array(
     'menu_local_task' => array(
       'template' => 'menu-local-task',
@@ -27,13 +27,16 @@ function atomium_atomium_theme_menu_local_task() {
 function atomium_preprocess_menu_local_task(array &$variables, $hook) {
   $link = $variables['link'];
   $link_text = $link['title'];
-  $active = NULL;
+  $active = array();
 
-  if (!empty($variables['active']) && TRUE == $variables['active']) {
+  if (!empty($variables['active']) && $variables['active'] === TRUE) {
     // Add text to indicate active tab for non-visual users.
     $active = array(
       '#markup' => t('(active tab)'),
-      '#theme_wrappers' => _atomium_extend_theme_hook('html_tag', $variables['theme_hook_original']),
+      '#theme_wrappers' => _atomium_extend_theme_hook(
+        'html_tag',
+        $variables['theme_hook_original']
+      ),
       '#tag' => 'span',
       '#attributes' => array(
         'class' => array(
@@ -51,14 +54,16 @@ function atomium_preprocess_menu_local_task(array &$variables, $hook) {
   }
 
   $variables[$variables['base_hook']] = $link_text;
+
   if (isset($link['href'])) {
     $variables[$variables['base_hook']] = array(
       $variables['base_hook'] => array(
-        '#theme' => _atomium_extend_theme_hook('link', $variables['theme_hook_original']),
-        '#text' => array(
-          array('#markup' => $link['title']),
-          $active,
+        '#theme' => _atomium_extend_theme_hook(
+          'link',
+          $variables['theme_hook_original']
         ),
+        // TODO: This render() call needs to be removed when #381 is merged.
+        '#text' => $link['title'] . render($active),
         '#path' => $link['href'],
         '#options' => array(
           'attributes' => array('title' => $link['title']),
@@ -68,5 +73,7 @@ function atomium_preprocess_menu_local_task(array &$variables, $hook) {
     );
   }
 
-  $variables['atomium']['attributes']['wrapper']->append('class', !empty($variables['active']) ? 'active' : '');
+  if (!empty($variables['active'])) {
+    $variables['atomium']['attributes']['wrapper']->append('class', 'active');
+  }
 }

@@ -11,7 +11,7 @@
 function date_migrate_example_field_default_fields() {
   $fields = array();
 
-  // Exported field: 'node-date_migrate_example-body'
+  // Exported field: 'node-date_migrate_example-body'.
   $fields['node-date_migrate_example-body'] = array(
     'field_config' => array(
       'active' => '1',
@@ -83,7 +83,7 @@ function date_migrate_example_field_default_fields() {
     ),
   );
 
-  // Exported field: 'node-date_migrate_example-field_date'
+  // Exported field: 'node-date_migrate_example-field_date'.
   $fields['node-date_migrate_example-field_date'] = array(
     'field_config' => array(
       'active' => '1',
@@ -166,7 +166,7 @@ function date_migrate_example_field_default_fields() {
     ),
   );
 
-  // Exported field: 'node-date_migrate_example-field_date_range'
+  // Exported field: 'node-date_migrate_example-field_date_range'.
   $fields['node-date_migrate_example-field_date_range'] = array(
     'field_config' => array(
       'active' => '1',
@@ -249,7 +249,7 @@ function date_migrate_example_field_default_fields() {
     ),
   );
 
-  // Exported field: 'node-date_migrate_example-field_date_repeat'
+  // Exported field: 'node-date_migrate_example-field_date_repeat'.
   $fields['node-date_migrate_example-field_date_repeat'] = array(
     'field_config' => array(
       'active' => '1',
@@ -333,7 +333,7 @@ function date_migrate_example_field_default_fields() {
     ),
   );
 
-  // Exported field: 'node-date_migrate_example-field_datestamp'
+  // Exported field: 'node-date_migrate_example-field_datestamp'.
   $fields['node-date_migrate_example-field_datestamp'] = array(
     'field_config' => array(
       'active' => '1',
@@ -416,7 +416,7 @@ function date_migrate_example_field_default_fields() {
     ),
   );
 
-  // Exported field: 'node-migrate_example_date-field_datestamp_range'
+  // Exported field: 'node-migrate_example_date-field_datestamp_range'.
   $fields['node-date_migrate_example-field_datestamp_range'] = array(
     'field_config' => array(
       'active' => '1',
@@ -499,7 +499,7 @@ function date_migrate_example_field_default_fields() {
     ),
   );
 
-  // Exported field: 'node-date_migrate_example-field_datetime'
+  // Exported field: 'node-date_migrate_example-field_datetime'.
   $fields['node-date_migrate_example-field_datetime'] = array(
     'field_config' => array(
       'active' => '1',
@@ -582,7 +582,7 @@ function date_migrate_example_field_default_fields() {
     ),
   );
 
-  // Exported field: 'node-date_migrate_example-field_datetime_utc'
+  // Exported field: 'node-date_migrate_example-field_datetime_utc'.
   $fields['node-date_migrate_example-field_datetime_utc'] = array(
     'field_config' => array(
       'active' => '1',
@@ -665,7 +665,7 @@ function date_migrate_example_field_default_fields() {
     ),
   );
 
-  // Exported field: 'node-date_migrate_example-field_datetime_range'
+  // Exported field: 'node-date_migrate_example-field_datetime_range'.
   $fields['node-date_migrate_example-field_datetime_range'] = array(
     'field_config' => array(
       'active' => '1',
@@ -743,7 +743,7 @@ function date_migrate_example_field_default_fields() {
           'year_range' => '-3:+3',
         ),
         'type' => 'date_text',
-        'weight' => '8',
+        'weight' => '7',
       ),
     ),
   );

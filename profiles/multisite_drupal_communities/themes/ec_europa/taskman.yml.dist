@@ -1,0 +1,60 @@
+drupal:
+  core: 7
+  base_url: "http://web:8080/build"
+  site:
+    profile: minimal
+  database:
+    host: "mysql"
+    port: "3306"
+    name: "atomium"
+    user: "root"
+    password: ""
+  settings:
+    conf:
+      file_scan_ignore_directories:
+        - vendor
+        - ${drupal.root}
+        - node_modules
+        - bower_components
+        - build
+        - sites/all/themes/ec_europa/build
+        - build/sites/all/themes/ec_europa/build
+      drupal_http_request_fails: false
+  post_install:
+    - { task: "chmod", file: "${drupal.root}/sites/default/files", permissions: 0777, recursive: true }
+    - ./vendor/bin/drush --root=$(pwd)/build dis -y color comment dashboard dblog help overlay path search shortcut toolbar update
+    - ./vendor/bin/drush --root=$(pwd)/build pmu -y color comment dashboard dblog help overlay path search shortcut toolbar update
+    - ./vendor/bin/drush --root=$(pwd)/build en -y admin_menu adminrole admin_menu_toolbar admin_devel atomium composer_autoloader devel realistic_dummy_content
+    - ./vendor/bin/drush --root=$(pwd)/build vset theme_default ec_europa
+    - ./vendor/bin/drush --root=$(pwd)/build cc all
+  drush:
+    options:
+      ignored-directories:
+        - vendor
+        - ${drupal.root}
+        - node_modules
+        - bower_components
+        - build
+        - sites/all/themes/ec_europa/build
+        - build/sites/all/themes/ec_europa/build
+      uri: "${drupal.base_url}"
+github:
+  changelog:
+    user: ec-europa
+    project: ec_europa
+    release:
+      branch: '0.0.x'
+    between-tags: "$(git tag --sort=-creatordate --merged '${github.changelog.release.branch}' | tr '\n' ',')"
+
+commands:
+  drupal:site-setup:
+    - { task: "chmod", file: "${drupal.root}/sites", permissions: 0777, recursive: true }
+    - { task: "symlink", from: "../../../../..", to: "${drupal.root}/sites/all/themes/custom/ec_europa" }
+    - { task: "run", command: "drupal:drush-setup" }
+    - { task: "run", command: "drupal:settings-setup" }
+    - { task: "run", command: "setup:phpunit" }
+    - { task: "run", command: "setup:behat" }
+  setup:phpunit:
+    - { task: "process", from: "phpunit.xml.dist", to: "phpunit.xml" }
+  setup:behat:
+    - { task: "process", from: "behat.yml.dist", to: "behat.yml" }

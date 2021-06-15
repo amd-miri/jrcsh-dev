@@ -29,9 +29,9 @@ function password_policy_drupal_strength_admin_form($form, &$form_state, $constr
     '#default_value' => $constraint->config['drupal_strength'],
     '#description' => t('<p>Password will be required to have this level or higher. 0 - 100</p>
 <p>Starting from a base of 100 points:</p>
-<ul><li>Having only 3 out of 4 of uppercase, lowercase, digit, and symbol loses 12.5 points</li>
-<li>Having only 2 out of 4 of uppercase, lowercase, digit, and symbol loses 25 points</li>
-<li>Having only 1 out of 4 of uppercase, lowercase, digit, and symbol loses 40 points</li>
+<ul><li>Having only 3 out of 4 of uppercase, lowercase, digit, and special character loses 12.5 points</li>
+<li>Having only 2 out of 4 of uppercase, lowercase, digit, and special character loses 25 points</li>
+<li>Having only 1 out of 4 of uppercase, lowercase, digit, and special character loses 40 points</li>
 <li>Each character fewer than 6 loses 5 points, plus a 30 point penalty for being under 6 characters.</li>
 <li>Username used as password without regard to case gets exactly 5 points</li></ul>
 <p>For example:</p>
@@ -53,7 +53,7 @@ function password_policy_drupal_strength_constraint($password, $account, $constr
   $has_lowercase = preg_match('/[a-z]+/', $password);
   $has_uppercase = preg_match('/[A-Z]+/', $password);
   $has_numbers = preg_match('/[0-9]+/', $password);
-  $has_punctuation = preg_match('/[^a-zA-Z0-9]+/', $password);
+  $has_special_characters = preg_match('/[^a-zA-Z0-9]+/', $password);
   // Lose 5 points for every character less than 6, plus a 30 point penalty.
   if (strlen($password) < 6) {
     $strength -= ((6 - strlen($password)) * 5) + 30;
@@ -68,7 +68,7 @@ function password_policy_drupal_strength_constraint($password, $account, $constr
   if (!$has_numbers) {
     ++$weaknesses;
   }
-  if (!$has_punctuation) {
+  if (!$has_special_characters) {
     ++$weaknesses;
   }
   // Apply penalty for each weakness (balanced against length penalty).

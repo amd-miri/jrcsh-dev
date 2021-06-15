@@ -105,7 +105,7 @@ abstract class BeanPlugin implements BeanTypePluginInterface {
       $content['bean'][$bean->Identifier()]['#contextual_links']['bean'] = array(
         'block', array($bean->Identifier(), 'edit')
       );
-    }    
+    }
     return $content;
   }
 }

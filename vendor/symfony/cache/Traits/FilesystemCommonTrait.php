@@ -26,7 +26,7 @@ trait FilesystemCommonTrait
     private function init($namespace, $directory)
     {
         if (!isset($directory[0])) {
-            $directory = sys_get_temp_dir().'/symfony-cache';
+            $directory = sys_get_temp_dir().\DIRECTORY_SEPARATOR.'symfony-cache';
         } else {
             $directory = realpath($directory) ?: $directory;
         }
@@ -55,8 +55,8 @@ trait FilesystemCommonTrait
     {
         $ok = true;
 
-        foreach (new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($this->directory, \FilesystemIterator::SKIP_DOTS)) as $file) {
-            $ok = ($file->isDir() || @unlink($file) || !file_exists($file)) && $ok;
+        foreach (new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($this->directory, \FilesystemIterator::SKIP_DOTS | \FilesystemIterator::CURRENT_AS_PATHNAME), \RecursiveIteratorIterator::LEAVES_ONLY) as $file) {
+            $ok = ($this->doUnlink($file) || !file_exists($file)) && $ok;
         }
 
         return $ok;
@@ -71,10 +71,15 @@ trait FilesystemCommonTrait
 
         foreach ($ids as $id) {
             $file = $this->getFile($id);
-            $ok = (!file_exists($file) || @unlink($file) || !file_exists($file)) && $ok;
+            $ok = (!file_exists($file) || $this->doUnlink($file) || !file_exists($file)) && $ok;
         }
 
         return $ok;
+    }
+
+    protected function doUnlink($file)
+    {
+        return @unlink($file);
     }
 
     private function write($file, $data, $expiresAt = null)
@@ -96,10 +101,11 @@ trait FilesystemCommonTrait
         }
     }
 
-    private function getFile($id, $mkdir = false)
+    private function getFile($id, $mkdir = false, string $directory = null)
     {
-        $hash = str_replace('/', '-', base64_encode(hash('sha256', static::class.$id, true)));
-        $dir = $this->directory.strtoupper($hash[0].\DIRECTORY_SEPARATOR.$hash[1].\DIRECTORY_SEPARATOR);
+        // Use MD5 to favor speed over security, which is not an issue here
+        $hash = str_replace('/', '-', base64_encode(hash('md5', static::class.$id, true)));
+        $dir = ($directory ?? $this->directory).strtoupper($hash[0].\DIRECTORY_SEPARATOR.$hash[1].\DIRECTORY_SEPARATOR);
 
         if ($mkdir && !file_exists($dir)) {
             @mkdir($dir, 0777, true);

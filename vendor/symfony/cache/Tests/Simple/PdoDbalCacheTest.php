@@ -17,6 +17,7 @@ use Symfony\Component\Cache\Tests\Traits\PdoPruneableTrait;
 
 /**
  * @group time-sensitive
+ * @group legacy
  */
 class PdoDbalCacheTest extends CacheTestCase
 {
@@ -24,7 +25,7 @@ class PdoDbalCacheTest extends CacheTestCase
 
     protected static $dbFile;
 
-    public static function setupBeforeClass()
+    public static function setUpBeforeClass(): void
     {
         if (!\extension_loaded('pdo_sqlite')) {
             self::markTestSkipped('Extension pdo_sqlite required.');
@@ -36,7 +37,7 @@ class PdoDbalCacheTest extends CacheTestCase
         $pool->createTable();
     }
 
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         @unlink(self::$dbFile);
     }

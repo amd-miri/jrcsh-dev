@@ -362,7 +362,7 @@ function file_entity_admin_files() {
       $count_query = db_select('file_usage', 'fu')
         ->fields('fu', array('fid', 'count'))
         ->condition('fu.fid', $file_result->fid, '=');
-      $count_query->addExpression('SUM(fu.count)', 'total_count');
+      $count_query->addExpression('fu.count', 'total_count');
       $count_result = $count_query->execute()->fetchAll();
 
       if (!empty($count_result[0]->total_count)) {
@@ -1172,6 +1172,13 @@ function file_entity_settings_form($form, &$form_state) {
     '#title' => t('Keep original file name'),
     '#default_value' => variable_get('file_entity_file_replace_options_keep_original_filename', FALSE),
     '#description' => t('Rename the newly uploaded file to the name of the original file. This action cannot be undone.'),
+  );
+
+  $form['file_entity_protect_repeated_render'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Protect against repeat rendering'),
+    '#default_value' => variable_get('file_entity_protect_repeated_render', TRUE),
+    '#description' => t('Avoid rendering the same entity more than 20 times. This can be a sign of an image entity getting caught in a recursive render, but it can also be triggered when the same image is rendered more than 20 times, e.g. in an long content list or data feed.'),
   );
 
   return system_settings_form($form);

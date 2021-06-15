@@ -914,6 +914,7 @@ function file_entity_theme() {
           'remote_playback' => 'remote_playback',
         ),
         'autoplay' => FALSE,
+        'playsinline' => FALSE,
         'loop' => FALSE,
         'muted' => FALSE,
         'width' => NULL,
@@ -2331,6 +2332,11 @@ function pathauto_file_update_alias(stdClass $file, $op, array $options = array(
 
   // Skip processing if the file has no pattern.
   if (!pathauto_pattern_load_by_entity('file', $file->type, $options['language'])) {
+    return;
+  }
+
+  // Skip processing if pathauto_entity module is enabled.
+  if (module_exists('pathauto_entity')) {
     return;
   }
 

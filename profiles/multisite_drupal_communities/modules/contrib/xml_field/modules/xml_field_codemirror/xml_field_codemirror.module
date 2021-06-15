@@ -19,16 +19,17 @@ define('XML_FIELD_CODEMIRROR_DEFAULT_THEME', 'default');
  */
 function _xml_field_codemirror_options() {
   $options = array(
-    'htmlMode' => FALSE,
-    'alignCDATA' => TRUE,
-    'lineNumbers' => TRUE,
-    'lineWrapping' => TRUE,
-    'tabsize' => 2,
-    'mode' => 'xml',
-    'theme' => XML_FIELD_CODEMIRROR_DEFAULT_THEME,
+    'htmlMode'      => FALSE,
+    'alignCDATA'    => TRUE,
+    'lineNumbers'   => TRUE,
+    'lineWrapping'  => TRUE,
+    'tabsize'       => 2,
+    'mode'          => 'xml',
+    'theme'         => XML_FIELD_CODEMIRROR_DEFAULT_THEME,
     'autoCloseTags' => 'true',
   );
   drupal_alter('xml_field_codemirror_config', $options);
+
   return $options;
 }
 
@@ -53,14 +54,14 @@ function xml_field_codemirror_xml_field_codemirror_instance_config_alter(&$confi
 function xml_field_codemirror_field_widget_info() {
   return array(
     'xml_field_codemirror' => array(
-      'label' => t('CodeMirror XML'),
+      'label'       => t('CodeMirror XML'),
       'field types' => array('xml_field_xml'),
-      'settings' => array(
+      'settings'    => array(
         'codemirror' => _xml_field_codemirror_options(),
       ),
-      'behaviors' => array(
+      'behaviors'   => array(
         'multiple values' => FIELD_BEHAVIOR_DEFAULT,
-        'default value' => FIELD_BEHAVIOR_DEFAULT,
+        'default value'   => FIELD_BEHAVIOR_DEFAULT,
       ),
     ),
   );
@@ -76,14 +77,14 @@ function xml_field_codemirror_field_widget_settings_form($field, $instance) {
   $form = array();
   if ($widget['type'] == 'xml_field_codemirror') {
     $form['codemirror']['theme'] = array(
-      '#type' => 'select',
-      '#title' => t('Theme'),
-      '#description' => t('Demo these themes <a href="@url" onclick="window.open(this.href); return false;">here</a>.', array(
+      '#type'          => 'select',
+      '#title'         => t('Theme'),
+      '#description'   => t('Demo these themes <a href="@url" onclick="window.open(this.href); return false;">here</a>.', array(
         '@url' => 'http://codemirror.net/demo/theme.html',
       )),
       '#default_value' => $settings['codemirror']['theme'],
-      '#required' => TRUE,
-      '#options' => _xml_field_codemirror_get_available_themes(),
+      '#required'      => TRUE,
+      '#options'       => _xml_field_codemirror_get_available_themes(),
 
       // Stuck on this hiding for now
       //'#ajax' => array(
@@ -107,6 +108,7 @@ function xml_field_codemirror_field_widget_settings_form($field, $instance) {
     //  '#default_value' => $settings['autoresize'],
     //);
   }
+
   return $form;
 }
 
@@ -188,7 +190,7 @@ function _xml_field_codemirror_get_library_version() {
   $json = file_get_contents($library['library path'] . '/' . $args['file']);
   $data = json_decode($json);
 
-  return $data->version; 
+  return $data->version;
 }
 
 /**
@@ -197,15 +199,15 @@ function _xml_field_codemirror_get_library_version() {
 function xml_field_codemirror_libraries_info() {
   // Expected to be extracted into 'sites/all/libraries/xml_field_codemirror'.
   $libraries['codemirror'] = array(
-    'name' => 'CodeMirror',
-    'vendor url' => 'http://codemirror.net/',
-    'download url' => 'https://github.com/marijnh/CodeMirror/downloads',
-    'version callback' => '_xml_field_codemirror_get_library_version',
+    'name'              => 'CodeMirror',
+    'vendor url'        => 'http://codemirror.net/',
+    'download url'      => 'https://github.com/marijnh/CodeMirror/downloads',
+    'version callback'  => '_xml_field_codemirror_get_library_version',
     'version arguments' => array(
       'file' => 'package.json',
     ),
-    'files' => array(
-      'js' => array(
+    'files'             => array(
+      'js'  => array(
         'lib/codemirror.js',
       ),
       'css' => array(
@@ -221,16 +223,16 @@ function xml_field_codemirror_libraries_info() {
  * Implements hook_element_info().
  */
 function xml_field_codemirror_element_info() {
-  
+
   // We extend our base element, but we cannot use element_info lest recursion.
   $base = xml_field_element_info();
   $base = $base['xmltext'];
   $info = array(
     'xml_codemirror' => array(
-      '#title' => 'CodeMirror XML',
-      '#resizable' => FALSE,
-      '#codemirror_options' => _xml_field_codemirror_options(),
-    ) + $base,
+        '#title'              => 'CodeMirror XML',
+        '#resizable'          => FALSE,
+        '#codemirror_options' => _xml_field_codemirror_options(),
+      ) + $base,
   );
   $info['xml_codemirror']['#pre_render'][] = 'xml_field_codemirror_element_pre_render';
 
@@ -249,7 +251,7 @@ function xml_field_codemirror_element_info() {
 function xml_field_codemirror_field_formatter_info() {
   $info = array();
   $info['xml_field_codemirror'] = array(
-    'label' => t('Read-only CodeMirror XML'),
+    'label'       => t('Read-only CodeMirror XML'),
     'field types' => array('xml_field_xml'),
   );
 
@@ -269,7 +271,7 @@ function xml_field_codemirror_field_formatter_view($entity_type, $entity, $field
       foreach ($items as $delta => $item) {
         $element[$delta] = array(
           '#theme' => 'xml_codemirror',
-          '#xml' => $item['xml'],
+          '#xml'   => $item['xml'],
         );
       }
       break;
@@ -288,49 +290,49 @@ function xml_field_codemirror_field_formatter_view($entity_type, $entity, $field
 function xml_field_codemirror_element_pre_render($element) {
   $id = &drupal_static(__FUNCTION__, 0);
   $path_to_codemirror = libraries_get_path('codemirror');
-  
+
   // Make sure we have all CodeMirror options.
   if (!isset($element['#codemirror_options'])) {
     $element['#codemirror_options'] = array();
   }
-  $element['#codemirror_options'] += _xml_field_codemirror_options();  
+  $element['#codemirror_options'] += _xml_field_codemirror_options();
   $element['#id'] = empty($element['#id']) ? 'xml-codemirror-' . $id++ : $element['#id'];
 
   $element['#attached']['js'][] = array(
-    'type' => 'file', 
-    'data' => $path_to_codemirror . '/lib/codemirror.js',
+    'type'   => 'file',
+    'data'   => $path_to_codemirror . '/lib/codemirror.js',
     'weight' => -10,
   );
   $element['#attached']['js'][] = array(
-    'type' => 'file', 
-    'data' => $path_to_codemirror . '/addon/hint/show-hint.js',
+    'type'   => 'file',
+    'data'   => $path_to_codemirror . '/addon/hint/show-hint.js',
     'weight' => -9,
   );
   $element['#attached']['js'][] = array(
-    'type' => 'file', 
-    'data' => $path_to_codemirror . '/addon/edit/closetag.js',
+    'type'   => 'file',
+    'data'   => $path_to_codemirror . '/addon/edit/closetag.js',
     'weight' => -8,
   );
   $element['#attached']['js'][] = array(
-    'type' => 'file', 
-    'data' => $path_to_codemirror . '/addon/hint/xml-hint.js',
+    'type'   => 'file',
+    'data'   => $path_to_codemirror . '/addon/hint/xml-hint.js',
     'weight' => -7,
   );
-  $element['#attached']['js'][] =  array(
-    'type' => 'file', 
+  $element['#attached']['js'][] = array(
+    'type' => 'file',
     'data' => drupal_get_path('module', 'xml_field_codemirror') . '/xml_field_codemirror.js',
   );
 
-  $element['#attached']['css'][] =  array(
-    'type' => 'file', 
+  $element['#attached']['css'][] = array(
+    'type' => 'file',
     'data' => $path_to_codemirror . '/lib/codemirror.css',
   );
-  $element['#attached']['css'][] =  array(
-    'type' => 'file', 
+  $element['#attached']['css'][] = array(
+    'type' => 'file',
     'data' => $path_to_codemirror . '/addon/hint-show-hint.css',
   );
-  $element['#attached']['css'][] =  array(
-    'type' => 'file', 
+  $element['#attached']['css'][] = array(
+    'type' => 'file',
     'data' => drupal_get_path('module', 'xml_field_codemirror') . '/xml_field_codemirror.css',
   );
 
@@ -348,8 +350,8 @@ function xml_field_codemirror_element_pre_render($element) {
   }
   $mode = $element['#codemirror_options']['mode'];
   $element['#attached']['js'][] = array(
-    'data' => $path_to_codemirror . "/mode/{$mode}/{$mode}.js",
-    'type' => 'file',
+    'data'   => $path_to_codemirror . "/mode/{$mode}/{$mode}.js",
+    'type'   => 'file',
     'weight' => '10',
   );
 
@@ -364,8 +366,8 @@ function xml_field_codemirror_theme($existing, $type, $theme, $path) {
     'xml_codemirror' => array(
       'variables' => array(
         'attributes' => array(),
-        'xml' => '',
-        'options' => array(
+        'xml'        => '',
+        'options'    => array(
           'readOnly' => TRUE,
         ),
       ),
@@ -377,7 +379,7 @@ function xml_field_codemirror_theme($existing, $type, $theme, $path) {
  * Implements hook_preprocess_xml_codemirror().
  */
 function xml_field_preprocess_xml_codemirror(&$vars) {
-  
+
   // We can accept xml as an object
   if (!is_string($vars['xml'])) {
     $vars['xml'] = xml_field_format($vars['xml'], array(
@@ -386,11 +388,11 @@ function xml_field_preprocess_xml_codemirror(&$vars) {
   }
 
   $build = array(
-    '#type' => t("xml_codemirror"),
-    '#title_display' => 'none',
-    '#attributes' => $vars['attributes'],
-    '#value' => $vars['xml'],
-    '#resizable' => FALSE,
+    '#type'               => t("xml_codemirror"),
+    '#title_display'      => 'none',
+    '#attributes'         => $vars['attributes'],
+    '#value'              => $vars['xml'],
+    '#resizable'          => FALSE,
     '#codemirror_options' => $vars['options'],
   );
 

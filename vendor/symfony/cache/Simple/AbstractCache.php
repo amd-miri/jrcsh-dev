@@ -12,17 +12,26 @@
 namespace Symfony\Component\Cache\Simple;
 
 use Psr\Log\LoggerAwareInterface;
-use Psr\SimpleCache\CacheInterface;
+use Psr\SimpleCache\CacheInterface as Psr16CacheInterface;
+use Symfony\Component\Cache\Adapter\AbstractAdapter;
 use Symfony\Component\Cache\CacheItem;
 use Symfony\Component\Cache\Exception\InvalidArgumentException;
 use Symfony\Component\Cache\ResettableInterface;
 use Symfony\Component\Cache\Traits\AbstractTrait;
+use Symfony\Contracts\Cache\CacheInterface;
+
+@trigger_error(sprintf('The "%s" class is deprecated since Symfony 4.3, use "%s" and type-hint for "%s" instead.', AbstractCache::class, AbstractAdapter::class, CacheInterface::class), E_USER_DEPRECATED);
 
 /**
- * @author Nicolas Grekas <p@tchwork.com>
+ * @deprecated since Symfony 4.3, use AbstractAdapter and type-hint for CacheInterface instead.
  */
-abstract class AbstractCache implements CacheInterface, LoggerAwareInterface, ResettableInterface
+abstract class AbstractCache implements Psr16CacheInterface, LoggerAwareInterface, ResettableInterface
 {
+    /**
+     * @internal
+     */
+    protected const NS_SEPARATOR = ':';
+
     use AbstractTrait {
         deleteItems as private;
         AbstractTrait::deleteItem as delete;
@@ -31,13 +40,9 @@ abstract class AbstractCache implements CacheInterface, LoggerAwareInterface, Re
 
     private $defaultLifetime;
 
-    /**
-     * @param string $namespace
-     * @param int    $defaultLifetime
-     */
-    protected function __construct($namespace = '', $defaultLifetime = 0)
+    protected function __construct(string $namespace = '', int $defaultLifetime = 0)
     {
-        $this->defaultLifetime = max(0, (int) $defaultLifetime);
+        $this->defaultLifetime = max(0, $defaultLifetime);
         $this->namespace = '' === $namespace ? '' : CacheItem::validateKey($namespace).':';
         if (null !== $this->maxIdLength && \strlen($namespace) > $this->maxIdLength - 24) {
             throw new InvalidArgumentException(sprintf('Namespace must be %d chars max, %d given ("%s")', $this->maxIdLength - 24, \strlen($namespace), $namespace));
@@ -56,7 +61,7 @@ abstract class AbstractCache implements CacheInterface, LoggerAwareInterface, Re
                 return $value;
             }
         } catch (\Exception $e) {
-            CacheItem::log($this->logger, 'Failed to fetch key "{key}"', ['key' => $key, 'exception' => $e]);
+            CacheItem::log($this->logger, 'Failed to fetch key "{key}": '.$e->getMessage(), ['key' => $key, 'exception' => $e]);
         }
 
         return $default;
@@ -90,7 +95,7 @@ abstract class AbstractCache implements CacheInterface, LoggerAwareInterface, Re
         try {
             $values = $this->doFetch($ids);
         } catch (\Exception $e) {
-            CacheItem::log($this->logger, 'Failed to fetch requested values', ['keys' => $keys, 'exception' => $e]);
+            CacheItem::log($this->logger, 'Failed to fetch values: '.$e->getMessage(), ['keys' => $keys, 'exception' => $e]);
             $values = [];
         }
         $ids = array_combine($ids, $keys);
@@ -129,7 +134,8 @@ abstract class AbstractCache implements CacheInterface, LoggerAwareInterface, Re
         foreach (\is_array($e) ? $e : array_keys($valuesById) as $id) {
             $keys[] = substr($id, \strlen($this->namespace));
         }
-        CacheItem::log($this->logger, 'Failed to save values', ['keys' => $keys, 'exception' => $e instanceof \Exception ? $e : null]);
+        $message = 'Failed to save values'.($e instanceof \Exception ? ': '.$e->getMessage() : '.');
+        CacheItem::log($this->logger, $message, ['keys' => $keys, 'exception' => $e instanceof \Exception ? $e : null]);
 
         return false;
     }
@@ -175,7 +181,7 @@ abstract class AbstractCache implements CacheInterface, LoggerAwareInterface, Re
                 yield $key => $value;
             }
         } catch (\Exception $e) {
-            CacheItem::log($this->logger, 'Failed to fetch requested values', ['keys' => array_values($keys), 'exception' => $e]);
+            CacheItem::log($this->logger, 'Failed to fetch values: '.$e->getMessage(), ['keys' => array_values($keys), 'exception' => $e]);
         }
 
         foreach ($keys as $key) {

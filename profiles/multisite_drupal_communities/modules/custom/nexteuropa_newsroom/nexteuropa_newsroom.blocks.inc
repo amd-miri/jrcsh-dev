@@ -150,7 +150,7 @@ function _nexteuropa_newsroom_page_search_block() {
 function _nexteuropa_newsroom_agenda_block() {
   $content = '';
   if ($type = _nexteuropa_newsroom_get_type_from_agenda_block_context()) {
-    $agenda_block = new NexteuropaNewsroomBlockAgenda($type, [], NEXTEUROPA_NEWSROOM_TOPIC_OPERATOR_OR);
+    $agenda_block = new NexteuropaNewsroomBlockAgenda($type, []);
     $content = $agenda_block->generateContent();
   }
 
@@ -165,7 +165,9 @@ function _nexteuropa_newsroom_agenda_block() {
  *   Content.
  */
 function _nexteuropa_newsroom_share_block() {
-  drupal_add_js('//europa.eu/webtools/load.js', 'file');
+  if (!module_exists('nexteuropa_webtools')) {
+    drupal_add_js('//europa.eu/webtools/load.js', 'file');
+  }
   $output = '<div class="social-media-links--webtool-horizontal">';
   $output .= '<span class="social-media-links__label">' . t('Share this page') . '</span>';
   $output .= '<div class="shareThis hideWhenSmall">';
@@ -413,15 +415,6 @@ function _nexteuropa_newsroom_block_news_proposal() {
     // First try to get topic from the current node.
     if ($associated_topic_id = NexteuropaNewsroomHelper::getFieldValue($node, 'field_newsroom_associated_topic', 'tid')) {
       $topic_id = $associated_topic_id;
-    }
-    elseif ($group_id = NexteuropaNewsroomHelper::getFieldValue($node, 'og_group_ref', 'target_id')) {
-      // Try get topic from Organic group, if it exists.
-      $group_id = is_array($group_id) ? $group_id[0] : $group_id;
-      $group = node_load($group_id);
-
-      if ($group && $group_associated_topic_id = NexteuropaNewsroomHelper::getFieldValue($group, 'field_newsroom_associated_topic', 'tid')) {
-        $topic_id = $group_associated_topic_id;
-      }
     }
   }
   else {

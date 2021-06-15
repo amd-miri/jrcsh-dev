@@ -4,6 +4,10 @@
  * @file
  * Tests for the Scheduler API.
  */
+
+/**
+ * Tests to cover the Scheduler API functions.
+ */
 class SchedulerApiTestCase extends DrupalWebTestCase {
 
   /**
@@ -27,7 +31,7 @@ class SchedulerApiTestCase extends DrupalWebTestCase {
   /**
    * {@inheritdoc}
    */
-  function setUp() {
+  public function setUp() {
     parent::setUp('scheduler', 'scheduler_test');
 
     // Add scheduler functionality to the 'scheduler_test' node type.
@@ -46,7 +50,7 @@ class SchedulerApiTestCase extends DrupalWebTestCase {
    * @todo Create and update the nodes through the interface so we can check if
    *   the correct messages are displayed.
    */
-  function testAllowedPublishing() {
+  public function testAllowedPublishing() {
     // Create a node that is not approved for publication. Then simulate a cron
     // run, and check that the node is not published.
     $node = $this->createUnapprovedNode();
@@ -101,14 +105,14 @@ class SchedulerApiTestCase extends DrupalWebTestCase {
   /**
    * Check to see if a node is not published.
    *
-   * @param $nid
-   *   The nid of the node to check.
-   * @param $message
+   * @param int $nid
+   *   The id of the node to check.
+   * @param string $message
    *   The message to display along with the assertion.
-   * @param $group
+   * @param string $group
    *   The type of assertion - examples are "Browser", "PHP".
    *
-   * @return
+   * @return bool
    *   TRUE if the assertion succeeded, FALSE otherwise.
    */
   public function assertNodeNotPublished($nid, $message = NULL, $group = 'Other') {
@@ -119,14 +123,14 @@ class SchedulerApiTestCase extends DrupalWebTestCase {
   /**
    * Check to see if a node is published.
    *
-   * @param $nid
-   *   The nid of the node to check.
-   * @param $message
+   * @param int $nid
+   *   The id of the node to check.
+   * @param string $message
    *   The message to display along with the assertion.
-   * @param $group
+   * @param string $group
    *   The type of assertion - examples are "Browser", "PHP".
    *
-   * @return
+   * @return bool
    *   TRUE if the assertion succeeded, FALSE otherwise.
    */
   public function assertNodePublished($nid, $message = NULL, $group = 'Other') {
@@ -138,7 +142,7 @@ class SchedulerApiTestCase extends DrupalWebTestCase {
    * Returns the publication status of a node.
    *
    * @param int $nid
-   *   The nid of the node for which the publication status is desired.
+   *   The id of the node for which the publication status is desired.
    *
    * @return bool
    *   TRUE if the node is published, FALSE otherwise.

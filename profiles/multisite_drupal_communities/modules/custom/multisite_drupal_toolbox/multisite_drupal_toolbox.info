@@ -1,0 +1,15 @@
+name = Multisite drupal toolbox
+description = Toolbox for the multisite drupal platform
+package = multisite drupal toolbox
+core = 7.x
+
+dependencies[] = context
+dependencies[] = entity
+dependencies[] = features
+dependencies[] = libraries
+dependencies[] = linkchecker
+dependencies[] = multisite_config
+dependencies[] = translation
+dependencies[] = workbench_moderation
+
+files[] = multisite_drupal_toolbox.test

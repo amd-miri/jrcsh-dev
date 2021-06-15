@@ -12,7 +12,7 @@ $plugin = array(
   'config' => array(
     'expire_enabled' => FALSE,
     'expire_limit' => '6 months',
-    'expire_warning_message' => 'Your password has expired. Please change it now.',
+    'expire_warning_message' => t('Your password has expired. Please change it now.'),
     'expire_warning_email_sent' => '-14 days',
     'expire_warning_email_message' => '',
     'expire_warning_email_subject' => '[user:name], your password on [site:name] shall expire in [password_expiration_date:interval] ',
@@ -229,6 +229,7 @@ class PasswordPolicyExpire extends PasswordPolicyItem {
         'uid' => $account->uid,
         'pass' => $account->pass,
         'created' => REQUEST_TIME,
+        'is_generated' => FALSE,
       );
       password_policy_update_password_history($account->password_history[0]);
     }
@@ -323,7 +324,7 @@ class PasswordPolicyExpire extends PasswordPolicyItem {
       }
       $candidates = _password_policy_expire_query_users($notice_int, $policy_name);
       foreach ($candidates as $candidate) {
-        $account = user_load($candidate->uid);
+        $account = user_load($candidate->uid, TRUE);
         if ($this->policy->match($account)) {
           $message = _password_policy_expire_notify($account, $candidate, $candidate->created + $expire_int, $this);
           if ($message['result']) {

@@ -9,7 +9,6 @@
  * NexteuropaNewsroomAgendaBlockSchedule class.
  */
 class NexteuropaNewsroomAgendaBlockSchedule extends NexteuropaNewsroomAgenda {
-  private $operator = NEXTEUROPA_NEWSROOM_TOPIC_OPERATOR_OR;
 
   /**
    * NexteuropaNewsroomAgendaBlockSchedule constructor.
@@ -20,12 +19,9 @@ class NexteuropaNewsroomAgendaBlockSchedule extends NexteuropaNewsroomAgenda {
    *   Newsroom topic taxonomy term.
    * @param object $current_day
    *   Current date.
-   * @param string $operator
-   *   Operator.
    */
-  public function __construct($type, array $topics, $current_day, $operator) {
+  public function __construct($type, array $topics, $current_day) {
     $this->setIsBlock(TRUE);
-    $this->setOperator($operator);
     parent::__construct($type, $topics, $current_day);
   }
 
@@ -37,26 +33,6 @@ class NexteuropaNewsroomAgendaBlockSchedule extends NexteuropaNewsroomAgenda {
    */
   public function getItemsNumber() {
     return NexteuropaNewsroomHelper::getBlockItemsNumber(FALSE);
-  }
-
-  /**
-   * Gets query operator.
-   *
-   * @return string
-   *   Query operator: OR or AND.
-   */
-  public function getOperator() {
-    return $this->operator;
-  }
-
-  /**
-   * Sets query operator.
-   *
-   * @param string $value
-   *   Query operator: OR or AND.
-   */
-  public function setOperator($value) {
-    $this->operator = $value;
   }
 
   /**
@@ -73,13 +49,8 @@ class NexteuropaNewsroomAgendaBlockSchedule extends NexteuropaNewsroomAgenda {
     if (empty($this->getTopics())) {
       return $query;
     }
-
-    if ($this->getOperator() == NEXTEUROPA_NEWSROOM_TOPIC_OPERATOR_OR) {
+    else {
       $query->condition('topic_data.tid', $this->getTopicsId());
-
-    }
-    elseif ($nids = NexteuropaNewsroomHelper::getNodeRelatedToTopic($this->getTopicsId())) {
-      $query->condition('nid', $nids, 'IN');
     }
 
     return $query;

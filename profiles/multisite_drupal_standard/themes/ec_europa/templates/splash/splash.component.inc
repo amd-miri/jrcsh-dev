@@ -8,7 +8,7 @@
 /**
  * Implements hook_atomium_theme_hook().
  */
-function ec_europa_atomium_theme_splash() {
+function ec_europa_atomium_theme_splash(array $existing, $type, $theme, $path) {
   return array(
     'splash' => array(
       'template' => 'splash',
@@ -40,18 +40,19 @@ function ec_europa_preprocess_splash(array &$variables, $hook) {
   }
 
   $variables['languages_list'] = array();
+
   foreach ($variables['languages_list_array'] as $language) {
     $variables['languages_list'][] = array(
       '#theme' => _atomium_extend_theme_hook('link', $variables['theme_hook_original']),
-      '#text' => $language->name,
+      '#text' => $language->native,
       '#path' => $variables['path'],
       '#options' => array(
         'attributes' => array(
           'class' => array(
             'ecl-button',
+            'ecl-button--default',
             'ecl-button--block',
-            'ecl-button--splash-page',
-            'ecl-u-mb-xxxs',
+            'ecl-language-list__button',
           ),
           'lang' => $language->language,
           'hreflang' => $language->language,
@@ -62,9 +63,9 @@ function ec_europa_preprocess_splash(array &$variables, $hook) {
     );
   }
 
-  $variables['languages_list'] = array_chunk(
+  $variables['languages_list'] = \array_chunk(
     $variables['languages_list'],
-    round(count($variables['languages_list']) / 2)
+    \round(\count($variables['languages_list']) / 2)
   );
 
   foreach ($variables['languages_list'] as $index => &$language) {

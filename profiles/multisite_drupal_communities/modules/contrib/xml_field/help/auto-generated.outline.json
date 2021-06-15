@@ -1,0 +1,50 @@
+{
+    "chapters": [],
+    "sections": [
+        {
+            "id": "fapi",
+            "title": "FAPI Elements",
+            "file": "fapi.md",
+            "sort": 0
+        },
+        {
+            "id": "display",
+            "title": "XML Display",
+            "file": "display.md",
+            "sort": 1
+        },
+        {
+            "id": "schemas",
+            "title": "Using Schemas",
+            "file": "schemas.md",
+            "sort": 2
+        },
+        {
+            "id": "using_files",
+            "title": "Using Default and Schema Include Files",
+            "file": "using_files.md",
+            "sort": 3
+        },
+        {
+            "id": "youtube",
+            "title": "Embedding YouTube videos with XML Field",
+            "file": "youtube.md",
+            "sort": 4
+        },
+        {
+            "id": "iterate",
+            "title": "Iterating XML & Examples",
+            "file": "iterate.md",
+            "sort": 5
+        },
+        {
+            "id": "cdata",
+            "title": "Enhanced CDATA Handling",
+            "file": "cdata.md",
+            "sort": 6
+        }
+    ],
+    "settings": {
+        "search": "tipuesearch"
+    }
+}

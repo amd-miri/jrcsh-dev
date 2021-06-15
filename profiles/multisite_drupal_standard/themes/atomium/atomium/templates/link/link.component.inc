@@ -8,7 +8,7 @@
 /**
  * Implements hook_atomium_theme_hook().
  */
-function atomium_atomium_theme_link() {
+function atomium_atomium_theme_link(array $existing, $type, $theme, $path) {
   return array(
     'link' => array(
       'template' => 'link',
@@ -23,38 +23,32 @@ function atomium_atomium_theme_link() {
 
 /**
  * Implements hook_preprocess_hook().
- *
- * @SuppressWarnings(PHPMD.CyclomaticComplexity)
  */
 function atomium_preprocess_link(array &$variables, $hook) {
-  global $language_url;
-
   $variables += array('options' => array('html' => FALSE));
   $variables['options'] += array(
     'html' => FALSE,
   );
 
   if (isset($variables['options']['attributes'])) {
-    $variables['atomium']['attributes']['element']->merge($variables['options']['attributes']);
+    $variables['atomium']['attributes']['element']
+      ->merge($variables['options']['attributes']);
   }
 
-  $path = url($variables['path'], $variables['options']);
+  // This cannot be moved to a #pre_render because some contrib modules
+  // uses #theme => link instead of #type => link (see admin_menu).
+  $startWithHash = (\mb_strpos($variables['path'], '#') === 0);
+  $startWithJavascript = (\mb_strpos($variables['path'], 'javascript:') === 0);
 
-  // Append active class.
-  if (($path == '/' . $_GET['q'] || ($path == url('<front>', $variables['options']) && drupal_is_front_page())) &&
-    (empty($variables['options']['language']) || $variables['options']['language']->language == $language_url->language)) {
-    $variables['atomium']['attributes']['element']->append('class', 'active');
+  if (!($startWithHash || $startWithJavascript)) {
+    $variables['path'] = url($variables['path'], $variables['options']);
   }
 
-  if ((0 === \strpos($variables['path'], '#')) || (0 === \strpos($variables['path'], 'javascript:'))) {
-    $path = $variables['path'];
-  }
+  $variables['atomium']['attributes']['element']
+    ->setAttribute('href', $variables['path']);
 
-  $variables['atomium']['attributes']['element']->setAttribute('href', $path);
-
-  if (\is_string($variables['text'])) {
-    $variables['text'] = array(
-      '#markup' => ($variables['options']['html'] ? $variables['text'] : check_plain($variables['text'])),
-    );
-  }
+  // The text property must be a string.
+  $variables['text'] = $variables['options']['html'] ?
+    $variables['text'] :
+    check_plain($variables['text']);
 }

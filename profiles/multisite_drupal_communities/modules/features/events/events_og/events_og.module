@@ -1,0 +1,38 @@
+<?php
+
+/**
+ * @file
+ * Code for the Events feature.
+ */
+
+include_once 'events_og.features.inc';
+include_once 'events_og.views_alter.inc';
+
+/**
+ * Implements hook_modules_enabled().
+ */
+function events_og_modules_enabled($modules) {
+  if (in_array('events_og', $modules)) {
+    // Force feature revert to update og permissions.
+    features_revert(array('events_og' => array('og_features_permission')));
+  }
+}
+
+/**
+ * Implements hook_menu().
+ */
+function events_og_menu() {
+  $items = array();
+
+  $items['community/%group_name/calendar'] = array(
+    'title' => 'Events',
+    'page callback' => 'views_page',
+    'page arguments' => array('calendar', 'month', 1),
+    'access callback' => TRUE,
+    'type' => MENU_NORMAL_ITEM,
+    'menu_name' => 'menu-communities-menu',
+    'weight' => 1,
+  );
+
+  return $items;
+}

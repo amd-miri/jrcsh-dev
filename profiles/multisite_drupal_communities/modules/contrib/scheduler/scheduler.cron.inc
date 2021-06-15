@@ -47,10 +47,6 @@ function _scheduler_publish() {
       continue;
     }
 
-    // Invoke Scheduler API for modules to react before the node is published.
-    // @todo For D8 move the 'pre' call to here.
-    // See https://www.drupal.org/node/2311273
-
     // Update timestamps.
     $n->changed = $n->publish_on;
     $old_creation_date = $n->created;
@@ -74,7 +70,8 @@ function _scheduler_publish() {
 
     // Invoke scheduler API to allow modules to alter the node before it is
     // saved.
-    // @todo For D8, remove this from here.
+    // For 8.x this 'pre' call is moved up to just before 'Update timestamps'.
+    // See https://www.drupal.org/node/2311273
     _scheduler_scheduler_api($n, 'pre_' . $action);
 
     // Use the actions system to publish the node.
@@ -143,10 +140,6 @@ function _scheduler_unpublish() {
       continue;
     }
 
-    // Invoke scheduler API for modules to react before the node is unpublished.
-    // @todo For D8, move the 'pre' call to here.
-    // See https://www.drupal.org/node/2311273
-
     // Update timestamps.
     $old_change_date = $n->changed;
     $n->changed = $n->unpublish_on;
@@ -167,7 +160,8 @@ function _scheduler_unpublish() {
 
     // Invoke scheduler API to allow modules to alter the node before it is
     // saved.
-    // @todo For D8, remove this from here.
+    // For 8.x this 'pre' call is moved up to just before 'Update timestamps'.
+    // See https://www.drupal.org/node/2311273
     _scheduler_scheduler_api($n, 'pre_' . $action);
 
     // Use the actions system to unpublish the node.

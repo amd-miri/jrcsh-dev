@@ -31,12 +31,14 @@ function atomium_preprocess_node(array &$variables, $hook) {
   }
 
   $variables['unpublished'] = (!$variables['status']) ? TRUE : FALSE;
-  if ('0' == $variables['status']) {
+
+  if ($variables['status'] === '0') {
     $variables['classes_array'][] = 'node__unpublished';
     $variables['theme_hook_suggestions'][] = 'node__unpublished';
   }
 
   $variables['preview'] = isset($variables['preview']) ? $variables['preview'] : FALSE;
+
   if (isset($variables['preview'])) {
     $variables['classes_array'][] = 'node__preview';
     $variables['theme_hook_suggestions'][] = 'node__preview';
@@ -55,16 +57,32 @@ function atomium_preprocess_node(array &$variables, $hook) {
 
   // Remove class from the ul that holds the links <ul class="inline links">.
   // This is generated in the node_build_content() function in the node.module.
-  $variables['content']['links']['#attributes']['class'] = \array_values(\array_diff($variables['content']['links']['#attributes']['class'], array('inline')));
-  $variables['content']['links']['#attributes']['class'] = \array_values(\array_diff($variables['content']['links']['#attributes']['class'], array('links')));
+  if (isset($variables['content']['links'])) {
+    $variables['content']['links']['#attributes']['class'] = \array_values(
+      \array_diff(
+        $variables['content']['links']['#attributes']['class'],
+        array('inline')
+      )
+    );
+    $variables['content']['links']['#attributes']['class'] = \array_values(
+      \array_diff(
+        $variables['content']['links']['#attributes']['class'],
+        array('links')
+      )
+    );
 
-  // Remove the class attribute it its empty.
-  if (isset($variables['content']['links']['#attributes']['class']) && empty($variables['content']['links']['#attributes']['class'])) {
-    unset($variables['content']['links']['#attributes']['class']);
+    // Remove the class attribute it its empty.
+    if (
+      isset($variables['content']['links']['#attributes']['class']) &&
+      empty($variables['content']['links']['#attributes']['class'])
+    ) {
+      unset($variables['content']['links']['#attributes']['class']);
+    }
   }
 
   // Add pubdate to submitted variable.
   $variables['pubdate'] = '<time pubdate datetime="' . format_date($variables['node']->created, 'custom', 'c') . '">' . $variables['date'] . '</time>';
+
   if ($variables['display_submitted']) {
     $variables['submitted'] = t('Submitted by !username on !datetime', array('!username' => $variables['name'], '!datetime' => $variables['pubdate']));
   }
@@ -73,7 +91,7 @@ function atomium_preprocess_node(array &$variables, $hook) {
   $variables['classes_array'][] = 'view-mode-' . $variables['view_mode'];
 
   // Add a class to show node is authored by current user.
-  if ($variables['uid'] && $variables['uid'] == $GLOBALS['user']->uid) {
+  if ($variables['uid'] && $variables['uid'] === $GLOBALS['user']->uid) {
     $variables['classes_array'][] = 'node-by-viewer';
   }
   $variables['classes_array'][] = 'node-' . $variables['nid'];

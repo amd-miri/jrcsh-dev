@@ -8,7 +8,7 @@
 /**
  * Implements hook_atomium_theme_hook().
  */
-function atomium_atomium_theme_menu_tree() {
+function atomium_atomium_theme_menu_tree(array $existing, $type, $theme, $path) {
   return array(
     'menu_tree' => array(
       'template' => 'menu-tree',
@@ -27,10 +27,9 @@ function atomium_preprocess_menu_tree(array &$variables, $hook) {
 
   if (isset($variables['#tree'])) {
     $children = element_children($variables['#tree']);
-    if (isset($children[0])) {
-      if ($item = $variables['#tree'][$children[0]]) {
-        $variables['depth'] = $item['#original_link']['depth'];
-      }
+
+    if (isset($children[0]) && $item = $variables['#tree'][$children[0]]) {
+      $variables['depth'] = (int) $item['#original_link']['depth'];
     }
   }
 

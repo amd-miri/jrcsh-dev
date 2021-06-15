@@ -59,10 +59,10 @@ EXDATE:20111223</rule>
       <from>8/1/2011 00:00</from>
       <to>9/1/2011 00:00</to>
     </datestamp_range>
-    <!--
-      The 'datetime' field is using the 'Asia/Tokyo' timezone.
-      See DateExampleMigration::__construct().
-    -->
++    <!--
++      The 'datetime' field is using the 'Asia/Tokyo' timezone.
++      See DateExampleMigration::__construct().
++    -->
     <datetime>11/18/2011 06:00</datetime>
     <datetime_range>
       <from>10/30/2011 19:43</from>

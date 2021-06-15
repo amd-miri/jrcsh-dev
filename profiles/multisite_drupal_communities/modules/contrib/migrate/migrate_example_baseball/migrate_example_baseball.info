@@ -24,8 +24,7 @@ name = "migrate_example_baseball"
 package = "Migration"
 php = "5.2.4"
 
-; Information added by Drupal.org packaging script on 2018-06-10
-version = "7.x-2.11"
-core = "7.x"
+; Information added by drush on 2019-06-30
+version = "7.x-1.x-dev"
 project = "migrate"
-datestamp = "1528674486"
+datestamp = "1561927165"

@@ -30,8 +30,7 @@ class CacheDataCollector extends DataCollector implements LateDataCollectorInter
     private $instances = [];
 
     /**
-     * @param string           $name
-     * @param TraceableAdapter $instance
+     * @param string $name
      */
     public function addInstance($name, TraceableAdapter $instance)
     {
@@ -104,10 +103,7 @@ class CacheDataCollector extends DataCollector implements LateDataCollectorInter
         return $this->data['instances']['calls'];
     }
 
-    /**
-     * @return array
-     */
-    private function calculateStatistics()
+    private function calculateStatistics(): array
     {
         $statistics = [];
         foreach ($this->data['instances']['calls'] as $name => $calls) {
@@ -124,7 +120,15 @@ class CacheDataCollector extends DataCollector implements LateDataCollectorInter
             foreach ($calls as $call) {
                 ++$statistics[$name]['calls'];
                 $statistics[$name]['time'] += $call->end - $call->start;
-                if ('getItem' === $call->name) {
+                if ('get' === $call->name) {
+                    ++$statistics[$name]['reads'];
+                    if ($call->hits) {
+                        ++$statistics[$name]['hits'];
+                    } else {
+                        ++$statistics[$name]['misses'];
+                        ++$statistics[$name]['writes'];
+                    }
+                } elseif ('getItem' === $call->name) {
                     ++$statistics[$name]['reads'];
                     if ($call->hits) {
                         ++$statistics[$name]['hits'];
@@ -158,10 +162,7 @@ class CacheDataCollector extends DataCollector implements LateDataCollectorInter
         return $statistics;
     }
 
-    /**
-     * @return array
-     */
-    private function calculateTotalStatistics()
+    private function calculateTotalStatistics(): array
     {
         $statistics = $this->getStatistics();
         $totals = [

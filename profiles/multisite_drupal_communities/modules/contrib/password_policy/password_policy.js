@@ -170,10 +170,10 @@
         }
       });
 
-      $('fieldset#edit-symbol-count-fieldset', context).drupalSetSummary(function (context) {
-        var symbol_count = $('input[name="symbol_count"]', context).val();
-        if (symbol_count) {
-          return Drupal.t('At least @count symbols', {'@count': symbol_count}) + '<br/>' + Drupal.t('Symbol characters: @symbols', {'@symbols': $('input[name="symbol_count_symbols"]', context).val()});
+      $('fieldset#edit-special-count-fieldset', context).drupalSetSummary(function (context) {
+        var special_count = $('input[name="special_count"]', context).val();
+        if (special_count) {
+          return Drupal.t('At least @count special characters', {'@count': special_count}) + '<br/>' + Drupal.t('Special characters: @chars', {'@chars': $('input[name="special_count_chars"]', context).val()});
         }
         else {
           return Drupal.t('Not enforced');

@@ -1,6 +1,8 @@
-# EC Europa Theme
+[![Build Status](https://drone.fpfis.eu/api/badges/ec-europa/ec_europa/status.svg?branch=0.0.x)](https://drone.fpfis.eu/ec-europa/ec_europa) 
+[![GitHub issues](https://img.shields.io/github/issues/ec-europa/ec_europa.svg)](https://github.com/ec-europa/ec_europa/issues?q=is:open+is:issue) 
+[![Current Release](https://img.shields.io/github/release/ec-europa/ec_europa.svg)](https://github.com/ec-europa/ec_europa/releases)
 
-[![Build Status](https://travis-ci.org/ec-europa/ec_europa.svg?branch=master)](https://travis-ci.org/ec-europa/ec_europa)
+# EC Europa Theme
 
 Repository containing the drupal theme for the NextEuropa platform.
 
@@ -73,13 +75,10 @@ render field value using ECL formatters.
 Writing tests specific to the EC Europa Theme project is optional (at the moment). Developers that would like to use
 Behat to test their work can do that by setting up a vanilla Drupal 7 site and installing the theme and its dependencies.
 
-The full list of steps can be found in the `before_script:` section of [.travis.yml](.travis.yml), although setup might
-vary depending on each developer's environment.
-
 Tests can be ran via:
 
-```
-$ ./vendor/bin/behat
+```bash
+./vendor/bin/behat
 ```
 
 ## Developer notes
@@ -103,7 +102,33 @@ If you need to implement some specific content formats in the rich texts in your
 you just have to insert them in an "editor.css" file.<br />
 This file is to be put in a repository named "wysiwyg" placed at the root of the sub-theme.
 
-### Compile ECL
+[Go to top](#table-of-content)
+
+### Development environment
+
+#### Usage
+
+To start, run:
+
+```bash
+docker-compose up
+```
+
+It is advised to not daemonise `docker-compose` so it can be turned off (`CTRL+C`) quickly when it is not anymore needed.
+However, there is an option to run docker on background by using the flag `-d`:
+
+```bash
+docker-compose up -d
+```
+
+Then:
+
+```bash
+docker-compose exec web composer install
+docker-compose exec web ./vendor/bin/taskman drupal:site-install
+```
+
+#### Compile ECL
 
 Requirements:
 
@@ -112,14 +137,14 @@ Requirements:
 
 Setup your environment by running:
 
-```
-$ npm install
+```bash
+docker-compose exec -u node node npm install 
 ```
 
 Build it by running:
 
-```
-$ npm run build
+```bash
+docker-compose exec -u node node npm run build 
 ```
 
 This will:
@@ -135,9 +160,36 @@ For more details about these build steps, check [`ecl-builder` documentation](ht
 
 Update the ECL by changing the `@ec-europa/ecl-components-preset-base` version in `package.json` and running:
 
-```
-$ npm run build
+```bash
+npm run build
 ```
 
 This will update assets such as images and fonts and re-compile CSS, resulting changes are meant to be committed to this
 repository since we cannot require theme users and/or deployment procedures to build the theme locally.
+
+
+## Release/changelog tool by taskman
+
+For a list of available commands run:
+
+```
+./vendor/bin/taskman
+```
+
+### Generate changelog
+
+Place your token in `taskman.yml` file:
+
+```yaml
+github:
+  token: YOUR_TOKEN
+```
+
+and then:
+
+```bash
+./vendor/bin/taskman github:changelog
+```
+
+For more information about how to customise the building process check [PHP Taskman](https://github.com/php-taskman/core)
+project page.

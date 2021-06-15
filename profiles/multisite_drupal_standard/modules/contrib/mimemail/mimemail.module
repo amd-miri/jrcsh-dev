@@ -235,7 +235,7 @@ function mimemail_mailengine($op, $message = array()) {
       // If 'Return-Path' isn't already set in php.ini, we pass it separately
       // as an additional parameter instead of in the header.
       // However, if PHP's 'safe_mode' is on, this is not allowed.
-      if (isset($message['headers']['Return-Path']) && !ini_get('safe_mode')) {
+      if (isset($message['headers']['Return-Path'])) {
         $return_path_set = strpos(ini_get('sendmail_path'), ' -f');
         if (!$return_path_set) {
           $return_path = trim($message['headers']['Return-Path'], '<>');

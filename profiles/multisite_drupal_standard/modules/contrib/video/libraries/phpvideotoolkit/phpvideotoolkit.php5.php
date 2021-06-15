@@ -1149,7 +1149,7 @@ class PHPVideoToolkit {
    * @return boolean FALSE on error encountered, TRUE otherwise
    */
   public function setInputFile($file, $input_frame_rate=0, $validate_decode_codecs=TRUE) {
-    $files_length = count($file);
+    $files_length = is_array($file) || $file instanceof Countable ? count($file) : (int) (!empty($file));
 // 			if the total number of files entered is 1 then only one file is being processed
     if ($files_length == 1) {
 //				check the input file, if there is a %d in there or a similar %03d then the file inputted is a sequence, if neither of those is found
@@ -2037,7 +2037,7 @@ class PHPVideoToolkit {
           $image = imagecreatefrompng($file);
           break;
         default :
-          continue 1;
+          continue 2;
       }
 
 // 				the dimensions will/should be the same for each image however still best to check
@@ -2621,14 +2621,9 @@ class PHPVideoToolkit {
    * @return array An array of codecs available to ffmpeg.
    */
   public static function getAvailableCodecs($type=FALSE) {
-// 			check to see if this is a static call
-    if (isset($this) === FALSE) {
       $toolkit = new PHPVideoToolkit();
       $info = $toolkit->getFFmpegInfo();
-    }
-    else {
-      $info = $this->getFFmpegInfo();
-    }
+    
 // 			are we checking for particluar method?
     $return_vals = array();
     if ($type === FALSE) {

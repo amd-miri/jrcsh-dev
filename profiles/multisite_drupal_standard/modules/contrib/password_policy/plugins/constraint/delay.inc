@@ -71,12 +71,11 @@ function password_policy_delay_constraint($password, $account, $constraint) {
 
   // If user has only system-generated password, uses one-time link and has the
   // token in the URL, don't apply constraint.
-  $is_password_generated = variable_get('user_email_verification', TRUE) && count($account->password_history) == 1;
+  $is_password_generated = count($account->password_history) == 1 && $account->password_history[0]->is_generated;
   $is_one_time_login = isset($_SESSION['pass_reset_' . $account->uid], $_GET['pass-reset-token']) && $_GET['pass-reset-token'] === $_SESSION['pass_reset_' . $account->uid];
   if ($is_password_generated && $is_one_time_login) {
     return TRUE;
   }
-
 
   // Apply constraint if last number of password changes defined by threshold
   // happened too recently.

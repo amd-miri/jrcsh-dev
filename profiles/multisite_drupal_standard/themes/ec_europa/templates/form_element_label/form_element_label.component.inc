@@ -32,14 +32,14 @@ function ec_europa_preprocess_form_element_label(array &$variables, $hook) {
 function ec_europa_preprocess_form_element_label__form_element__checkbox(array &$variables, $hook) {
   $variables['atomium']['attributes']['wrapper']->append('class', 'ecl-checkbox__label');
 
-  if (isset($variables['element']['element']) && 'invisible' == $variables['element']['element']['#title_display']) {
+  if (isset($variables['element']['element']) && $variables['element']['element']['#title_display'] === 'invisible') {
     $variables['atomium']['attributes']['wrapper']->remove('class', 'element-invisible');
     $variables['form_element_label'] = array(
       'title' => NULL,
       'required' => NULL,
     );
   }
-  $variables['atomium']['attributes']['wrapper']->removeAttribute('for');
+  $variables['atomium']['attributes']['wrapper']->delete('for');
 }
 
 /**
@@ -48,12 +48,12 @@ function ec_europa_preprocess_form_element_label__form_element__checkbox(array &
 function ec_europa_preprocess_form_element_label__form_element__radio(array &$variables, $hook) {
   $variables['atomium']['attributes']['wrapper']->append('class', 'ecl-radio__label');
 
-  if (isset($variables['element']['element']) && 'invisible' == $variables['element']['element']['#title_display']) {
+  if (isset($variables['element']['element']) && $variables['element']['element']['#title_display'] === 'invisible') {
     $variables['atomium']['attributes']['wrapper']->remove('class', 'element-invisible');
     $variables['form_element_label'] = array(
       'title' => NULL,
       'required' => NULL,
     );
   }
-  $variables['atomium']['attributes']['wrapper']->removeAttribute('for');
+  $variables['atomium']['attributes']['wrapper']->delete('for');
 }

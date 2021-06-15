@@ -1,0 +1,166 @@
+<?php
+
+/**
+ * @file
+ * Solr_config.install file.
+ */
+
+include_once 'solr_config.install.inc';
+
+/**
+ * Implements hook_enable().
+ */
+function solr_config_enable() {
+  // Settings for file bundles implemented by file_entity.
+  db_insert('apachesolr_index_bundles')->fields(array(
+    'env_id' => 'solr',
+    'entity_type' => 'file',
+    'bundle' => 'application',
+  ))->execute();
+  db_insert('apachesolr_index_bundles')->fields(array(
+    'env_id' => 'solr',
+    'entity_type' => 'file',
+    'bundle' => 'audio',
+  ))->execute();
+  db_insert('apachesolr_index_bundles')->fields(array(
+    'env_id' => 'solr',
+    'entity_type' => 'file',
+    'bundle' => 'image',
+  ))->execute();
+  db_insert('apachesolr_index_bundles')->fields(array(
+    'env_id' => 'solr',
+    'entity_type' => 'file',
+    'bundle' => 'text',
+  ))->execute();
+  db_insert('apachesolr_index_bundles')->fields(array(
+    'env_id' => 'solr',
+    'entity_type' => 'file',
+    'bundle' => 'video',
+  ))->execute();
+  db_insert('apachesolr_index_bundles')->fields(array(
+    'env_id' => 'solr',
+    'entity_type' => 'file',
+    'bundle' => 'file',
+  ))->execute();
+
+  db_insert('apachesolr_index_bundles')->fields(array(
+    'env_id' => 'solr',
+    'entity_type' => 'file',
+    'bundle' => 'document',
+  ))->execute();
+
+  _solr_config_place_facets();
+
+}
+
+/**
+ * Implements hook_disable().
+ */
+function solr_config_disable() {
+  // Settings for file bundles implemented by file_entity.
+  db_delete('apachesolr_index_bundles')
+    ->condition('env_id', 'solr')
+    ->condition('entity_type', 'file')
+    ->condition('bundle', 'application')
+    ->execute();
+  db_delete('apachesolr_index_bundles')
+    ->condition('env_id', 'solr')
+    ->condition('entity_type', 'file')
+    ->condition('bundle', 'audio')
+    ->execute();
+  db_delete('apachesolr_index_bundles')
+    ->condition('env_id', 'solr')
+    ->condition('entity_type', 'file')
+    ->condition('bundle', 'image')
+    ->execute();
+  db_delete('apachesolr_index_bundles')
+    ->condition('env_id', 'solr')
+    ->condition('entity_type', 'file')
+    ->condition('bundle', 'text')
+    ->execute();
+  db_delete('apachesolr_index_bundles')
+    ->condition('env_id', 'solr')
+    ->condition('entity_type', 'file')
+    ->condition('bundle', 'video')
+    ->execute();
+
+  db_delete('apachesolr_index_bundles')
+    ->condition('env_id', 'solr')
+    ->condition('entity_type', 'file')
+    ->condition('bundle', 'file')
+    ->execute();
+
+  db_delete('apachesolr_index_bundles')
+    ->condition('env_id', 'solr')
+    ->condition('entity_type', 'file')
+    ->condition('bundle', 'document')
+    ->execute();
+}
+
+/**
+ * Add documents to the indexable file bundles.
+ */
+function solr_config_update_7110() {
+  db_insert('apachesolr_index_bundles')->fields(array(
+    'env_id' => 'solr',
+    'entity_type' => 'file',
+    'bundle' => 'document',
+  ))->execute();
+}
+
+/**
+ * Add solr facet blocks to the search context.
+ */
+function solr_config_update_7120() {
+  _solr_config_place_facets();
+}
+
+/**
+ * Add a menu link for the solr facets settings.
+ */
+function solr_config_update_7122() {
+  $mlid_parent = db_select('menu_links', 'ml')
+    ->condition('ml.link_path', 'admin/config/search')
+    ->fields('ml', array('mlid'))
+    ->execute()
+    ->fetchField();
+
+  $options = array();
+  $options['attributes']['title'] = t('Configure SolR facets');
+
+  $item = array(
+    'link_path' => 'admin/config/search/apachesolr/settings/solr/facets',
+    'link_title' => t('SolR facets'),
+    'menu_name' => 'management',
+    'options' => $options,
+    'plid' => $mlid_parent,
+  );
+  menu_link_save($item);
+}
+
+/**
+ * Implements hook_install().
+ */
+function solr_config_install() {
+  $t = get_t();
+  // Add a menu link for the solr facets settings.
+  $mlid_parent = db_select('menu_links', 'ml')
+    ->condition('ml.link_path', 'admin/config/search')
+    ->fields('ml', array('mlid'))
+    ->execute()
+    ->fetchField();
+
+  $options = array();
+  $options['attributes']['title'] = $t('Configure SolR facets');
+
+  $item = array(
+    'link_path' => 'admin/config/search/apachesolr/settings/solr/facets',
+    'link_title' => $t('SolR facets'),
+    'menu_name' => 'management',
+    'options' => $options,
+    'plid' => $mlid_parent,
+  );
+  menu_link_save($item);
+
+  variable_set('apachesolr_delay_removals', 1);
+}

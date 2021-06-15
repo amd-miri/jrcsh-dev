@@ -7,7 +7,8 @@ use Drupal\Tests\atomium\AbstractTest;
 /**
  * Class AbstractUnitTest.
  *
- * @package Drupal\Tests\atomium\Kernel
+ * @internal
  */
 abstract class AbstractUnitTest extends AbstractTest {
+
 }

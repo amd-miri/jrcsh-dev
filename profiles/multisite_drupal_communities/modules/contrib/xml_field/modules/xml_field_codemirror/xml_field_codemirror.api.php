@@ -11,9 +11,9 @@
  * Implements hook_xml_field_codemirror_defaults_alter().
  *
  * Allow modules to alter the codemirror configuration option defaults. Note
-   that field instance options (set in the UI) take precendence over any values
-   here; these are just global defaults. This allows for modifications to all
-   CodeMirror options though, most of which are not accessible in the UI.
+ * that field instance options (set in the UI) take precendence over any values
+ * here; these are just global defaults. This allows for modifications to all
+ * CodeMirror options though, most of which are not accessible in the UI.
  *
  * @param array &$config
  *

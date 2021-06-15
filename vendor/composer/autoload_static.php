@@ -4,13 +4,15 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInit0577e61ae4e45c436e676ee492e8437a
+class ComposerStaticInit44e7e1466cd485f172915fc6d2c7c100
 {
     public static $files = array (
-        '32dcc8afd4335739640db7d200c1971d' => __DIR__ . '/..' . '/symfony/polyfill-apcu/bootstrap.php',
         '0e6d7bf4a5811bfa5cf40c5ccd6fae6a' => __DIR__ . '/..' . '/symfony/polyfill-mbstring/bootstrap.php',
+        '023d27dca8066ef29e6739335ea73bad' => __DIR__ . '/..' . '/symfony/polyfill-php70/bootstrap.php',
         '320cde22f66dd4f5d3fd621d3e88b98f' => __DIR__ . '/..' . '/symfony/polyfill-ctype/bootstrap.php',
+        '25072dd6e2470089de65ae7bf11d3109' => __DIR__ . '/..' . '/symfony/polyfill-php72/bootstrap.php',
         '7b11c4dc42b3b3023073cb14e519683c' => __DIR__ . '/..' . '/ralouphie/getallheaders/src/getallheaders.php',
+        'f598d06aa772fa33d905e87be6398fb1' => __DIR__ . '/..' . '/symfony/polyfill-intl-idn/bootstrap.php',
         'a0edc8309cc5e1d60e3047b5df6b7052' => __DIR__ . '/..' . '/guzzlehttp/psr7/src/functions_include.php',
         'c964ee0ededf28c96ebd9db5099ef910' => __DIR__ . '/..' . '/guzzlehttp/promises/src/functions_include.php',
         '37a3dc5111fe8f707ab4c132ef1dbc62' => __DIR__ . '/..' . '/guzzlehttp/guzzle/src/functions_include.php',
@@ -27,9 +29,15 @@ class ComposerStaticInit0577e61ae4e45c436e676ee492e8437a
         ),
         'S' => 
         array (
+            'Symfony\\Polyfill\\Php72\\' => 23,
+            'Symfony\\Polyfill\\Php70\\' => 23,
             'Symfony\\Polyfill\\Mbstring\\' => 26,
+            'Symfony\\Polyfill\\Intl\\Idn\\' => 26,
             'Symfony\\Polyfill\\Ctype\\' => 23,
-            'Symfony\\Polyfill\\Apcu\\' => 22,
+            'Symfony\\Contracts\\Translation\\' => 30,
+            'Symfony\\Contracts\\Service\\' => 26,
+            'Symfony\\Contracts\\Cache\\' => 24,
+            'Symfony\\Component\\VarExporter\\' => 30,
             'Symfony\\Component\\Validator\\' => 28,
             'Symfony\\Component\\Translation\\' => 30,
             'Symfony\\Component\\ExpressionLanguage\\' => 37,
@@ -39,7 +47,6 @@ class ComposerStaticInit0577e61ae4e45c436e676ee492e8437a
         ),
         'P' => 
         array (
-            'Psr\\SimpleCache\\' => 16,
             'Psr\\Log\\' => 8,
             'Psr\\Http\\Message\\' => 17,
             'Psr\\Container\\' => 14,
@@ -74,17 +81,41 @@ class ComposerStaticInit0577e61ae4e45c436e676ee492e8437a
         array (
             0 => __DIR__ . '/..' . '/cweagans/composer-patches/src',
         ),
+        'Symfony\\Polyfill\\Php72\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/symfony/polyfill-php72',
+        ),
+        'Symfony\\Polyfill\\Php70\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/symfony/polyfill-php70',
+        ),
         'Symfony\\Polyfill\\Mbstring\\' => 
         array (
             0 => __DIR__ . '/..' . '/symfony/polyfill-mbstring',
+        ),
+        'Symfony\\Polyfill\\Intl\\Idn\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/symfony/polyfill-intl-idn',
         ),
         'Symfony\\Polyfill\\Ctype\\' => 
         array (
             0 => __DIR__ . '/..' . '/symfony/polyfill-ctype',
         ),
-        'Symfony\\Polyfill\\Apcu\\' => 
+        'Symfony\\Contracts\\Translation\\' => 
         array (
-            0 => __DIR__ . '/..' . '/symfony/polyfill-apcu',
+            0 => __DIR__ . '/..' . '/symfony/translation-contracts',
+        ),
+        'Symfony\\Contracts\\Service\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/symfony/service-contracts',
+        ),
+        'Symfony\\Contracts\\Cache\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/symfony/cache-contracts',
+        ),
+        'Symfony\\Component\\VarExporter\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/symfony/var-exporter',
         ),
         'Symfony\\Component\\Validator\\' => 
         array (
@@ -109,10 +140,6 @@ class ComposerStaticInit0577e61ae4e45c436e676ee492e8437a
         'Symfony\\Component\\Cache\\' => 
         array (
             0 => __DIR__ . '/..' . '/symfony/cache',
-        ),
-        'Psr\\SimpleCache\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/psr/simple-cache/src',
         ),
         'Psr\\Log\\' => 
         array (
@@ -166,12 +193,68 @@ class ComposerStaticInit0577e61ae4e45c436e676ee492e8437a
         ),
     );
 
+    public static $classMap = array (
+        'ArithmeticError' => __DIR__ . '/..' . '/symfony/polyfill-php70/Resources/stubs/ArithmeticError.php',
+        'AssertionError' => __DIR__ . '/..' . '/symfony/polyfill-php70/Resources/stubs/AssertionError.php',
+        'CAS_AuthenticationException' => __DIR__ . '/..' . '/jasig/phpcas/source/CAS/AuthenticationException.php',
+        'CAS_Client' => __DIR__ . '/..' . '/jasig/phpcas/source/CAS/Client.php',
+        'CAS_CookieJar' => __DIR__ . '/..' . '/jasig/phpcas/source/CAS/CookieJar.php',
+        'CAS_Exception' => __DIR__ . '/..' . '/jasig/phpcas/source/CAS/Exception.php',
+        'CAS_GracefullTerminationException' => __DIR__ . '/..' . '/jasig/phpcas/source/CAS/GracefullTerminationException.php',
+        'CAS_InvalidArgumentException' => __DIR__ . '/..' . '/jasig/phpcas/source/CAS/InvalidArgumentException.php',
+        'CAS_Languages_Catalan' => __DIR__ . '/..' . '/jasig/phpcas/source/CAS/Languages/Catalan.php',
+        'CAS_Languages_ChineseSimplified' => __DIR__ . '/..' . '/jasig/phpcas/source/CAS/Languages/ChineseSimplified.php',
+        'CAS_Languages_English' => __DIR__ . '/..' . '/jasig/phpcas/source/CAS/Languages/English.php',
+        'CAS_Languages_French' => __DIR__ . '/..' . '/jasig/phpcas/source/CAS/Languages/French.php',
+        'CAS_Languages_German' => __DIR__ . '/..' . '/jasig/phpcas/source/CAS/Languages/German.php',
+        'CAS_Languages_Greek' => __DIR__ . '/..' . '/jasig/phpcas/source/CAS/Languages/Greek.php',
+        'CAS_Languages_Japanese' => __DIR__ . '/..' . '/jasig/phpcas/source/CAS/Languages/Japanese.php',
+        'CAS_Languages_LanguageInterface' => __DIR__ . '/..' . '/jasig/phpcas/source/CAS/Languages/LanguageInterface.php',
+        'CAS_Languages_Spanish' => __DIR__ . '/..' . '/jasig/phpcas/source/CAS/Languages/Spanish.php',
+        'CAS_OutOfSequenceBeforeAuthenticationCallException' => __DIR__ . '/..' . '/jasig/phpcas/source/CAS/OutOfSequenceBeforeAuthenticationCallException.php',
+        'CAS_OutOfSequenceBeforeClientException' => __DIR__ . '/..' . '/jasig/phpcas/source/CAS/OutOfSequenceBeforeClientException.php',
+        'CAS_OutOfSequenceBeforeProxyException' => __DIR__ . '/..' . '/jasig/phpcas/source/CAS/OutOfSequenceBeforeProxyException.php',
+        'CAS_OutOfSequenceException' => __DIR__ . '/..' . '/jasig/phpcas/source/CAS/OutOfSequenceException.php',
+        'CAS_PGTStorage_AbstractStorage' => __DIR__ . '/..' . '/jasig/phpcas/source/CAS/PGTStorage/AbstractStorage.php',
+        'CAS_PGTStorage_Db' => __DIR__ . '/..' . '/jasig/phpcas/source/CAS/PGTStorage/Db.php',
+        'CAS_PGTStorage_File' => __DIR__ . '/..' . '/jasig/phpcas/source/CAS/PGTStorage/File.php',
+        'CAS_ProxiedService' => __DIR__ . '/..' . '/jasig/phpcas/source/CAS/ProxiedService.php',
+        'CAS_ProxiedService_Abstract' => __DIR__ . '/..' . '/jasig/phpcas/source/CAS/ProxiedService/Abstract.php',
+        'CAS_ProxiedService_Exception' => __DIR__ . '/..' . '/jasig/phpcas/source/CAS/ProxiedService/Exception.php',
+        'CAS_ProxiedService_Http' => __DIR__ . '/..' . '/jasig/phpcas/source/CAS/ProxiedService/Http.php',
+        'CAS_ProxiedService_Http_Abstract' => __DIR__ . '/..' . '/jasig/phpcas/source/CAS/ProxiedService/Http/Abstract.php',
+        'CAS_ProxiedService_Http_Get' => __DIR__ . '/..' . '/jasig/phpcas/source/CAS/ProxiedService/Http/Get.php',
+        'CAS_ProxiedService_Http_Post' => __DIR__ . '/..' . '/jasig/phpcas/source/CAS/ProxiedService/Http/Post.php',
+        'CAS_ProxiedService_Imap' => __DIR__ . '/..' . '/jasig/phpcas/source/CAS/ProxiedService/Imap.php',
+        'CAS_ProxiedService_Testable' => __DIR__ . '/..' . '/jasig/phpcas/source/CAS/ProxiedService/Testable.php',
+        'CAS_ProxyChain' => __DIR__ . '/..' . '/jasig/phpcas/source/CAS/ProxyChain.php',
+        'CAS_ProxyChain_AllowedList' => __DIR__ . '/..' . '/jasig/phpcas/source/CAS/ProxyChain/AllowedList.php',
+        'CAS_ProxyChain_Any' => __DIR__ . '/..' . '/jasig/phpcas/source/CAS/ProxyChain/Any.php',
+        'CAS_ProxyChain_Interface' => __DIR__ . '/..' . '/jasig/phpcas/source/CAS/ProxyChain/Interface.php',
+        'CAS_ProxyChain_Trusted' => __DIR__ . '/..' . '/jasig/phpcas/source/CAS/ProxyChain/Trusted.php',
+        'CAS_ProxyTicketException' => __DIR__ . '/..' . '/jasig/phpcas/source/CAS/ProxyTicketException.php',
+        'CAS_Request_AbstractRequest' => __DIR__ . '/..' . '/jasig/phpcas/source/CAS/Request/AbstractRequest.php',
+        'CAS_Request_CurlMultiRequest' => __DIR__ . '/..' . '/jasig/phpcas/source/CAS/Request/CurlMultiRequest.php',
+        'CAS_Request_CurlRequest' => __DIR__ . '/..' . '/jasig/phpcas/source/CAS/Request/CurlRequest.php',
+        'CAS_Request_Exception' => __DIR__ . '/..' . '/jasig/phpcas/source/CAS/Request/Exception.php',
+        'CAS_Request_MultiRequestInterface' => __DIR__ . '/..' . '/jasig/phpcas/source/CAS/Request/MultiRequestInterface.php',
+        'CAS_Request_RequestInterface' => __DIR__ . '/..' . '/jasig/phpcas/source/CAS/Request/RequestInterface.php',
+        'CAS_TypeMismatchException' => __DIR__ . '/..' . '/jasig/phpcas/source/CAS/TypeMismatchException.php',
+        'DivisionByZeroError' => __DIR__ . '/..' . '/symfony/polyfill-php70/Resources/stubs/DivisionByZeroError.php',
+        'Error' => __DIR__ . '/..' . '/symfony/polyfill-php70/Resources/stubs/Error.php',
+        'ParseError' => __DIR__ . '/..' . '/symfony/polyfill-php70/Resources/stubs/ParseError.php',
+        'SessionUpdateTimestampHandlerInterface' => __DIR__ . '/..' . '/symfony/polyfill-php70/Resources/stubs/SessionUpdateTimestampHandlerInterface.php',
+        'TypeError' => __DIR__ . '/..' . '/symfony/polyfill-php70/Resources/stubs/TypeError.php',
+        'phpCAS' => __DIR__ . '/..' . '/jasig/phpcas/source/CAS.php',
+    );
+
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInit0577e61ae4e45c436e676ee492e8437a::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInit0577e61ae4e45c436e676ee492e8437a::$prefixDirsPsr4;
-            $loader->prefixesPsr0 = ComposerStaticInit0577e61ae4e45c436e676ee492e8437a::$prefixesPsr0;
+            $loader->prefixLengthsPsr4 = ComposerStaticInit44e7e1466cd485f172915fc6d2c7c100::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInit44e7e1466cd485f172915fc6d2c7c100::$prefixDirsPsr4;
+            $loader->prefixesPsr0 = ComposerStaticInit44e7e1466cd485f172915fc6d2c7c100::$prefixesPsr0;
+            $loader->classMap = ComposerStaticInit44e7e1466cd485f172915fc6d2c7c100::$classMap;
 
         }, null, ClassLoader::class);
     }

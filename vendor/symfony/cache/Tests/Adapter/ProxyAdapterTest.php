@@ -13,6 +13,7 @@ namespace Symfony\Component\Cache\Tests\Adapter;
 
 use Psr\Cache\CacheItemInterface;
 use Symfony\Component\Cache\Adapter\ArrayAdapter;
+use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 use Symfony\Component\Cache\Adapter\ProxyAdapter;
 use Symfony\Component\Cache\CacheItem;
 
@@ -27,17 +28,19 @@ class ProxyAdapterTest extends AdapterTestCase
         'testPrune' => 'ProxyAdapter just proxies',
     ];
 
-    public function createCachePool($defaultLifetime = 0)
+    public function createCachePool($defaultLifetime = 0, $testMethod = null)
     {
+        if ('testGetMetadata' === $testMethod) {
+            return new ProxyAdapter(new FilesystemAdapter(), '', $defaultLifetime);
+        }
+
         return new ProxyAdapter(new ArrayAdapter(), '', $defaultLifetime);
     }
 
-    /**
-     * @expectedException \Exception
-     * @expectedExceptionMessage OK bar
-     */
     public function testProxyfiedItem()
     {
+        $this->expectException('Exception');
+        $this->expectExceptionMessage('OK bar');
         $item = new CacheItem();
         $pool = new ProxyAdapter(new TestingArrayAdapter($item));
 

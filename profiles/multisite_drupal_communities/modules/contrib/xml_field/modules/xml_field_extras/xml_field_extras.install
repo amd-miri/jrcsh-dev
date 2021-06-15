@@ -8,23 +8,21 @@
  */
 
 /**
- * The uninstall hook will fire when the module gets uninstalled.
+ * Implements hook_uninstall().
  */
 function xml_field_extras_uninstall() {
-
-  //Clean up our entries in the variables table.
-  $result = db_query("SELECT name FROM {variable} WHERE `name` LIKE 'xml_field_extras%'");
-  while ($data = db_fetch_object($result)) {
-    variable_del($data->name);
+  $vars = db_select('variable', 'v')
+    ->fields('v', array('name'))
+    ->condition('name', 'xml_field_extras%', 'LIKE')
+    ->execute()->fetchCol();
+  foreach ($vars as $var) {
+    variable_del($var);
   }
-
-  //delete blocks
-  db_query("DELETE FROM {blocks} WHERE `module` = 'xml_field_extras'");
 }
 
-
 /**
- * Replace 'xml_field_schema_validator' with 'xml_field_is_valid_xml_string' in all field instances.
+ * Replace 'xml_field_schema_validator' with 'xml_field_is_valid_xml_string' in
+ * all field instances.
  */
 function xml_field_extras_update_7001(&$sandbox) {
   try {
@@ -34,12 +32,17 @@ function xml_field_extras_update_7001(&$sandbox) {
         foreach (array_keys($field_data) as $field_name) {
           $instances = field_read_instances(array(
             'entity_type' => $entity_type,
-            'bundle' => $bundle_type,
-            'field_name' => $field_name,
+            'bundle'      => $bundle_type,
+            'field_name'  => $field_name,
           ));
           foreach ($instances as $instance) {
             // Prefix a number of settings...
-            foreach (array('schema', 'schema_show', 'schema_errors', 'schema_collapsed') as $base) {
+            foreach (array(
+                       'schema',
+                       'schema_show',
+                       'schema_errors',
+                       'schema_collapsed',
+                     ) as $base) {
               if (!isset($instance['settings']['xml_' . $base]) && isset($instance['settings'][$base])) {
                 $instance['settings']['xml_' . $base] = $instance['settings'][$base];
               }
@@ -53,10 +56,7 @@ function xml_field_extras_update_7001(&$sandbox) {
         }
       }
     }
-  }
-  catch (Exception $e) {
+  } catch (Exception $e) {
     throw new DrupalUpdateException("FAILED: Replacing 'xml_field_schema_validator' with 'xml_field_is_valid_xml_string' in all field instances.");
   }
 }
-
-/** @} */ //end of group xml_field_extras

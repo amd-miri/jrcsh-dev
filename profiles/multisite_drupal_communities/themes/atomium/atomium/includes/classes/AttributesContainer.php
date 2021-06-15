@@ -4,8 +4,6 @@ namespace Drupal\atomium;
 
 /**
  * Class AttributesContainer.
- *
- * @package Drupal\atomium
  */
 class AttributesContainer implements \ArrayAccess {
   /**
@@ -39,6 +37,20 @@ class AttributesContainer implements \ArrayAccess {
   }
 
   /**
+   * Returns the whole array.
+   */
+  public function getStorage() {
+    return $this->storage;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function offsetExists($name) {
+    return isset($this->storage[$name]);
+  }
+
+  /**
    * {@inheritdoc}
    */
   public function offsetSet($name, $value) {
@@ -50,20 +62,6 @@ class AttributesContainer implements \ArrayAccess {
    */
   public function offsetUnset($name) {
     unset($this->storage[$name]);
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function offsetExists($name) {
-    return isset($this->storage[$name]);
-  }
-
-  /**
-   * Returns the whole array.
-   */
-  public function getStorage() {
-    return $this->storage;
   }
 
 }

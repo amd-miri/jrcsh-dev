@@ -8,14 +8,13 @@
 /**
  * Implements hook_default_rules_configuration().
  *
- * @return
- *   An array of rules configurations with the configuration names as keys.
+ * This function returns an array of rules configurations with the configuration
+ * names as keys. Two reaction rules and four components are provided.
  */
 function scheduler_default_rules_configuration() {
   // Define two reaction rules which will be displayed on the 'Rules' tab. These
   // are initially inactive, but the user can enable them, and then modify the
   // values and/or add more conditions and actions.
-
   // 1. Reaction rule to send an email when Scheduler publishes content.
   $rule = rules_reaction_rule();
   $rule->label = t('Send e-mail when content is published by Scheduler');
@@ -48,7 +47,6 @@ function scheduler_default_rules_configuration() {
   // Define four components which will be available in the 'Components' tab in
   // Rules admin. These are also available in Views Bulk Operations, to allow
   // a user to set or remove scheduling dates in bulk.
-
   // 1. Component to set the publishing date on a node.
   $rule = rule(array(
     'scheduler_node' => array(

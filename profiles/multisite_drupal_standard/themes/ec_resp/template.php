@@ -1549,12 +1549,12 @@ function ec_resp_preprocess_block(&$variables) {
         $variables['menu_items'] = implode('', $items);
         break;
 
-      case 'easy_breadcrumb-easy_breadcrumb':
-        $variables['menu_breadcrumb'] = menu_tree('menu-breadcrumb-menu');
-        break;
-
     }
   }
+}
+
+function ec_resp_preprocess_easy_breadcrumb(array &$variables, $hook) {
+  $variables['menu_breadcrumb'] = menu_tree('menu-breadcrumb-menu');
 }
 
 /**

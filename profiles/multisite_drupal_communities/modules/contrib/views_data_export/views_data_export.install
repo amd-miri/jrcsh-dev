@@ -67,6 +67,11 @@ function views_data_export_schema() {
         'length' => '64',
         'description' => 'The export ID this view equates too.',
       ),
+      'kid' => array(
+        'type' => 'serial',
+        'not null' => TRUE,
+        'description' => 'A unique ID for the cache object.',
+        ),
       'updated' => array(
         'type' => 'int',
         'unsigned' => TRUE,
@@ -85,6 +90,7 @@ function views_data_export_schema() {
       'eid' => array('eid'),
       'updated' => array('updated'),
     ),
+    'primary key' => array('kid'),
   );
   return $schema;
 }
@@ -155,6 +161,40 @@ function views_data_export_update_7301(){
   db_change_field('views_data_export_object_cache', 'data', 'data', $spec);
 }
 
+/**
+ * Add missing primary key.
+ */
+function views_data_export_update_7302() {
+  $db_table = 'views_data_export_object_cache';
+
+  if (db_index_exists($db_table, 'PRIMARY')) {
+    db_drop_primary_key($db_table);
+  }
+  if (!db_field_exists($db_table, 'kid')) {
+    // Issue in Drupal Core where creating a serial field on an existing table
+    // is not possible in MySQL 5.7+ without first creating an int field and
+    // converting that to serial. see https://www.drupal.org/node/2615496.
+    db_add_field(
+      $db_table,
+      'kid', array(
+        'description' => 'A unique ID for the cache object.',
+        'type' => 'int',
+        'not null' => TRUE,
+        'unsigned' => TRUE,
+        )
+    );
+  }
+  // https://api.drupal.org/api/drupal/includes%21database%21database.inc/function/db_change_field/7.x
+  db_change_field($db_table, 'kid', 'kid', array(
+    'type' => 'serial',
+    'not null' => TRUE,
+    ),
+    array(
+      'primary key' => array(
+        'kid',
+        ),
+    ));
+}
 
 /**
  * Implements hook_requirements().

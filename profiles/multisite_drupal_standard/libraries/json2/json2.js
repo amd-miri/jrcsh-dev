@@ -1,13 +1,16 @@
 //  json2.js
-//  2017-06-12
+//  2016-05-01
 //  Public Domain.
 //  NO WARRANTY EXPRESSED OR IMPLIED. USE AT YOUR OWN RISK.
+//  See http://www.JSON.org/js.html
+//  This code should be minified before deployment.
+//  See http://javascript.crockford.com/jsmin.html
 
 //  USE YOUR OWN COPY. IT IS EXTREMELY UNWISE TO LOAD CODE FROM SERVERS YOU DO
 //  NOT CONTROL.
 
 //  This file creates a global JSON object containing two methods: stringify
-//  and parse. This file provides the ES5 JSON capability to ES3 systems.
+//  and parse. This file is provides the ES5 JSON capability to ES3 systems.
 //  If a project might run on IE8 or earlier, then this file should be included.
 //  This file does nothing on ES5 systems.
 
@@ -110,31 +113,25 @@
 //                  a =
 //   /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2}(?:\.\d*)?)Z$/.exec(value);
 //                  if (a) {
-//                      return new Date(Date.UTC(
-//                         +a[1], +a[2] - 1, +a[3], +a[4], +a[5], +a[6]
-//                      ));
+//                      return new Date(Date.UTC(+a[1], +a[2] - 1, +a[3], +a[4],
+//                          +a[5], +a[6]));
 //                  }
-//                  return value;
 //              }
+//              return value;
 //          });
 
-//          myData = JSON.parse(
-//              "[\"Date(09/09/2001)\"]",
-//              function (key, value) {
-//                  var d;
-//                  if (
-//                      typeof value === "string"
-//                      && value.slice(0, 5) === "Date("
-//                      && value.slice(-1) === ")"
-//                  ) {
-//                      d = new Date(value.slice(5, -1));
-//                      if (d) {
-//                          return d;
-//                      }
+//          myData = JSON.parse('["Date(09/09/2001)"]', function (key, value) {
+//              var d;
+//              if (typeof value === "string" &&
+//                      value.slice(0, 5) === "Date(" &&
+//                      value.slice(-1) === ")") {
+//                  d = new Date(value.slice(5, -1));
+//                  if (d) {
+//                      return d;
 //                  }
-//                  return value;
 //              }
-//          );
+//              return value;
+//          });
 
 //  This is a reference implementation. You are free to copy, modify, or
 //  redistribute.
@@ -165,12 +162,12 @@ if (typeof JSON !== "object") {
     var rx_two = /\\(?:["\\\/bfnrt]|u[0-9a-fA-F]{4})/g;
     var rx_three = /"[^"\\\n\r]*"|true|false|null|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?/g;
     var rx_four = /(?:^|:|,)(?:\s*\[)+/g;
-    var rx_escapable = /[\\"\u0000-\u001f\u007f-\u009f\u00ad\u0600-\u0604\u070f\u17b4\u17b5\u200c-\u200f\u2028-\u202f\u2060-\u206f\ufeff\ufff0-\uffff]/g;
+    var rx_escapable = /[\\\"\u0000-\u001f\u007f-\u009f\u00ad\u0600-\u0604\u070f\u17b4\u17b5\u200c-\u200f\u2028-\u202f\u2060-\u206f\ufeff\ufff0-\uffff]/g;
     var rx_dangerous = /[\u0000\u00ad\u0600-\u0604\u070f\u17b4\u17b5\u200c-\u200f\u2028-\u202f\u2060-\u206f\ufeff\ufff0-\uffff]/g;
 
     function f(n) {
         // Format integers to have at least two digits.
-        return (n < 10)
+        return n < 10
             ? "0" + n
             : n;
     }
@@ -184,20 +181,12 @@ if (typeof JSON !== "object") {
         Date.prototype.toJSON = function () {
 
             return isFinite(this.valueOf())
-                ? (
-                    this.getUTCFullYear()
-                    + "-"
-                    + f(this.getUTCMonth() + 1)
-                    + "-"
-                    + f(this.getUTCDate())
-                    + "T"
-                    + f(this.getUTCHours())
-                    + ":"
-                    + f(this.getUTCMinutes())
-                    + ":"
-                    + f(this.getUTCSeconds())
-                    + "Z"
-                )
+                ? this.getUTCFullYear() + "-" +
+                        f(this.getUTCMonth() + 1) + "-" +
+                        f(this.getUTCDate()) + "T" +
+                        f(this.getUTCHours()) + ":" +
+                        f(this.getUTCMinutes()) + ":" +
+                        f(this.getUTCSeconds()) + "Z"
                 : null;
         };
 
@@ -245,11 +234,8 @@ if (typeof JSON !== "object") {
 
 // If the value has a toJSON method, call it to obtain a replacement value.
 
-        if (
-            value
-            && typeof value === "object"
-            && typeof value.toJSON === "function"
-        ) {
+        if (value && typeof value === "object" &&
+                typeof value.toJSON === "function") {
             value = value.toJSON(key);
         }
 
@@ -270,7 +256,7 @@ if (typeof JSON !== "object") {
 
 // JSON numbers must be finite. Encode non-finite numbers as null.
 
-            return (isFinite(value))
+            return isFinite(value)
                 ? String(value)
                 : "null";
 
@@ -318,14 +304,7 @@ if (typeof JSON !== "object") {
                 v = partial.length === 0
                     ? "[]"
                     : gap
-                        ? (
-                            "[\n"
-                            + gap
-                            + partial.join(",\n" + gap)
-                            + "\n"
-                            + mind
-                            + "]"
-                        )
+                        ? "[\n" + gap + partial.join(",\n" + gap) + "\n" + mind + "]"
                         : "[" + partial.join(",") + "]";
                 gap = mind;
                 return v;
@@ -341,7 +320,7 @@ if (typeof JSON !== "object") {
                         v = str(k, value);
                         if (v) {
                             partial.push(quote(k) + (
-                                (gap)
+                                gap
                                     ? ": "
                                     : ":"
                             ) + v);
@@ -357,7 +336,7 @@ if (typeof JSON !== "object") {
                         v = str(k, value);
                         if (v) {
                             partial.push(quote(k) + (
-                                (gap)
+                                gap
                                     ? ": "
                                     : ":"
                             ) + v);
@@ -421,10 +400,9 @@ if (typeof JSON !== "object") {
 // Otherwise, throw an error.
 
             rep = replacer;
-            if (replacer && typeof replacer !== "function" && (
-                typeof replacer !== "object"
-                || typeof replacer.length !== "number"
-            )) {
+            if (replacer && typeof replacer !== "function" &&
+                    (typeof replacer !== "object" ||
+                    typeof replacer.length !== "number")) {
                 throw new Error("JSON.stringify");
             }
 
@@ -478,10 +456,8 @@ if (typeof JSON !== "object") {
             rx_dangerous.lastIndex = 0;
             if (rx_dangerous.test(text)) {
                 text = text.replace(rx_dangerous, function (a) {
-                    return (
-                        "\\u"
-                        + ("0000" + a.charCodeAt(0).toString(16)).slice(-4)
-                    );
+                    return "\\u" +
+                            ("0000" + a.charCodeAt(0).toString(16)).slice(-4);
                 });
             }
 

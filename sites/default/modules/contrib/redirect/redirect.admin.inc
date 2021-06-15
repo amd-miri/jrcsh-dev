@@ -6,6 +6,7 @@
  */
 
 function redirect_list_form($form, &$form_state) {
+  $args = func_get_args();
   $form['#operations'] = redirect_get_redirect_operations();
   if (isset($form_state['values']['operation']) && empty($form_state['values']['confirm'])) {
     return redirect_list_form_operations_confirm_form($form, $form_state, $form_state['values']['operation'], array_filter($form_state['values']['rids']));
@@ -32,8 +33,7 @@ function redirect_list_form($form, &$form_state) {
   }
 
   // Get filter keys and add the filter form.
-  $keys = func_get_args();
-  $keys = array_splice($keys, 2); // Offset the $form and $form_state parameters.
+  $keys = array_slice($args, 2); // Offset the $form and $form_state parameters.
   $keys = implode('/', $keys);
   $form['redirect_list_filter_form'] = redirect_list_filter_form($keys);
 

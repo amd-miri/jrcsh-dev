@@ -1,0 +1,14 @@
+name = NextEuropa Varnish
+description = Custom Varnish rules and actions.
+core = 7.x
+package = NextEuropa
+version = v1.0.8
+
+dependencies[] = workbench_moderation
+dependencies[] = entity
+dependencies[] = registry_autoload
+
+configure = admin/config/system/nexteuropa-varnish
+registry_autoload[] = PSR-4
+
+files[] = includes/cache_purge_rule.ui.inc

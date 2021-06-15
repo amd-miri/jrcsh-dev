@@ -10,16 +10,19 @@
 /**
  * Field handler to display a countdown until a scheduled action.
  *
- * Defines class scheduler_handler_field_scheduler_countdown.
+ * Defines class SchedulerHandlerFieldSchedulerCountdown.
+ * The structure is [module]_handler_[type]_[tablename]_[fieldname]
+ * However, for standards compliance, CamelCase is now used where possible.
  *
  * @see http://www.ericschaefer.org/blog/2011/01/09/custom-field-handlers-for-views-2-drupal
  */
-class scheduler_handler_field_scheduler_countdown extends views_handler_field {
-  CONST SECOND_SCALE = 1;
-  CONST MINUTE_SCALE = 60;
-  CONST HOUR_SCALE = 3600;
-  CONST DAY_SCALE = 86400;
-  CONST WEEK_SCALE = 604800;
+class SchedulerHandlerFieldSchedulerCountdown extends views_handler_field {
+
+  const SECOND_SCALE = 1;
+  const MINUTE_SCALE = 60;
+  const HOUR_SCALE = 3600;
+  const DAY_SCALE = 86400;
+  const WEEK_SCALE = 604800;
 
   /**
    * Add the timestamp_field into the SQL query.
@@ -28,30 +31,37 @@ class scheduler_handler_field_scheduler_countdown extends views_handler_field {
    * of seconds from now until publishing. If publish_on is in the past then
    * NULL is returned.
    */
-  function query() {
+  public function query() {
     $this->ensure_my_table();
     $this->node_table = $this->query->ensure_table('node', $this->relationship);
     $time_field = $this->definition['timestamp_field'];
     $this->field_alias = $this->query->add_field(NULL, 'CASE WHEN (' . $time_field . ' > ' . REQUEST_TIME . ') THEN (' . $time_field . ' - ' . REQUEST_TIME . ') ELSE NULL END', $this->table_alias . '_' . $this->field);
   }
 
+  // @codingStandardsIgnoreStart
   /**
    * Define our display options and provide defaults.
    *
    * @return array
    *   An associative array containing the options.
    */
-  function option_definition() {
+  public function option_definition() {
+  // The name fails Drupal.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+  // However, it is defined in Views module and cannot be corrected, hence we
+  // need to ignore this fault and not report it.
+  // @codingStandardsIgnoreEnd
     $options = parent::option_definition();
     $options['countdown_display'] = array('default' => 'smart');
     $options['units_display'] = array('default' => 'long');
     return $options;
   }
 
+  // @codingStandardsIgnoreStart. Same as above.
   /**
    * Defines the form for the user to select the display options.
    */
-  function options_form(&$form, &$form_state) {
+  public function options_form(&$form, &$form_state) {
+  // @codingStandardsIgnoreEnd
     parent::options_form($form, $form_state);
     $form['countdown_display'] = array(
       '#title' => t('Display countdown as'),
@@ -79,17 +89,19 @@ class scheduler_handler_field_scheduler_countdown extends views_handler_field {
   }
 
   /**
-   * Callback function to keep only the array scale values which are smaller
-   * than the countdown value being displayed.
+   * Callback function for array_filter.
+   *
+   * Keep only the array scale values which are smaller than the countdown
+   * value being displayed.
    */
-  function scale_filter_callback($array_value) {
+  public function scaleFilterCallback($array_value) {
     return ($this->raw_value >= $array_value);
   }
 
   /**
    * Renders the countdown value in the units required.
    */
-  function render($values) {
+  public function render($values) {
     $countdown_display = $this->options['countdown_display'];
     $this->raw_value = $values->{$this->field_alias};
 
@@ -102,7 +114,7 @@ class scheduler_handler_field_scheduler_countdown extends views_handler_field {
     );
     // If the field has been set to 'Smart', determine the right timescale.
     if ($countdown_display == 'smart') {
-      $scales = array_filter($scales, array($this, 'scale_filter_callback'));
+      $scales = array_filter($scales, array($this, 'scaleFilterCallback'));
       $scale = empty($scales) ? self::SECOND_SCALE : reset($scales);
     }
     // Otherwise use the fixed display requested.

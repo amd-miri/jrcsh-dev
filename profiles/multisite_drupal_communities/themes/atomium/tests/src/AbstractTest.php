@@ -9,7 +9,7 @@ use Symfony\Component\Yaml\Yaml;
 /**
  * Class AbstractTest.
  *
- * @package Drupal\Tests\atomium
+ * @internal
  */
 abstract class AbstractTest extends TestCase {
 
@@ -23,7 +23,7 @@ abstract class AbstractTest extends TestCase {
     $finder = (new Finder())
       ->files()->in(\realpath(__DIR__ . '/../fixtures/components'));
 
-    return \array_map(function ($file) {
+    return \array_map(static function ($file) {
       return array(
         'hook' => drupal_basename($file->getRelativePathname(), '.yml'),
         'content' => Yaml::parse($file->getContents()),

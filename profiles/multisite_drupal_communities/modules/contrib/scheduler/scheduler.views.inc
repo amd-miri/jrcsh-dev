@@ -28,10 +28,11 @@ function scheduler_views_data() {
 
   // Define how the node table is linked to the Scheduler table. This is needed
   // when 'scheduler' is the base table, to give access to the node fields.
+  // Type = 'inner' will exclude any bad data rows in the scheduler table.
   $tables['node']['table']['join']['scheduler'] = array(
     'left_field' => 'nid',
     'field' => 'nid',
-    'type' => 'inner', // to exclude any bad data rows in the scheduler table.
+    'type' => 'inner',
   );
 
   // Describe the two fields in the Scheduler database table.
@@ -72,9 +73,9 @@ function scheduler_views_data() {
   // Describe the two extra derived fields provided for Views.
   $tables['scheduler']['publish_countdown'] = array(
     'title' => t('Publish countdown'),
-    'help' => t('Time until the article will be automatically published'),
+    'help' => t('Time until the content will be published'),
     'field' => array(
-      'handler' => 'scheduler_handler_field_scheduler_countdown',
+      'handler' => 'SchedulerHandlerFieldSchedulerCountdown',
       'click sortable' => FALSE,
       'timestamp_field' => 'publish_on',
     ),
@@ -82,26 +83,13 @@ function scheduler_views_data() {
 
   $tables['scheduler']['unpublish_countdown'] = array(
     'title' => t('Unpublish countdown'),
-    'help' => t('Time until the article will be automatically unpublished'),
+    'help' => t('Time until the content will be unpublished'),
     'field' => array(
-      'handler' => 'scheduler_handler_field_scheduler_countdown',
+      'handler' => 'SchedulerHandlerFieldSchedulerCountdown',
       'click sortable' => FALSE,
       'timestamp_field' => 'unpublish_on',
     ),
   );
 
   return $tables;
-}
-
-/**
- * Implements hook_views_handlers().
- */
-function scheduler_views_handlers() {
-  return array(
-    'handlers' => array(
-      'scheduler_handler_field_scheduler_countdown' => array(
-        'parent' => 'views_handler_field',
-      ),
-    ),
-  );
 }

@@ -8,11 +8,31 @@
 /**
  * Implements hook_atomium_theme_hook().
  */
-function atomium_atomium_theme_select() {
+function atomium_atomium_theme_select(array $existing, $type, $theme, $path) {
   return array(
     'select' => array(
       'render element' => 'element',
       'template' => 'select',
+    ),
+  );
+}
+
+/**
+ * Implements hook_atomium_definition_hook().
+ */
+function atomium_atomium_definition_select() {
+  return array(
+    'label' => 'Select',
+    'description' => 'Select description.',
+    'preview' => array(
+      array(
+        'title' => 'Select title',
+        'options' => array(
+          'option 1' => 'option 1',
+          'option 2' => 'option 2',
+          'option 3' => 'option 3',
+        ),
+      ),
     ),
   );
 }
@@ -28,11 +48,14 @@ function atomium_preprocess_select(array &$variables, $hook) {
   if (isset($variables['element']['#field_name'])) {
     $variables['theme_hook_suggestions'][] = 'select__' . $variables['element']['#field_name'];
   }
+
   if (isset($variables['element']['#entity_type'])) {
     $variables['theme_hook_suggestions'][] = 'select__' . $variables['element']['#entity_type'];
+
     if (isset($variables['element']['#field_name'])) {
       $variables['theme_hook_suggestions'][] = 'select__' . $variables['element']['#entity_type'] . '__' . $variables['element']['#field_name'];
     }
+
     if (isset($variables['element']['#bundle'])) {
       $variables['theme_hook_suggestions'][] = 'select__' . $variables['element']['#entity_type'] . '__' . $variables['element']['#bundle'];
     }

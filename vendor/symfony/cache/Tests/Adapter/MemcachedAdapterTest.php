@@ -23,7 +23,7 @@ class MemcachedAdapterTest extends AdapterTestCase
 
     protected static $client;
 
-    public static function setupBeforeClass()
+    public static function setUpBeforeClass(): void
     {
         if (!MemcachedAdapter::isSupported()) {
             self::markTestSkipped('Extension memcached >=2.2.0 required.');
@@ -63,11 +63,11 @@ class MemcachedAdapterTest extends AdapterTestCase
 
     /**
      * @dataProvider provideBadOptions
-     * @expectedException \ErrorException
-     * @expectedExceptionMessage constant(): Couldn't find constant Memcached::
      */
     public function testBadOptions($name, $value)
     {
+        $this->expectException('ErrorException');
+        $this->expectExceptionMessage('constant(): Couldn\'t find constant Memcached::');
         MemcachedAdapter::createConnection([], [$name => $value]);
     }
 
@@ -93,12 +93,10 @@ class MemcachedAdapterTest extends AdapterTestCase
         $this->assertSame(1, $client->getOption(\Memcached::OPT_LIBKETAMA_COMPATIBLE));
     }
 
-    /**
-     * @expectedException \Symfony\Component\Cache\Exception\CacheException
-     * @expectedExceptionMessage MemcachedAdapter: "serializer" option must be "php" or "igbinary".
-     */
     public function testOptionSerializer()
     {
+        $this->expectException('Symfony\Component\Cache\Exception\CacheException');
+        $this->expectExceptionMessage('MemcachedAdapter: "serializer" option must be "php" or "igbinary".');
         if (!\Memcached::HAVE_JSON) {
             $this->markTestSkipped('Memcached::HAVE_JSON required');
         }
@@ -196,5 +194,47 @@ class MemcachedAdapterTest extends AdapterTestCase
     public function testClear()
     {
         $this->assertTrue($this->createCachePool()->clear());
+    }
+
+    public function testMultiServerDsn()
+    {
+        $dsn = 'memcached:?host[localhost]&host[localhost:12345]&host[/some/memcached.sock:]=3';
+        $client = MemcachedAdapter::createConnection($dsn);
+
+        $expected = [
+            0 => [
+                'host' => 'localhost',
+                'port' => 11211,
+                'type' => 'TCP',
+            ],
+            1 => [
+                'host' => 'localhost',
+                'port' => 12345,
+                'type' => 'TCP',
+            ],
+            2 => [
+                'host' => '/some/memcached.sock',
+                'port' => 0,
+                'type' => 'SOCKET',
+            ],
+        ];
+        $this->assertSame($expected, $client->getServerList());
+
+        $dsn = 'memcached://localhost?host[foo.bar]=3';
+        $client = MemcachedAdapter::createConnection($dsn);
+
+        $expected = [
+            0 => [
+                'host' => 'localhost',
+                'port' => 11211,
+                'type' => 'TCP',
+            ],
+            1 => [
+                'host' => 'foo.bar',
+                'port' => 11211,
+                'type' => 'TCP',
+            ],
+        ];
+        $this->assertSame($expected, $client->getServerList());
     }
 }

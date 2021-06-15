@@ -181,7 +181,7 @@ function nexteuropa_newsroom_newsletter_subscription_form(array $form, array &$f
   $form['#prefix'] = '<div class="newsroom-newsletter-subscription">';
   $form['#suffix'] = '</div>';
   $form['#token'] = FALSE;
-  $form['#action'] = NexteuropaNewsroomHelper::getNewsroomUrl('subscription-quick-generic.cfm');
+  $form['#action'] = $_SERVER['REQUEST_URI'];
   $form['intro'] = [
     '#markup' => '<div class="newsroom-newsletter-subscription-title">' . $title . '&nbsp;-&nbsp;' . l(t('See previous issues'), NexteuropaNewsroomHelper::getNewsroomUrl('newsletter-specific-archive.cfm?serviceId=' . $args['tid'])) . '</div>',
   ];
@@ -204,9 +204,7 @@ function nexteuropa_newsroom_newsletter_subscription_form(array $form, array &$f
     '#suffix' => '</span>',
     '#type' => 'submit',
     '#value' => t('Subscribe'),
-    '#ajax' => [
-      'callback' => '_nexteuropa_newsroom_newsletter_subscription_block_form_ajax',
-    ],
+    '#submit' => ['_nexteuropa_newsroom_newsletter_subscription_block_form_submit'],
     '#attributes' => [
       'class' => ['btn btn-primary'],
     ],
@@ -271,39 +269,6 @@ function _nexteuropa_newsroom_send_subscription_request($url, $service_id, $emai
 }
 
 /**
- * Newsletter subscription form block ajax callback.
- *
- * @param array $form
- *   Form array.
- * @param array $form_state
- *   Form state array.
- *
- * @return array
- *   Ajax callback array.
- */
-function _nexteuropa_newsroom_newsletter_subscription_block_form_ajax(array $form, array &$form_state) {
-  $form_id = $form['#form_id'];
-  $selector = '#' . str_replace('_', '-', $form_id);
-
-  $subscription = _nexteuropa_newsroom_send_subscription_request($form['#action'], $form_state['values']['service_id'], $form_state['values']['email']);
-
-  if ($subscription['status'] == 'Failed') {
-    form_set_error('email', $subscription['feedbackMessage']);
-    $commands[] = ajax_command_invoke($selector . ' #edit-email', 'addClass', ['error']);
-  }
-  else {
-    $type = ($subscription['isNewUser'] === 'False' && $subscription['isNewSubscription'] === 'False') ? 'warning' : 'status';
-    drupal_set_message($subscription['feedbackMessage'], $type);
-    $commands[] = ajax_command_invoke($selector . ' #edit-email', 'removeClass', ['error']);
-  }
-
-  $replacement = theme('status_messages', ['display' => NULL]);
-  $commands[] = ajax_command_replace($selector . ' .form-group', '<div class="form-group">' . $replacement . '</div>');
-
-  return ['#type' => 'ajax', '#commands' => $commands];
-}
-
-/**
  * Gets form rendable array for filter on the agenda page.
  *
  * @param array $form
@@ -359,7 +324,31 @@ function nexteuropa_newsroom_agenda_filter_form(array $form, array &$form_state,
 }
 
 /**
- * Ajax submit handler.
+ * Submit handler.
+ *
+ * @param array $form
+ *   Form array.
+ * @param array $form_state
+ *   Form state array.
+ */
+function _nexteuropa_newsroom_newsletter_subscription_block_form_submit(array &$form, array &$form_state) {
+
+  $subscription = _nexteuropa_newsroom_send_subscription_request(NexteuropaNewsroomHelper::getNewsroomUrl('subscription-quick-generic.cfm'),
+    $form_state['values']['service_id'], $form_state['values']['email']);
+
+  if ($subscription['status'] == 'Failed') {
+    drupal_set_message($subscription['feedbackMessage'], 'error');
+  }
+  else {
+    $type = ($subscription['isNewUser'] === 'False' && $subscription['isNewSubscription'] === 'False') ? 'warning' : 'status';
+    drupal_set_message($subscription['feedbackMessage'], $type);
+  }
+
+  $form_state['redirect'] = $_SERVER['HTTP_REFERER'];
+}
+
+/**
+ * Submit handler.
  *
  * @param array $form
  *   Form array.
@@ -406,6 +395,17 @@ function nexteuropa_newsroom_subscription_newsletter_form(array $form, array $fo
     '#type' => 'hidden',
     '#value' => $service_id,
     '#required' => TRUE,
+  ];
+
+  $gdpr_line = t('By checking this box, I confirm that I want to register for this service. <br> and I agree with the') .
+    ' <a href="https://ec.europa.eu/digital-single-market/en/legal-notice#newsroom">' . t('privacy statement') . '</a>';
+  $form['checkboxes'] = [
+    '#type' => 'checkboxes',
+    '#options' => [
+      'gdpr' => $gdpr_line,
+    ],
+    '#prefix' => '<div class="gdpr_checkbox checkbox europa-checkbox">',
+    '#suffix' => '</div>',
   ];
 
   $form['submit'] = [
@@ -490,8 +490,10 @@ function _nexteuropa_newsroom_newsletter_subscription_page_form_ajax(array $form
 
   drupal_set_message($message, $type);
   $replacement = theme('status_messages', ['display' => NULL]);
+  $commands = [];
   $commands[] = ajax_command_replace('#' . $form['#id'] . ' .submit-response', '<div class="submit-response">' . $replacement . '</div>');
   $commands[] = ajax_command_replace('#' . $form['#id'] . ' button', '');
+  $commands[] = ajax_command_replace('#' . $form['#id'] . ' .gdpr_checkbox', '');
 
   return ['#type' => 'ajax', '#commands' => $commands];
 }
@@ -523,6 +525,7 @@ function _nexteuropa_newsroom_newsletter_unsubscription_form_ajax(array $form, a
   $replacement = theme('status_messages', ['display' => NULL]);
   $commands[] = ajax_command_replace('#' . $form['#id'] . ' .submit-response', '<div class="submit-response">' . $replacement . '</div>');
   $commands[] = ajax_command_replace('#' . $form['#id'] . ' button', '');
+  $commands[] = ajax_command_replace('#' . $form['#id'] . ' .gdpr_checkbox', '');
 
   return ['#type' => 'ajax', '#commands' => $commands];
 }

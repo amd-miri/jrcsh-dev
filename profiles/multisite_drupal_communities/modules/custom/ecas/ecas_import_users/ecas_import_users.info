@@ -1,0 +1,11 @@
+name = EU Login import users
+description = Create users accounts from EU Login accounts (in LDAP).
+package = "ECAS"
+core = 7.x
+php = 5.2.4
+multisite_version = 2.0
+dependencies[] = ecas
+
+stylesheets[all][] = css/ecas_import_users.css
+
+files[] = ecas_import_users.test

@@ -8,7 +8,7 @@
 /**
  * Implements hook_atomium_theme_hook().
  */
-function atomium_atomium_theme_breadcrumb() {
+function atomium_atomium_theme_breadcrumb(array $existing, $type, $theme, $path) {
   return array(
     'breadcrumb' => array(
       'variables' => array('breadcrumb' => NULL),
@@ -27,12 +27,12 @@ function atomium_atomium_definition_breadcrumb() {
     'preview' => array(
       'breadcrumb' => array(
         array(
-          '#theme' => _atomium_extend_theme_hook('link'),
+          '#theme' => 'link',
           '#text' => 'Home',
           '#path' => '/',
         ),
         array(
-          '#theme' => _atomium_extend_theme_hook('link'),
+          '#theme' => 'link',
           '#text' => 'News',
           '#path' => '/',
         ),
@@ -47,6 +47,7 @@ function atomium_atomium_definition_breadcrumb() {
  */
 function atomium_preprocess_breadcrumb(array &$variables, $hook) {
   $links = array();
+
   foreach ($variables['breadcrumb'] as $item) {
     if (\is_string($item)) {
       $item = array(
@@ -55,22 +56,28 @@ function atomium_preprocess_breadcrumb(array &$variables, $hook) {
     }
 
     $links[] = array(
-      'link' => $item,
-      '#theme_wrappers' => _atomium_extend_theme_hook('html_tag', $variables['theme_hook_original'] . '__li'),
-      '#tag' => 'li',
+      'data' => $item,
+      '#theme_wrappers' => NULL,
     );
   }
 
-  $variables['breadcrumb'] = '';
-  if ($links) {
-    $variables[$variables['base_hook']] = array(
-      $variables['base_hook'] => array(
-        '#theme' => _atomium_extend_theme_hook('item_list', $variables['theme_hook_original']),
-        '#items' => $links,
-        '#type' => 'ul',
-        '#wrapper' => FALSE,
-        '#attributes' => array(),
+  $breadcrumb = array();
+
+  if (!empty($links)) {
+    $breadcrumb = array(
+      '#theme' => _atomium_extend_theme_hook(
+        'item_list',
+        array(
+          'ul',
+          $variables['theme_hook_original'],
+        )
       ),
+      '#items' => $links,
+      '#wrapper' => FALSE,
     );
   }
+
+  $variables[$variables['base_hook']] = array(
+    $variables['base_hook'] => $breadcrumb,
+  );
 }

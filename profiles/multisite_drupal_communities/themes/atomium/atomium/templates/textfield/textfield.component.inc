@@ -8,11 +8,27 @@
 /**
  * Implements hook_atomium_theme_hook().
  */
-function atomium_atomium_theme_textfield() {
+function atomium_atomium_theme_textfield(array $existing, $type, $theme, $path) {
   return array(
     'textfield' => array(
       'render element' => 'element',
       'template' => 'textfield',
+    ),
+  );
+}
+
+/**
+ * Implements hook_atomium_definition_hook().
+ */
+function atomium_atomium_definition_textfield() {
+  return array(
+    'label' => 'Textfield',
+    'description' => 'Text field description.',
+    'preview' => array(
+      array(
+        'title' => 'Text field',
+        'description' => 'Text field description',
+      ),
     ),
   );
 }
@@ -64,11 +80,14 @@ function atomium_preprocess_textfield(array &$variables, $hook) {
   if (isset($variables['element']['#field_name'])) {
     $variables['theme_hook_suggestions'][] = 'textfield__' . $variables['element']['#field_name'];
   }
+
   if (isset($variables['element']['#entity_type'])) {
     $variables['theme_hook_suggestions'][] = 'textfield__' . $variables['element']['#entity_type'];
+
     if (isset($variables['element']['#field_name'])) {
       $variables['theme_hook_suggestions'][] = 'textfield__' . $variables['element']['#entity_type'] . '__' . $variables['element']['#field_name'];
     }
+
     if (isset($variables['element']['#bundle'])) {
       $variables['theme_hook_suggestions'][] = 'textfield__' . $variables['element']['#entity_type'] . '__' . $variables['element']['#bundle'];
     }

@@ -224,7 +224,7 @@ function field_multiple_value_form($field, $instance, $langcode, $items, &$form,
       // table.
       if ($multiple) {
         if ($delta == 0) {
-          $element['#title'] = t('!title', array('!title' => $title));
+          $element['#title'] = $title;
         }
         else {
           $element['#title'] = t('!title (value @number)', array('@number' => $delta + 1, '!title' => $title));

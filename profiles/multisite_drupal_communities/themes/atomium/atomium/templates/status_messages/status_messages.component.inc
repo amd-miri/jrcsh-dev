@@ -8,7 +8,7 @@
 /**
  * Implements hook_atomium_theme_hook().
  */
-function atomium_atomium_theme_status_messages() {
+function atomium_atomium_theme_status_messages(array $existing, $type, $theme, $path) {
   return array(
     'status_messages' => array(
       'variables' => array(
@@ -56,7 +56,11 @@ function atomium_preprocess_status_messages(array &$variables, $hook) {
   $output = array();
 
   $variables += array('messages' => array());
-  $status_messages = drupal_array_merge_deep($variables['messages'], drupal_get_messages($variables['display']));
+  $status_messages = drupal_array_merge_deep(
+    $variables['messages'],
+    drupal_get_messages($variables['display'])
+  );
+
   foreach ($status_messages as $type => $messages) {
     $container = array(
       'messages' => array(
@@ -64,10 +68,7 @@ function atomium_preprocess_status_messages(array &$variables, $hook) {
           array('item_list'),
           array($variables['theme_hook_original'], $type)
         ),
-        '#title' => !empty($status_heading[$type]) ? $status_heading[$type] : '',
         '#items' => $messages,
-        '#type' => 'ul',
-        '#attributes' => array('class' => array()),
       ),
       '#theme_wrappers' => _atomium_extend_with_suggestions(
         array('container'),
@@ -79,6 +80,10 @@ function atomium_preprocess_status_messages(array &$variables, $hook) {
         ),
       ),
     );
+
+    if (!empty($status_heading[$type])) {
+      $container['messages']['#title'] = $status_heading[$type];
+    }
 
     $output[$type] = $container;
   }

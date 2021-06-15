@@ -8,11 +8,24 @@
 /**
  * Implements hook_atomium_theme_hook().
  */
-function atomium_atomium_theme_more_help_link() {
+function atomium_atomium_theme_more_help_link(array $existing, $type, $theme, $path) {
   return array(
     'more_help_link' => array(
       'template' => 'more-help-link',
       'variables' => array('url' => NULL),
+    ),
+  );
+}
+
+/**
+ * Implements hook_atomium_definition_hook().
+ */
+function atomium_atomium_definition_more_help_link() {
+  return array(
+    'label' => 'More help link',
+    'description' => 'More help link description.',
+    'preview' => array(
+      'url' => '#',
     ),
   );
 }

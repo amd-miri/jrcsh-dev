@@ -5,39 +5,31 @@
  * @ingroup xml_field_codemirror
  * @{
  */
-
-(function ($) {
-
+(function ($, Drupal) {
   Drupal.XMLFieldCodeMirror = Drupal.XMLFieldCodeMirror || {};
-
-  /**
-  * Core behavior for xml_field_codemirror.
-  */
   Drupal.behaviors.XMLFieldCodeMirror = Drupal.behaviors.XMLFieldCodeMirror || {};
-
   Drupal.XMLFieldCodeMirror.editors = Drupal.XMLFieldCodeMirror.editors || [];
 
-  /**
-   * Attach behaviors
-   */
   Drupal.behaviors.XMLFieldCodeMirror.attach = function (context, settings) {
-    var editor = {};
-    var cm_options = {};
+    var editor     = {},
+        cm_options = {};
 
     function passAndHint(cm) {
-      setTimeout(function() {cm.execCommand("autocomplete");}, 100);
+      setTimeout(function () {
+        cm.execCommand("autocomplete");
+      }, 100);
       return CodeMirror.Pass;
     }
 
-    $('.xml-field-codemirror', context).once('xml-field-codemirror', function() {
+    $('.xml-field-codemirror', context).once('xml-field-codemirror', function () {
       var id = $(this).attr('id');
       cm_options = $.extend({
         extraKeys: {
-          "' '": passAndHint,
-          "'<'": passAndHint,
+          "' '"       : passAndHint,
+          "'<'"       : passAndHint,
           "Ctrl-Space": "autocomplete"
         }
-      // Get the settings passed in by Drupal for this element id.
+        // Get the settings passed in by Drupal for this element id.
       }, Drupal.settings.XMLFieldCodeMirror[id]);
 
       editor = CodeMirror.fromTextArea($(this).get(0), cm_options);
@@ -45,24 +37,24 @@
 
       //http://codemirror.net/demo/xmlcomplete.html
       editor.xmlHints['<'] = [
-          'levelTop',
-          'levelRoot',
-          'mainLevel'
+        'levelTop',
+        'levelRoot',
+        'mainLevel'
       ];
 
       editor.xmlHints['<levelTop '] =
-      editor.xmlHints['<levelRoot '] =
-      editor.xmlHints['<mainLevel '] = [
-          'property1111',
-          'property2222'
-      ];
+        editor.xmlHints['<levelRoot '] =
+          editor.xmlHints['<mainLevel '] = [
+            'property1111',
+            'property2222'
+          ];
 
       editor.xmlHints['<levelTop><'] =
-      editor.xmlHints['<levelRoot><'] =
-      editor.xmlHints['<mainLevel><'] = [
-          'second',
-          'two'
-      ];
+        editor.xmlHints['<levelRoot><'] =
+          editor.xmlHints['<mainLevel><'] = [
+            'second',
+            'two'
+          ];
 
       editor.xmlHints['<levelTop><second '] = [
         'secondProperty'
@@ -74,13 +66,13 @@
       ];
 
       editor.commands = editor.commands || {};
-      editor.commands.autocomplete = function(cm) {
+      editor.commands.autocomplete = function (cm) {
         editor.showHint(cm, editor.xmlHint);
-      }
+      };
 
       Drupal.XMLFieldCodeMirror.editors[id] = editor;
     });
-  }
+  };
 
   /**
    * Detach behaviors
@@ -93,9 +85,4 @@
       });
     }
   };
-
-  /**
-  * @} End of "defgroup xml_field_codemirror".
-  */
-
-})(jQuery);
+})(jQuery, Drupal);

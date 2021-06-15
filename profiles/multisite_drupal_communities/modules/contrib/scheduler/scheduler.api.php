@@ -11,13 +11,15 @@
  */
 
 /**
- * Modules can implement hook_scheduler_api() to react to the Scheduler
- * operation being done on a node. The hook is invoked during cron processing
- * and also from scheduler_node_presave().
+ * Allow modules to react to Scheduler node operations.
+ *
+ * Modules can implement hook_scheduler_api() to react to the Scheduler action
+ * being performed on a node. This hook is invoked during cron processing for
+ * 'pre_publish', 'publish', 'pre_unpublish' and 'unpublish' and from
+ * scheduler_node_presave() for 'publish_immediately'.
  *
  * @param object $node
  *   The scheduled node object that is being processed.
- *
  * @param string $action
  *   $action determines what is being done to the node. The value will be
  *   'pre_publish', 'publish', 'publish_immediately', 'pre_unpublish'
@@ -25,27 +27,35 @@
  */
 function hook_scheduler_api($node, $action) {
   switch ($action) {
-    case 'pre_publish' :
+    case 'pre_publish':
       break;
-    case 'publish' :
+
+    case 'publish':
       break;
-    case 'publish_immediately' :
+
+    case 'publish_immediately':
       break;
-    case 'pre_unpublish' :
+
+    case 'pre_unpublish':
       break;
-    case 'unpublish' :
+
+    case 'unpublish':
       break;
+
     default:
   }
 }
 
 /**
+ * Allow modules to add node ids to the list being processed.
+ *
  * Modules can implement hook_scheduler_nid_list() to add more node ids into the
  * list to be processed in the current cron run. This hook is invoked during
- * cron runs only.
+ * cron runs only. It is maintained for backwards compatibility but has been
+ * superceded by hook_scheduler_nid_list_alter(), which has more functionality.
  *
  * @param string $action
- *   $action determines what is being done to the node.
+ *   Indicates what is being done to the node.
  *   The value will be 'publish' or 'unpublish'.
  *
  * @return array
@@ -58,32 +68,35 @@ function hook_scheduler_nid_list($action) {
 }
 
 /**
+ * Allows modules to add or remove node ids from the list to be processed.
+ *
  * Modules can implement hook_scheduler_nid_list_alter() to add or remove node
  * ids from the list to be processed in the current cron run. This hook is
  * invoked during cron runs only.
  *
  * @param array $nids
- *   $nids is an array of node ids being processed.
- *
+ *   Array of node ids being processed.
  * @param string $action
- *   $action determines what is being done to the node.
+ *   Indicates what is being done to the node.
  *   The value will be 'publish' or 'unpublish'.
  *
  * @return array
  *   The full array of node ids to process, adjusted as required.
  */
-function hook_scheduler_nid_list_alter(&$nids, $action) {
+function hook_scheduler_nid_list_alter(array &$nids, $action) {
+  // Do some processing to add or removed node ids from the $nids array.
   return $nids;
 }
 
 /**
- * Modules can implement hook_scheduler_allow_publishing() to prevent
- * publication of a scheduled node.
+ * Allows modules to prevent publication of a scheduled node.
  *
- * The node can be scheduled, and an attempt to publish it will be made during
- * the first cron run after the publishing time. If this hook returns FALSE the
- * node will not be published. Attempts at publishing will continue on each
- * subsequent cron run until this hook returns TRUE.
+ * Modules can implement hook_scheduler_allow_publishing() to prevent publishing
+ * of a scheduled node. The node can be scheduled for publishing as usual, and
+ * an attempt to publish it will be made during the first cron run after the
+ * publishing time. If this hook returns FALSE the node will not be published.
+ * Attempts at publishing will continue on each subsequent cron run until this
+ * hook returns TRUE.
  *
  * @param object $node
  *   The scheduled node that is about to be published.
@@ -110,13 +123,14 @@ function hook_scheduler_allow_publishing($node) {
 }
 
 /**
- * Modules can implement hook_scheduler_allow_unpublishing() to prevent
- * unpublication of a scheduled node.
+ * Allows modules to prevent unpublication of a scheduled node.
  *
- * The node can be scheduled, and an attempt to unpublish it will be made during
- * the first cron run after the unpublishing time. If this hook returns FALSE
- * the node will not be unpublished. Attempts at unpublishing will continue on
- * each subsequent cron run until this hook returns TRUE.
+ * Modules can implement hook_scheduler_allow_unpublishing() to prevent
+ * unpublishing of a scheduled node. The node can be scheduled for unpublishing
+ * as usual, and an attempt to unpublish it will be made during the first cron
+ * run after the unpublishing time. If this hook returns FALSE the node will not
+ * be unpublished. Attempts at unpublishing will continue on each subsequent
+ * cron run until this hook returns TRUE.
  *
  * @param object $node
  *   The scheduled node that is about to be unpublished.

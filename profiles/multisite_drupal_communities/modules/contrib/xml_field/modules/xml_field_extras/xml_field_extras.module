@@ -12,10 +12,10 @@
  *
  * @param object|string $entity
  *   If string, then send bundle name.
- * @param string $fieldname
+ * @param string        $fieldname
  *   (Optional) Defaults to NULL. If NULL and there is only one xml_field field
  *   for the entity, it will be used. To be sure include a fieldname.
- * @param string $entity_type
+ * @param string        $entity_type
  *   (Optional) Defaults to node.
  *
  * @return string
@@ -30,8 +30,9 @@ function xml_field_xml_schema($entity, $fieldname = NULL, $entity_type = 'node',
   else {
     $bundle_name = _xml_field_resolve_entity($entity, $entity_type);
     if (($instance = field_info_instance($entity_type, $fieldname, $bundle_name))
-      && isset($instance['settings']['xml_schema'])) {
-      $default = $instance['settings']['xml_schema'];  
+      && isset($instance['settings']['xml_schema'])
+    ) {
+      $default = $instance['settings']['xml_schema'];
     }
   }
 
@@ -42,11 +43,11 @@ function xml_field_xml_schema($entity, $fieldname = NULL, $entity_type = 'node',
  * Callback function to validate youtube embed code
  *
  * @param string $xml
- * @param array $instance
+ * @param array  $instance
  *   (Optional) Defaults to NULL.
  * @param string $message
  *   (Optional) Defaults to NULL.
- * @param array $args
+ * @param array  $args
  *   (Optional) Defaults to array().
  *
  * @return bool
@@ -56,6 +57,7 @@ function xml_field_xml_schema($entity, $fieldname = NULL, $entity_type = 'node',
 function xml_field_youtube_validator($xml, $instance = NULL, &$message = NULL, &$args = array()) {
   if (trim($xml) && !preg_match('/<iframe.+(?=youtube\.com\/embed\/).+?<\/iframe>/', $xml)) {
     $message = "@title does not appear to be valid YouTube embed code.";
+
     return FALSE;
   }
 
@@ -66,10 +68,10 @@ function xml_field_youtube_validator($xml, $instance = NULL, &$message = NULL, &
  * Validate XML against an XSD
  *
  * @param string $xml
- * @param array $instance
+ * @param array  $instance
  * @param string $message
  *   (Optional) Defaults to NULL.
- * @param array $args
+ * @param array  $args
  *   (Optional) Defaults to array().
  *
  * @return bool
@@ -92,18 +94,19 @@ function xml_field_schema_validator($xml, $instance, &$message = NULL, &$args = 
       throw new BadFunctionCallException;
     }
     elseif (($test = new DOMDocument())
-            && ((!$show_errors && !(@$test->loadXML($xml)))
-                || !($test->loadXML($xml)))) {
+      && ((!$show_errors && !(@$test->loadXML($xml)))
+        || !($test->loadXML($xml)))
+    ) {
       throw new Exception('Invalid XML presented to the XSD.');
     }
     else {
       if ((!$show_errors && !($result = @$test->schemaValidateSource($schema)))
-          || !($result = $test->schemaValidateSource($schema))) {
+        || !($result = $test->schemaValidateSource($schema))
+      ) {
         throw new Exception('XML did not validate per XSD.');
       }
     }
-  }
-  catch (Exception $e) {
+  } catch (Exception $e) {
     $message = t('@title: ' . $e->getMessage(), $args);
 
     // Go through and clean up the error messages that might have been set.
@@ -126,7 +129,7 @@ function xml_field_schema_validator($xml, $instance, &$message = NULL, &$args = 
  */
 function xml_field_extras_element_validate($element, &$form_state, $form) {
   $instance = NULL;
-  $title    = isset($element['#title']) ? $element['#title'] : NULL;
+  $title = isset($element['#title']) ? $element['#title'] : NULL;
   if (!isset($element['#field_name'])) {
 
     // We'll move over the schema-related element keys to the settings array
@@ -144,16 +147,16 @@ function xml_field_extras_element_validate($element, &$form_state, $form) {
   // This is a field so we pull from the instance settings.
   else {
     $field_name = $element['#field_name'];
-    $lang       = $element['#language'];
-    $instance   = $form_state['field'][$field_name][$lang]['instance'];
-    $title      = $instance['label'];
+    $lang = $element['#language'];
+    $instance = $form_state['field'][$field_name][$lang]['instance'];
+    $title = $instance['label'];
   }
 
   if (array_key_exists('#value', $element) && $instance) {
-    $message  = '';
-    $args     = array(
+    $message = '';
+    $args = array(
       '@title' => $title,
-    );    
+    );
     if (!xml_field_schema_validator($element['#value'], $instance, $message, $args)) {
       form_error($element, $message);
     }
@@ -176,17 +179,18 @@ function _xml_field_data_include($extension, $entity, $fieldname = NULL, $entity
   $suggestions = xml_field_get_suggestions($entity, $fieldname, $entity_type, $delta);
   $includes = _xml_field_get_includes();
   if (isset($suggestions[$extension])
-      && is_array($includes)
-      && ($intersection = array_intersect($suggestions[$extension], array_keys($includes)))) {
+    && is_array($includes)
+    && ($intersection = array_intersect($suggestions[$extension], array_keys($includes)))
+  ) {
     $file = reset($intersection);
     $candidates = array();
     foreach ($intersection as $key) {
       $candidates[$key] = $includes[$key];
     }
     $default = array(
-      'filename' => $file,
-      'uri' => $includes[$file],
-      'value' => file_get_contents($includes[$file]),
+      'filename'   => $file,
+      'uri'        => $includes[$file],
+      'value'      => file_get_contents($includes[$file]),
       'candidates' => $candidates,
     );
   }
@@ -248,10 +252,10 @@ function _xml_field_get_includes() {
  * @param object|string $entity
  *   If this is a string, it should be a bundle type.
  *   If this is an object, it should be a bundle instance.
- * @param string $fieldname
+ * @param string        $fieldname
  *   (Optional) Defaults to NULL. If NULL and there is only one xml_field field
  *   for the entity, it will be used. To be sure include a fieldname.
- * @param string $entity_type
+ * @param string        $entity_type
  *   (Optional) Defaults to node.
  *
  * @return array
@@ -261,12 +265,14 @@ function _xml_field_get_includes() {
 function xml_field_get_suggestions($entity, $fieldname = NULL, $entity_type = 'node') {
   $suggestions = array();
   if ($entity_type
-      && ($entity_info = entity_get_info($entity_type))) {
-    $entity_key       = $entity_info['entity keys']['id'];
-    $bundle           = _xml_field_resolve_entity($entity, $entity_type);
+    && ($entity_info = entity_get_info($entity_type))
+  ) {
+    $entity_key = $entity_info['entity keys']['id'];
+    $bundle = _xml_field_resolve_entity($entity, $entity_type);
 
     if ($fieldname === NULL
-        && ($f = xml_field_entity_xml_field($entity, $entity_type = 'node'))) {
+      && ($f = xml_field_entity_xml_field($entity, $entity_type = 'node'))
+    ) {
       $fieldname = $f;
     }
 
@@ -295,7 +301,7 @@ function xml_field_get_suggestions($entity, $fieldname = NULL, $entity_type = 'n
 
   $suggestions = array(
     'xml' => $suggestions,
-    'xsd' => $suggestions
+    'xsd' => $suggestions,
   );
 
   array_push($suggestions['xml'], 'default');
@@ -318,17 +324,17 @@ function xml_field_get_suggestions($entity, $fieldname = NULL, $entity_type = 'n
  * <list>
  *   <items>do,re,mi,fa,sol</items>
  * </list>
- * 
+ *
  * <?php
  * $array = xml_field_explode($xml, 'items', NULL, ',');
  * ?>
  * @endcode
  *
- * @param string or XMLFieldXMLElement
+ * @param        string or XMLFieldXMLElement
  * @param string $selector
- *   (Optional) Defaults to NULL.
+ *                      (Optional) Defaults to NULL.
  * @param string $separator
- *   (Optional) Defaults to ','.
+ *                      (Optional) Defaults to ','.
  *
  * @return array
  *
@@ -345,22 +351,24 @@ function xml_field_explode($xml, $selector = NULL, $attribute = NULL, $separator
 
 
 /**
- * Return an array of selected attributes swapping aliases and including defaults
+ * Return an array of selected attributes swapping aliases and including
+ * defaults
  *
  * @param string $xml
  * @param string $selector
- * @param array $defaults
- * - Keys are the keys in the return array
- * - Values are the default values.  To use the alias feature read on:
+ * @param array  $defaults
+ *   - Keys are the keys in the return array
+ *   - Values are the default values.  To use the alias feature read on:
  *   Alias feature: Values are arrays with two elements.
- *   - 0 string The name of the attribute as it appears in the XML; a synonym of
+ *   - 0 string The name of the attribute as it appears in the XML; a synonym
+ *   of
  *   the return array key. E.g. you may use 'display' in place of 'display_id'
  *   to make your xml more readable.
  *   - 1 string The default value if attribute doesn't exist in the XML.
- * @param bool $filter
+ * @param bool   $filter
  *   (Optional) Defaults to FALSE. When TRUE, only keys in $defaults are
  *   returned, when FALSE, all values will be returned, even if not selected.
- * @param mixed $callback
+ * @param mixed  $callback
  *   (Optional) Defaults to check_plain.
  *
  * @return array
@@ -399,18 +407,18 @@ function xml_field_attributes_as_array($xml, $selector = NULL, $defaults = array
  *
  * @param string $xml
  * @param string $selector
- * @param array $defaults
- * - Keys are the keys in the return array
- * - Values are the default values.  To use the alias feature read on:
+ * @param array  $defaults
+ *   - Keys are the keys in the return array
+ *   - Values are the default values.  To use the alias feature read on:
  *   Alias feature: Values are arrays with two elements.
  *   - 0 string The name of the child as it appears in the XML; a synonym of
  *   the return array key. E.g. you may use 'display' in place of 'display_id'
  *   to make your xml more readable.
  *   - 1 string The default value if child doesn't exist in the XML.
- * @param bool $filter
+ * @param bool   $filter
  *   (Optional) Defaults to FALSE. When TRUE, only keys in $defaults are
  *   returned, when FALSE, all values will be returned, even if not selected.
- * @param mixed $callback
+ * @param mixed  $callback
  *   (Optional) Defaults to filter_xss_admin.
  *
  * @return array
@@ -495,9 +503,9 @@ function _xml_field_as_array($xml, $selector, $defaults, $filter, $callback) {
  * @license http://creativecommons.org/licenses/by/3.0/
  * @license CC-BY-3.0 <http://spdx.org/licenses/CC-BY-3.0>
  */
-function _xml_field_to_array($xml_object, $out = array()){
+function _xml_field_to_array($xml_object, $out = array()) {
   foreach ((array) $xml_object as $index => $node) {
-    $out[$index] = (is_object($node)) ? _xml_field_to_array ($node) : $node;
+    $out[$index] = (is_object($node)) ? _xml_field_to_array($node) : $node;
   }
 
   return $out;
@@ -506,13 +514,14 @@ function _xml_field_to_array($xml_object, $out = array()){
 /**
  * Return an array of nodes based on a csv xml element of nids
  *
- * @param string or xmlFieldXMLElement $xml
- *   e.g. $xml->page->title
+ * @param        string or xmlFieldXMLElement $xml
+ *                      e.g. $xml->page->title
  * @param string $selector
- *   Optional. You will omit this if you were trying to grab attributes from
- *   the parent tag.
- * @param array $options
- *  - separator: (Optional) Defaults to ','.  The char used to separate nids.
+ *                      Optional. You will omit this if you were trying to grab
+ *                      attributes from the parent tag.
+ * @param array  $options
+ *                      - separator: (Optional) Defaults to ','.  The char used
+ *                      to separate nids.
  *
  * @return array
  */
@@ -556,23 +565,24 @@ function xml_field_node_load_multiple($xml, $selector = NULL, $options = array()
  *  }
  * @endcode
  *
- * @param string or xmlFieldXMLElement $xml
+ * @param        string or xmlFieldXMLElement $xml
  * @param string $selector
- * @param array $options
- *  - view_mode
- *  - weight
- *  - langcode
- *    These first three options allow you to specifiy arguments to be used for
- *    node_view_multiple. The keys represent the variable name to send to
- *    node_view_multiple. The values are arrays where 1) the first element is the
- *    element name to be found in the xml, and 2) the second element is the
- *    default value if that attribute is not found in the XML.
- *   array(
- *     'view_mode' => array('mode', 'teaser'),
- *     'weight' => array('weight', 0),
- *     'langcode' => array('lang', NULL),
- *   )
- *  - separator
+ * @param array  $options
+ *                      - view_mode
+ *                      - weight
+ *                      - langcode
+ *                      These first three options allow you to specifiy
+ *                      arguments to be used for node_view_multiple. The keys
+ *                      represent the variable name to send to
+ *                      node_view_multiple. The values are arrays where 1) the
+ *                      first element is the element name to be found in the
+ *                      xml, and 2) the second element is the default value if
+ *                      that attribute is not found in the XML. array(
+ *                      'view_mode' => array('mode', 'teaser'),
+ *                      'weight' => array('weight', 0),
+ *                      'langcode' => array('lang', NULL),
+ *                      )
+ *                      - separator
  *
  * @return
  *   An array in the format expected by drupal_render(). The array will contain
@@ -585,8 +595,8 @@ function xml_field_node_view_multiple($xml, $selector = NULL, $options = array()
   if ($nodes = xml_field_node_load_multiple($xml, $selector)) {
     $options += array(
       'view_mode' => array('mode', 'teaser'),
-      'weight' => array('weight', 0),
-      'langcode' => array('lang', NULL),
+      'weight'    => array('weight', 0),
+      'langcode'  => array('lang', NULL),
     );
     $args = xml_field_attributes_as_array($xml, $selector, $options, TRUE);
     $build = node_view_multiple($nodes, $args['view_mode'], $args['weight'], $args['langcode']);
@@ -618,14 +628,14 @@ function xml_field_node_view_multiple($xml, $selector = NULL, $options = array()
  *  }
  * @endcode
  *
- * @param string or xmlFieldXMLElement $xml
+ * @param        string or xmlFieldXMLElement $xml
  * @param string $selector
- * @param array $options
- * - name
- * - display_id
- * - view_mode
- * - separator
- * - items_per_page
+ * @param array  $options
+ *                      - name
+ *                      - display_id
+ *                      - view_mode
+ *                      - separator
+ *                      - items_per_page
  *
  * @return array
  *   An array in the format expected by drupal_render(). The array will contain
@@ -634,24 +644,26 @@ function xml_field_node_view_multiple($xml, $selector = NULL, $options = array()
 function xml_field_embed_view($xml, $selector = NULL, $options = array()) {
   $build = array();
   $options += array(
-    'name' => array('name', ''),
-    'display_id' => array('display', 'default'),
-    'view_mode' => array('mode', 'default'),
-    'separator' => array('separator', ','),
+    'name'           => array('name', ''),
+    'display_id'     => array('display', 'default'),
+    'view_mode'      => array('mode', 'default'),
+    'separator'      => array('separator', ','),
     'items_per_page' => array('pager', NULL),
   );
   $args = xml_field_attributes_as_array($xml, $selector, $options, TRUE);
 
   if (!$args['name']
-      || !($view = views_get_view($args['name']))
-      || !$view->access($args['display_id'])) {
+    || !($view = views_get_view($args['name']))
+    || !$view->access($args['display_id'])
+  ) {
     return;
   }
 
   // Allow XML to override the node view mode defined by the view
   if ($args['view_mode'] !== 'default'
-      && ($handler = $view->display['default']->handler)
-      && array_key_exists('view_mode', $view->display['default']->handler->options['row_options'])) {
+    && ($handler = $view->display['default']->handler)
+    && array_key_exists('view_mode', $view->display['default']->handler->options['row_options'])
+  ) {
     $handler->options['row_options']['view_mode'] = $args['view_mode'];
   }
 
@@ -672,22 +684,23 @@ function xml_field_embed_view($xml, $selector = NULL, $options = array()) {
  *
  * Given the XML below, you would call this function as such:
  *
- *  @code
+ * @code
  *  <?php
  *  xml_field_embed_theme($xml, 'theme', array(
  *    'theme' => array('what_theme', NULL),
  *    'token' => array('replacement_token', NULL),
  *  ));
- *  @endcode
+ * @endcode
  *
- *  @code
+ * @code
  *  <page>
  *    <theme what_theme="youtube" replacement_token="youtube:NID">
  *      <nid>1099</nid>
- *      <caption>See how FertilAid helped this woman with PCOS conceive...</caption>
+ *      <caption>See how FertilAid helped this woman with PCOS
+ *      conceive...</caption>
  *    </theme>
  *  </page>
- *  @endcode
+ * @endcode
  *
  * @return array
  * - The key is $selector
@@ -715,11 +728,11 @@ function xml_field_embed_theme($xml, $selector = NULL, $options = array()) {
         $key = $options['token'];
       }
       $t_vars = array(
-        '!theme' => $options['theme'],
+        '!theme'    => $options['theme'],
         '!instance' => $instance,
       );
       $build['#xml_field_tokens'][$key] = array(
-        'name' => t('Theme #!instance', $t_vars),
+        'name'        => t('Theme #!instance', $t_vars),
         'description' => t('The output of instance #!instance of <code>theme_!theme()</code>.', $t_vars),
       );
       $build[$key] = $item;
@@ -742,16 +755,16 @@ function xml_field_extras_field_info_alter(&$info) {
       $info[$key]['instance_settings'] += array(
 
         // The XSD for this field.
-        'xml_schema'            => '',
+        'xml_schema'           => '',
 
         // Boolean whether or not to dispaly XSD under input field.
-        'xml_schema_show'       => TRUE,
+        'xml_schema_show'      => TRUE,
 
         // Boolean whether or not to collapse the XDS.
-        'xml_schema_collapsed'  => TRUE,
+        'xml_schema_collapsed' => TRUE,
 
         // Boolean whether or not to display detailed XSD validation errors.
-        'xml_schema_errors'     => TRUE,
+        'xml_schema_errors'    => TRUE,
       );
     }
   }
@@ -767,9 +780,14 @@ function xml_field_extras_field_widget_form_alter(&$element, $form_state, $conte
     if (!($schema = xml_field_xml_schema($element['xml']['#entity'], $element['xml']['#field_name'], $element['xml']['#entity_type'], $element['xml']['#delta']))) {
       $schema = isset($settings['xml_schema']) ? $settings['xml_schema'] : '';
     }
-    $settings['xml_schema'] = $schema;  
+    $settings['xml_schema'] = $schema;
 
-    $schema_keys = array('xml_schema', 'xml_schema_show', 'xml_schema_collapsed', 'xml_schema_errors');
+    $schema_keys = array(
+      'xml_schema',
+      'xml_schema_show',
+      'xml_schema_collapsed',
+      'xml_schema_errors',
+    );
     $merge = array();
     foreach ($schema_keys as $key) {
       $element['#' . $key] = $settings[$key];
@@ -807,34 +825,34 @@ function xml_field_extras_element_pre_render($element) {
 
   // Do we have/show a schema?
   if (!empty($element['#xml_schema']) && !empty($element['#xml_schema_show'])) {
-    $build    = array();
+    $build = array();
 
     $build['schema_fieldset'] = array(
-      '#type' => 'fieldset',
-      '#attributes' => array(
+      '#type'        => 'fieldset',
+      '#attributes'  => array(
         'class' => array('xml-schema'),
-      ),      
-      '#parents' => array(),
-      '#title' => t('View XSD'),
+      ),
+      '#parents'     => array(),
+      '#title'       => t('View XSD'),
       '#collapsible' => TRUE,
-      '#collapsed' => $element['#xml_schema_collapsed'],
+      '#collapsed'   => $element['#xml_schema_collapsed'],
     );
     // We're using this outside of the fapi context, so we have to be tricky.
     $null = array();
     form_process_fieldset($build['schema_fieldset'], $null);
-    
+
     $build['schema_fieldset']['xml'] = array(
-      '#theme' => 'xml',
-      '#xml' => $element['#xml_schema'],
+      '#theme'   => 'xml',
+      '#xml'     => $element['#xml_schema'],
       '#options' => array(
         'htmlentities' => TRUE,
       ),
-      '#header' => FALSE,
-    );  
+      '#header'  => FALSE,
+    );
 
     $element['#children'] .= drupal_render($build);
   }
-  
+
   return $element;
 }
 
@@ -873,8 +891,8 @@ function xml_field_extras_form_field_ui_field_edit_form_alter(&$form, $form_stat
       '#items' => $in_code['candidates'],
     );
     $element['default_xml'] = array(
-      '#theme' => 'xml',
-      '#xml' => xml_field_xml_default($instance['bundle'], $instance['field_name'], $instance['entity_type']),
+      '#theme'   => 'xml',
+      '#xml'     => xml_field_xml_default($instance['bundle'], $instance['field_name'], $instance['entity_type']),
       '#options' => array(
         'htmlentities' => TRUE,
       ),
@@ -892,11 +910,11 @@ function xml_field_extras_form_field_ui_field_edit_form_alter(&$form, $form_stat
   $weight = 1;
   $schema = xml_field_xml_schema($instance['bundle'], $instance['field_name'], $instance['entity_type']);
   $form['instance']['settings']['xml_schema'] = array(
-    '#type' => 'xmltext',
+    '#type'          => 'xmltext',
     '#default_value' => $schema,
-    '#title' => t('XML Schema Definition'),
-    '#description' => t('Should a <a href="http://www.w3schools.com/schema/schema_simple.asp">schema</a> be used in validating this field? If so, paste the schema in this box.  Schemas may also be provided via include files, see <a href="!help">advanced help</a> for more info. Need an <a href="!url">online schema generator</a>?', array(
-      '!url' => url('http://www.freeformatter.com/xsd-generator.html'),
+    '#title'         => t('XML Schema Definition'),
+    '#description'   => t('Should a <a href="http://www.w3schools.com/schema/schema_simple.asp">schema</a> be used in validating this field? If so, paste the schema in this box.  Schemas may also be provided via include files, see <a href="!help">advanced help</a> for more info. Need an <a href="!url">online schema generator</a>?', array(
+      '!url'  => url('http://www.freeformatter.com/xsd-generator.html'),
       '!help' => url('help/xml_field/using_files'),
     )),
     //'#states' => array(
@@ -904,7 +922,7 @@ function xml_field_extras_form_field_ui_field_edit_form_alter(&$form, $form_stat
     //    ':input[name="instance[settings][validation_callback]"]' => array('value' => 'xml_field_schema_validator'),
     //  ),
     //),
-    '#weight' => $weight++,
+    '#weight'        => $weight++,
   );
 
   if ($in_code = _xml_field_data_include('xsd', $instance['bundle'], $instance['field_name'], $instance['entity_type'])) {
@@ -918,7 +936,7 @@ function xml_field_extras_form_field_ui_field_edit_form_alter(&$form, $form_stat
     }
     $form['instance']['settings']['xml_schema']['#type'] = 'fieldset';
     $form['instance']['settings']['xml_schema']['#description'] = t('<strong>The schema definition for this field is being provided by code. See <a href="!help">advanced help</a> for more info.</strong>', array(
-      '!url' => url('http://www.freeformatter.com/xsd-generator.html'),
+      '!url'  => url('http://www.freeformatter.com/xsd-generator.html'),
       '!help' => url('help/xml_field/using_files'),
     ));
     $form['instance']['settings']['xml_schema'][] = array(
@@ -927,8 +945,8 @@ function xml_field_extras_form_field_ui_field_edit_form_alter(&$form, $form_stat
       '#items' => $in_code['candidates'],
     );
     $form['instance']['settings']['xml_schema'][] = array(
-      '#theme' => 'xml',
-      '#xml' => $schema,
+      '#theme'   => 'xml',
+      '#xml'     => $schema,
       '#options' => array(
         'htmlentities' => TRUE,
       ),
@@ -936,37 +954,37 @@ function xml_field_extras_form_field_ui_field_edit_form_alter(&$form, $form_stat
   }
 
   $form['instance']['settings']['xml_schema_show'] = array(
-    '#type' => 'checkbox',
-    '#title' => t('Display the <strong>XSD</strong> below the widget on edit forms.'),
+    '#type'          => 'checkbox',
+    '#title'         => t('Display the <strong>XSD</strong> below the widget on edit forms.'),
     '#default_value' => $instance['settings']['xml_schema_show'],
     //'#states' => array(
     //  'visible' => array(
     //    ':input[name="instance[settings][validation_callback]"]' => array('value' => 'xml_field_schema_validator'),
     //  ),
     //),
-    '#weight' => $weight++,
+    '#weight'        => $weight++,
   );
   $form['instance']['settings']['xml_schema_collapsed'] = array(
-    '#type' => 'checkbox',
-    '#title' => t('When shown, <strong>collapse XSD</strong> fieldset by default.'),
+    '#type'          => 'checkbox',
+    '#title'         => t('When shown, <strong>collapse XSD</strong> fieldset by default.'),
     '#default_value' => $instance['settings']['xml_schema_collapsed'],
     //'#states' => array(
     //  'visible' => array(
     //    ':input[name="instance[settings][validation_callback]"]' => array('value' => 'xml_field_schema_validator'),
     //  ),
     //),
-    '#weight' => $weight++,
+    '#weight'        => $weight++,
   );
   $form['instance']['settings']['xml_schema_errors'] = array(
-    '#type' => 'checkbox',
-    '#title' => t('Display <strong>detailed schema errors</strong> if validation fails.'),
+    '#type'          => 'checkbox',
+    '#title'         => t('Display <strong>detailed schema errors</strong> if validation fails.'),
     '#default_value' => $instance['settings']['xml_schema_errors'],
     //'#states' => array(
     //  'visible' => array(
     //    ':input[name="instance[settings][validation_callback]"]' => array('value' => 'xml_field_schema_validator'),
     //  ),
     //),
-    '#weight' => $weight++,
+    '#weight'        => $weight++,
   );
 }
 
@@ -981,6 +999,6 @@ function xml_field_extras_xml_field_validation_callbacks_alter(&$callbacks) {
 
   $callbacks['xml_field_youtube_validator'] = array(
     'callback' => 'xml_field_youtube_validator',
-    'title' => t('YouTube Validator'),
+    'title'    => t('YouTube Validator'),
   );
 }

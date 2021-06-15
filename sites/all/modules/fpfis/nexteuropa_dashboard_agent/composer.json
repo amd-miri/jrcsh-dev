@@ -1,0 +1,30 @@
+{
+    "name": "ec-europa/nexteuropa_dashboard_agent",
+    "description": "Agent to be used by the NextEuropa Dashboard application, which provides information about the website modules and a link to access the site as an administrator.",
+    "type": "drupal-custom-module",
+    "license": "EUPL-1.2",
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "require": {
+        "drupal/drupal": "7.*",
+        "ext-openssl": "*",
+        "php": ">=5.6"
+    },
+    "require-dev": {
+        "ec-europa/qa-automation": "4.0.*",
+        "jakub-onderka/php-parallel-lint": "^v1.0",
+        "phpro/grumphp": "v0.14.*",
+        "openeuropa/code-review": "^1.0",
+        "sensiolabs/security-checker": "^v5.0",
+        "squizlabs/php_codesniffer": "^3.5"
+    },
+    "repositories": [
+        {
+            "type": "composer",
+            "url": "https://packages.drupal.org/7"
+        }
+    ],
+    "config": {
+        "sort-packages": true
+    }
+}

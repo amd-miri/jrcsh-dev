@@ -1,19 +1,4 @@
 <?php
-/**
-*Load local development override configuration, if available.
- *
- * Use a custom settings file to override variables on secondary (staging,
- * development, etc) installations of this site. Typically used to disable
- * caching, JavaScript/CSS compression, re-routing of outgoing emails, and
- * other things that should not happen on development and testing sites.
- *
- * The purpose of this file is to set defaults, not to enforce them, so
- * keep this code block at the start of this file.
- */
-$local_settings = getenv('DRUPAL_LOCAL_SETTINGS_LOCATION');
-if (file_exists($local_settings)){
-  include $local_settings;
-}
 
 /**
  * @file
@@ -260,6 +245,24 @@ if (file_exists($local_settings)){
  * @endcode
  */
 $databases = array();
+
+/**
+ * Quoting of identifiers in MySQL.
+ *
+ * To allow compatibility with newer versions of MySQL, Drupal will quote table
+ * names and some other identifiers. The ANSI standard character for identifier
+ * quoting is the double quote (") and that can be used by MySQL along with the
+ * sql_mode setting of ANSI_QUOTES. However, MySQL's own default is to use
+ * backticks (`). Drupal 7 uses backticks for compatibility. If you need to
+ * change this, you can do so with this variable. It's possible to switch off
+ * identifier quoting altogether by setting this variable to an empty string.
+ *
+ * @see https://www.drupal.org/project/drupal/issues/2978575
+ * @see https://dev.mysql.com/doc/refman/8.0/en/identifiers.html
+ * @see \DatabaseConnection_mysql::setPrefix
+ * @see \DatabaseConnection_mysql::quoteIdentifier
+ */
+# $conf['mysql_identifier_quote_character'] = '"';
 
 /**
  * Access control for update.php script.
@@ -676,31 +679,84 @@ $conf['file_scan_ignore_directories'] = array(
 );
 
 /**
- * Override session cookie lifetime defined above.
- * Set value to zero for session cookies to be deleted when browser is closed.
+ * Logging of user flood control events.
+ *
+ * Drupal's user module will place a temporary block on a given IP address or
+ * user account if there are excessive failed login attempts. By default these
+ * flood control events will be logged. This can be useful for identifying
+ * brute force login attacks. Set this variable to FALSE to disable logging, for
+ * example if you are using the dblog module and want to avoid database writes.
+ *
+ * @see user_login_final_validate()
+ * @see user_user_flood_control()
  */
-ini_set('session.cookie_lifetime', 0);
+# $conf['log_user_flood_control'] = FALSE;
 
 /**
- * Load local development override configuration, if available.
+ * Opt out of variable_initialize() locking optimization.
  *
- * Use settings.local.php to override variables on secondary (staging,
- * development, etc) installations of this site. Typically used to disable
- * caching, JavaScript/CSS compression, re-routing of outgoing emails, and
- * other things that should not happen on development and testing sites.
- *
- * The purpose of this file is to override settings, so keep this code block
- * at the end of this file to take full effect.
+ * After lengthy discussion in https://www.drupal.org/node/973436 a change was
+ * made in variable_initialize() in order to avoid excessive waiting under
+ * certain conditions. Set this variable to TRUE in order to opt out of this
+ * optimization and revert to the original behaviour.
  */
-$local_settings_post = str_replace('.php', '.post.php', $local_settings);
-if (file_exists($local_settings_post)){
-  include $local_settings_post;
-}
+# $conf['variable_initialize_wait_for_lock'] = FALSE;
 
 /**
- * Include a local settings file if it exists.
+ * Opt in to field_sql_storage_field_storage_write() optimization.
+ *
+ * To reduce unnecessary writes field_sql_storage_field_storage_write() can skip
+ * fields where values have apparently not changed. To opt in to this
+ * optimization, set this variable to TRUE.
  */
-$local_settings = dirname(__FILE__) . '/settings.local.php';
-if (file_exists($local_settings)) {
-  include $local_settings;
-}
+$conf['field_sql_storage_skip_writing_unchanged_fields'] = TRUE;
+
+/**
+ * Use site name as display-name in outgoing mail.
+ *
+ * Drupal can use the site name (i.e. the value of the site_name variable) as
+ * the display-name when sending e-mail. For example this would mean the sender
+ * might be "Acme Website" <acme@example.com> as opposed to just the e-mail
+ * address alone. In order to avoid disruption this is not enabled by default
+ * for existing sites. The feature can be enabled by setting this variable to
+ * TRUE.
+ *
+ * @see https://tools.ietf.org/html/rfc2822
+ * @see drupal_mail()
+ */
+$conf['mail_display_name_site_name'] = TRUE;
+
+/**
+ * SameSite cookie attribute.
+ *
+ * This variable can be used to set a value for the SameSite cookie attribute.
+ *
+ * Versions of PHP before 7.3 have no native support for the SameSite attribute
+ * so it is emulated.
+ *
+ * The session.cookie-samesite setting in PHP 7.3 and later will be overridden
+ * by this variable for Drupal session cookies, and any other cookies managed
+ * with drupal_setcookie().
+ *
+ * Setting this variable to FALSE disables the SameSite attribute on cookies.
+ *
+ * @see drupal_setcookie()
+ * @see drupal_session_start()
+ * @see https://www.php.net/manual/en/session.configuration.php#ini.session.cookie-samesite
+ */
+# $conf['samesite_cookie_value'] = 'None';
+
+/**
+ * Add Permissions-Policy header to disable Google FLoC.
+ *
+ * By default, Drupal sends the 'Permissions-Policy: interest-cohort=()' header
+ * to disable Google's Federated Learning of Cohorts feature, introduced in
+ * Chrome 89.
+ *
+ * See https://en.wikipedia.org/wiki/Federated_Learning_of_Cohorts for more
+ * information about FLoC.
+ *
+ * If you don't wish to disable FLoC in Chrome, you can set this value
+ * to FALSE.
+ */
+# $conf['block_interest_cohort'] = TRUE;

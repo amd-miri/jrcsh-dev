@@ -6,7 +6,8 @@
  * /var/www/site_01.conf.d/settings.php
  * /var/www/site_01.conf.d/settings.post.php
  */
-$strippedRoot = rtrim(DRUPAL_ROOT,'/');
+
+$strippedRoot = defined("DRUPAL_ROOT") ? rtrim(DRUPAL_ROOT,'/'): '';
 
 if(file_exists($strippedRoot.'.conf.d/settings.php')) {
     // This file was dropped for us by config management :
@@ -14,7 +15,7 @@ if(file_exists($strippedRoot.'.conf.d/settings.php')) {
     putenv('DRUPAL_LOCAL_SETTINGS_LOCATION='.$strippedRoot.'.conf.d/settings.php');
     if(!defined("FPFIS_SALT_CONFIG_USED"))
         define('FPFIS_SALT_CONFIG_USED', true);
-} else {
+} elseif (file_exists($strippedRoot . '/../settings.common.php')) {
     // Old behavior :
     if (!getenv("DRUPAL_LOCAL_SETTINGS_LOCATION")){
       putenv('DRUPAL_LOCAL_SETTINGS_LOCATION=' . $strippedRoot . '/../settings.common.php');

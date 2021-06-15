@@ -12,7 +12,6 @@ class NexteuropaNewsroomSummaryBlock {
 
   protected $types = [];
   protected $topics = [];
-  protected $operator = NEXTEUROPA_NEWSROOM_TOPIC_OPERATOR_OR;
 
   /**
    * Gets newsroom topics.
@@ -52,26 +51,6 @@ class NexteuropaNewsroomSummaryBlock {
    */
   public function getTypes() {
     return $this->types;
-  }
-
-  /**
-   * Gets query operator.
-   *
-   * @return string
-   *   Query operator: OR or AND.
-   */
-  public function getOperator() {
-    return $this->operator;
-  }
-
-  /**
-   * Sets query operator.
-   *
-   * @param string $value
-   *   Query operator: OR or AND.
-   */
-  public function setOperator($value) {
-    $this->operator = $value;
   }
 
   /**
@@ -116,51 +95,20 @@ class NexteuropaNewsroomSummaryBlock {
       $config = $cache->data;
     }
     else {
-      $topic_operator = NEXTEUROPA_NEWSROOM_TOPIC_OPERATOR_OR;
       $selected_topics = [];
-      $selected_types = [];
 
       if ($entity = $this->getEntityFromRequest()) {
-        if (!empty($entity->type) && $entity->type == 'newsroom_selection') {
-
-          if (NexteuropaNewsroomHelper::getFieldValue($entity, 'field_newsroom_topic_operator')) {
-            $topic_operator = NexteuropaNewsroomHelper::getFieldValue($entity, 'field_newsroom_topic_operator');
-          }
-
-          // Get topics from newsroom selection.
-          if ($topic_config = field_get_items('node', $entity, 'field_newsroom_selected_topics')) {
-            foreach ($topic_config as $term_ref) {
-              $selected_topics[] = $term_ref['target_id'];
-            }
-          }
-
-          // Get types from newsroom selection.
-          $type_config = field_get_items('node', $entity, 'field_newsroom_selected_types');
-          if ($type_config) {
-            foreach ($type_config as $term_ref) {
-              $selected_types[] = $term_ref['tid'];
-            }
-          }
-        }
-        elseif ($associated_topic_id = NexteuropaNewsroomHelper::getFieldValue($entity, 'field_newsroom_associated_topic', 'tid')) {
+        if ($associated_topic_id = NexteuropaNewsroomHelper::getFieldValue($entity, 'field_newsroom_associated_topic', 'tid')) {
           // If it has the associated field, try to load topic.
           $selected_topics[] = $associated_topic_id;
         }
       }
 
-      $types = [];
-      if (!empty($selected_types)) {
-        foreach ($selected_types as $type_id) {
-          $types[] = NexteuropaNewsroomVocabularyHelper::getNewsroomType($type_id);
-        }
-      }
-      else {
-        $types = NexteuropaNewsroomVocabularyHelper::getNewsroomTypes();
-        // We need only the first level of types.
-        foreach ($types as $key => $type) {
-          if ($type->depth > 0) {
-            unset($types[$key]);
-          }
+      $types = NexteuropaNewsroomVocabularyHelper::getNewsroomTypes();
+      // We need only the first level of types.
+      foreach ($types as $key => $type) {
+        if ($type->depth > 0) {
+          unset($types[$key]);
         }
       }
 
@@ -172,7 +120,6 @@ class NexteuropaNewsroomSummaryBlock {
       }
 
       $config['topic'] = $topics;
-      $config['topic_operator'] = $topic_operator;
       $config['type'] = $types;
 
       cache_set($cache_key, $config, NEXTEUROPA_NEWSROOM_CACHE_TABLE, time() + variable_get('nexteuropa_newsroom_ct_summary_filter', 3600));
@@ -180,7 +127,6 @@ class NexteuropaNewsroomSummaryBlock {
 
     $this->setTopics($config['topic']);
     $this->setTypes($config['type']);
-    $this->setOperator($config['topic_operator']);
   }
 
   /**
@@ -211,12 +157,6 @@ class NexteuropaNewsroomSummaryBlock {
       $entity = $current_path['page_arguments'][0];
     }
 
-    // Check if selection config is set.
-    if ($newsroom_selection_id = NexteuropaNewsroomHelper::getFieldValue($entity, 'field_newsroom_associated_select', 'target_id')) {
-      // If it has the selection field, try to load config.
-      $entity = node_load($newsroom_selection_id);
-    }
-
     return $entity;
   }
 
@@ -238,10 +178,10 @@ class NexteuropaNewsroomSummaryBlock {
         continue;
       }
 
-      $blocks[] = new NexteuropaNewsroomBlock($type, $this->getTopics(), $this->getOperator());
+      $blocks[] = new NexteuropaNewsroomBlock($type, $this->getTopics());
     }
 
-    $blocks[] = new NexteuropaNewsroomBlockAgenda(NULL, $this->getTopics(), $this->getOperator());
+    $blocks[] = new NexteuropaNewsroomBlockAgenda(NULL, $this->getTopics());
 
     usort($blocks, ['NexteuropaNewsroomSummaryBlock', 'sortBlocks']);
     foreach ($blocks as $block) {

@@ -18,7 +18,6 @@
  */
 function nexteuropa_newsroom_admin_settings(array $form, array &$form_state) {
   // Be aware about the selected content types in the fields fieldset.
-  $sel_ct = NexteuropaNewsroomHelper::getFieldInstances('select');
   $top_ct = NexteuropaNewsroomHelper::getFieldInstances('topic');
   $newsroom_universe_id = NexteuropaNewsroomHelper::getUniverseId();
   // Get some information basing on the activation of the universe id.
@@ -170,22 +169,6 @@ function nexteuropa_newsroom_admin_settings(array $form, array &$form_state) {
     '#collapsed' => TRUE,
   ];
 
-  $form['newsroom_fields']['nexteuropa_newsroom_content_types_select'] = [
-    '#type' => 'checkboxes',
-    '#title' => t('Advanced and configurable reference with newsroom items.'),
-    '#description' => t('Choose the content types in which you want to activate a complex relationship with the newsroom items.'),
-    '#options' => _nexteuropa_newsroom_prepare_options('ct'),
-    '#multiple' => TRUE,
-    '#default_value' => $sel_ct,
-  ];
-
-  $form['newsroom_fields']['nexteuropa_newsroom_content_types_delete_select'] = [
-    '#type' => 'checkbox',
-    '#title' => t('Delete all the newsroom select fields in your content types.'),
-    '#description' => t('If you want to delete all the instance of the select field together check this.'),
-    '#default_value' => 0,
-  ];
-
   // Settings about the universe.
   $form['newsroom_universe'] = [
     '#type' => 'fieldset',
@@ -224,6 +207,7 @@ function nexteuropa_newsroom_admin_settings(array $form, array &$form_state) {
     '#title' => t('IP addresses allowed for import'),
     '#default_value' => variable_get('nexteuropa_newsroom_allowed_ips', '127.0.0.1,158.167.165.192,158.167.165.191,158.167.209.222,158.167.240.147,158.167.209.223,158.167.210.159,158.167.210.158'),
     '#description' => t('Comma separated list of IP addresses where the importer can be launched from.'),
+    '#maxlength' => 512,
   ];
 
   $form['newsroom_universe']['nexteuropa_newsroom_item_import_script'] = [
@@ -449,6 +433,13 @@ function nexteuropa_newsroom_admin_settings(array $form, array &$form_state) {
       '#access' => user_access(NEXTEUROPA_NEWSROOM_ADMIN_ACCESS),
       '#weight' => 11,
     ];
+    $form['actions']['clean_files'] = [
+      '#type' => 'submit',
+      '#value' => 'Clean files',
+      '#submit' => ['_nexteuropa_newsroom_admin_clean_files'],
+      '#access' => user_access(NEXTEUROPA_NEWSROOM_ADMIN_ACCESS),
+      '#weight' => 12,
+    ];
     $form['actions']['clean_cache'] = [
       '#type' => 'submit',
       '#value' => 'Clean cache',
@@ -461,7 +452,6 @@ function nexteuropa_newsroom_admin_settings(array $form, array &$form_state) {
   // Define the fields_form array.
   $form_state['fields_form'] = [];
   $form_state['fields_form']['topic'] = $top_ct;
-  $form_state['fields_form']['select'] = $sel_ct;
 
   // Confirmation step_needed.
   if (!empty($form_state['storage']['confirm']) && empty($form_state['confirm']['processed'])) {
@@ -470,6 +460,79 @@ function nexteuropa_newsroom_admin_settings(array $form, array &$form_state) {
   // Normal form.
   else {
     return system_settings_form($form);
+  }
+}
+
+/**
+ * Deletes files duplication.
+ */
+function _nexteuropa_newsroom_admin_clean_files() {
+  $operations = [];
+
+  $result = db_select('field_data_field_newsroom_illustrative_img')
+    ->fields(NULL, ['entity_id', 'field_newsroom_illustrative_img_fid'])
+    ->condition('bundle', NEXTEUROPA_NEWSROOM_CONTENT_TYPE)
+    ->orderBy('entity_id', 'DEC')
+    ->execute()->fetchAll();
+
+  if (!empty($result)) {
+    $cache_key = 'get_agenda:clean_files';
+    $items = [];
+    if ($cache = cache_get($cache_key, NEXTEUROPA_NEWSROOM_CACHE_TABLE)) {
+      $items = $cache->data;
+    }
+
+    foreach ($result as $nid) {
+      // We cleaned it already. Skip it.
+      if (in_array($nid->entity_id, $items)) {
+        continue;
+      }
+
+      $operations[] = [
+        '_nexteuropa_newsroom_file_cleanup_batch_process',
+        [
+          $nid->entity_id,
+        ],
+      ];
+    }
+  }
+
+  $query = db_select('file_managed', 'fm');
+  $query->fields('fm', ['fid']);
+  $query->join('file_usage', 'fu', 'fm.fid = fu.fid');
+  $query->leftJoin('node', 'n', "n.nid = fu.id AND n.type = '" . NEXTEUROPA_NEWSROOM_CONTENT_TYPE . "'");
+  $query->condition('fu.type', 'node');
+  $query->condition('fm.type', 'image');
+  $query->condition('fm.uri', '%newsroom%', 'LIKE');
+  $query->isNull('n.nid');
+
+  $result = $query->execute()->fetchAll();
+
+  if (!empty($result)) {
+    foreach ($result as $fid) {
+      $operations[] = [
+        '_nexteuropa_newsroom_remove_file_batch_process',
+        [
+          $fid->fid,
+        ],
+      ];
+    }
+  }
+
+  if (!empty($operations)) {
+    $batch = [
+      'operations' => $operations,
+      'title' => t('Clean up files'),
+      'init_message' => t('Starting...'),
+      'error_message' => t('An error occurred'),
+      'finished' => '_nexteuropa_newsroom_file_cleanup_batch_finish',
+    ];
+
+    // Start the batch job.
+    batch_set($batch);
+  }
+  else {
+    drupal_set_message(t('Nothing to do'), 'status');
   }
 }
 
@@ -486,8 +549,8 @@ function _nexteuropa_newsroom_admin_settings_form_validate(array $form, array &$
   if (empty($form_state['storage']['confirm']) && empty($form_state['confirm']['processed'])) {
     $check_values = _nexteuropa_newsroom_admin_prepare_check($form_state['fields_form'], $form_state['values']);
 
-    // Check every topic and select instance if requested.
-    foreach (['topic', 'select'] as $field_item) {
+    // Check every topic instance if requested.
+    foreach (['topic'] as $field_item) {
       if ($check_values['delete'][$field_item] == 1) {
         $test = _nexteuropa_newsroom_admin_check_deletion($field_item, NEXTEUROPA_NEWSROOM_ALL);
       }
@@ -539,8 +602,8 @@ function _nexteuropa_newsroom_admin_settings_form_submit(array $form, array &$fo
   else {
     $check_values = _nexteuropa_newsroom_admin_prepare_check($form_state['fields_form'], $form_state['values']);
 
-    // Remove every topic or select instance if requested.
-    foreach (['topic', 'select'] as $field_item) {
+    // Remove every topic instance if requested.
+    foreach (['topic'] as $field_item) {
       if ($check_values['delete'][$field_item] == 1) {
         _nexteuropa_newsroom_admin_remove_fields($field_item, NEXTEUROPA_NEWSROOM_ALL);
       }
@@ -728,7 +791,7 @@ function _nexteuropa_newsroom_admin_add_fields($type = 'topic', array $sel_ct = 
 function _nexteuropa_newsroom_admin_field_group($machine_name) {
   // Get info about the group, it's likely to be already in the database.
   $groups = field_group_info_groups('node', $machine_name, 'form', TRUE);
-  $fields = ['topic', 'select'];
+  $fields = ['topic'];
   $group_name = 'group_newsroom_fields';
   $instances = FALSE;
 
@@ -874,29 +937,22 @@ function _nexteuropa_newsroom_admin_check_deletion($type, array $checks = []) {
 function _nexteuropa_newsroom_admin_prepare_check(array $previous, array $input) {
   // Set some values.
   $selected['topic'] = array_filter($input['nexteuropa_newsroom_content_types_topic']);
-  $selected['select'] = array_filter($input['nexteuropa_newsroom_content_types_select']);
   $check_topic = [];
-  $check_select = [];
   // Check the two array for differences. we need to catch also a deselection.
   if ($selected != $previous) {
     $check_topic[] = array_diff($previous['topic'], $selected['topic']);
     $check_topic[] = array_diff($selected['topic'], $previous['topic']);
-    $check_select[] = array_diff($previous['select'], $selected['select']);
-    $check_select[] = array_diff($selected['select'], $previous['select']);
   }
   // Prepare all the relevant data formatted into an [).
   $infos = [
     'selected' => [
       'topic' => $selected['topic'],
-      'select' => $selected['select'],
     ],
     'delete' => [
       'topic' => $input['nexteuropa_newsroom_content_types_delete_topic'],
-      'select' => $input['nexteuropa_newsroom_content_types_delete_select'],
     ],
     'check' => [
       'topic' => $check_topic,
-      'select' => $check_select,
     ],
   ];
 
@@ -992,7 +1048,7 @@ function _nexteuropa_newsroom_prepare_options($type) {
     $content_types = node_type_get_types();
     // Exclude the ct used for the import.
     unset($content_types[NEXTEUROPA_NEWSROOM_CONTENT_TYPE]);
-    unset($content_types['newsroom_selection']);
+    unset($content_types[NEXTEUROPA_NEWSROOM_ISSUE_CONTENT_TYPE]);
     // Build options for selecting content types.
     foreach ($content_types as $name => $content_type) {
       if ($content_type->disabled !== 1) {

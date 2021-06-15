@@ -1,0 +1,7 @@
+{
+    "name": "ec-europa/digit-ne-varnish",
+    "description": "The module provides functionality which allows to send customized HTTP request to the Varnish server.",
+    "type": "drupal-module",
+    "license": "EUPL-1.1",
+    "homepage": "https://github.com/ec-europa/digit-ne-varnish"
+}

@@ -32,19 +32,19 @@ function atomium_bartik_preprocess_html(array &$variables, $hook) {
   // Add conditional stylesheets for IE.
   drupal_add_css(
     path_to_theme() . '/assets/css/ie.css',
-      array(
-        'group' => CSS_THEME,
-        'browsers' => array('IE' => 'lte IE 7', '!IE' => FALSE),
-        'preprocess' => FALSE,
-      )
+    array(
+      'group' => CSS_THEME,
+      'browsers' => array('IE' => 'lte IE 7', '!IE' => FALSE),
+      'preprocess' => FALSE,
+    )
   );
   drupal_add_css(
     path_to_theme() . '/assets/css/ie6.css',
-      array(
-        'group' => CSS_THEME,
-        'browsers' => array('IE' => 'IE 6', '!IE' => FALSE),
-        'preprocess' => FALSE,
-      )
+    array(
+      'group' => CSS_THEME,
+      'browsers' => array('IE' => 'IE 6', '!IE' => FALSE),
+      'preprocess' => FALSE,
+    )
   );
 
   // Add information about the number of sidebars.
@@ -70,6 +70,5 @@ function atomium_bartik_process_html(array &$variables, $hook) {
   // Hook into color.module.
   if (module_exists('color')) {
     _color_html_alter($variables);
-
   }
 }

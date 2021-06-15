@@ -8,7 +8,7 @@
 /**
  * Implements hook_atomium_theme_hook().
  */
-function ec_europa_atomium_theme_tags() {
+function ec_europa_atomium_theme_tags(array $existing, $type, $theme, $path) {
   return array(
     'tags' => array(
       'variables' => array(
@@ -110,7 +110,7 @@ function ec_europa_preprocess_tags(array &$variables, $hook) {
       '#text' => $item['value'],
       '#path' => $item['href'],
     );
-  };
+  }
 }
 
 /**

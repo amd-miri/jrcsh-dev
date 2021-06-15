@@ -8,11 +8,24 @@
 /**
  * Implements hook_atomium_theme_hook().
  */
-function atomium_atomium_theme_tablesort_indicator() {
+function atomium_atomium_theme_tablesort_indicator(array $existing, $type, $theme, $path) {
   return array(
     'tablesort_indicator' => array(
       'template' => 'tablesort-indicator',
       'variables' => array('style' => NULL),
+    ),
+  );
+}
+
+/**
+ * Implements hook_atomium_definition_hook().
+ */
+function atomium_atomium_definition_tablesort_indicator() {
+  return array(
+    'label' => 'Tablesort indicator',
+    'description' => 'Tablesort indicator description.',
+    'preview' => array(
+      'style' => 'asc',
     ),
   );
 }
@@ -36,7 +49,7 @@ function atomium_preprocess_tablesort_indicator(array &$variables, $hook) {
     ),
   );
 
-  if ('asc' === $variables['style']) {
+  if ($variables['style'] === 'asc') {
     $image['#path'] = 'misc/arrow-asc.png';
     $image['#alt'] = $image['#title'] = t('sort ascending');
     $direction = 'asc';

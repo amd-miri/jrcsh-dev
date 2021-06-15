@@ -18,11 +18,9 @@ class NexteuropaNewsroomBlock extends NexteuropaNewsroomBlockBase {
    *   Newsroom type taxonomy term.
    * @param array|object $topics
    *   Newsroom topics taxonomy terms.
-   * @param string $operator
-   *   Operator connecting  topics.
    */
-  public function __construct($type, $topics, $operator) {
-    parent::__construct($type, $topics, $operator);
+  public function __construct($type, $topics) {
+    parent::__construct($type, $topics);
     $this->setIsAgenda(FALSE);
     $this->setHighlighted();
     $this->getData();
@@ -124,12 +122,7 @@ class NexteuropaNewsroomBlock extends NexteuropaNewsroomBlockBase {
       $query->condition('n.type', NEXTEUROPA_NEWSROOM_CONTENT_TYPE);
 
       if (!empty($topic_ids)) {
-        if ($this->getOperator() == NEXTEUROPA_NEWSROOM_TOPIC_OPERATOR_OR) {
-          $query->condition('topic_data.tid', $topic_ids);
-        }
-        elseif ($nids = NexteuropaNewsroomHelper::getNodeRelatedToTopic($topic_ids)) {
-          $query->condition('nid', $nids, 'IN');
-        }
+        $query->condition('topic_data.tid', $topic_ids);
       }
 
       $query->condition('tt.tid', NexteuropaNewsroomVocabularyHelper::getTypeChildren($this->getType()->tid));

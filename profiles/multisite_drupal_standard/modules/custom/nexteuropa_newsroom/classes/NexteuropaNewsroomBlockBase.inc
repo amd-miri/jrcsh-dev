@@ -14,7 +14,6 @@ abstract class NexteuropaNewsroomBlockBase {
   protected $isAgenda = FALSE;
   protected $lastestDate = NULL;
   protected $type = NULL;
-  protected $operator = NEXTEUROPA_NEWSROOM_TOPIC_OPERATOR_OR;
   protected $topics = [];
 
   /**
@@ -24,13 +23,10 @@ abstract class NexteuropaNewsroomBlockBase {
    *   Newsroom type taxonomy term.
    * @param array|object $topics
    *   Newsroom topics taxonomy terms.
-   * @param string $operator
-   *   Operator connecting  topics.
    */
-  public function __construct($type, $topics, $operator) {
+  public function __construct($type, $topics) {
     $this->setType($type);
     $this->setTopics($topics);
-    $this->setOperator($operator);
   }
 
   /**
@@ -81,26 +77,6 @@ abstract class NexteuropaNewsroomBlockBase {
    */
   public function setIsAgenda($value) {
     $this->isAgenda = $value;
-  }
-
-  /**
-   * Gets query operator.
-   *
-   * @return string
-   *   Query operator: OR or AND.
-   */
-  public function getOperator() {
-    return $this->operator;
-  }
-
-  /**
-   * Sets query operator.
-   *
-   * @param string $value
-   *   Query operator: OR or AND.
-   */
-  public function setOperator($value) {
-    $this->operator = $value;
   }
 
   /**

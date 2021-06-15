@@ -22,6 +22,7 @@ function ec_europa_preprocess_form_element__radio(array &$variables, $hook) {
     'ecl-form-label'
   );
   $variables['atomium']['attributes']['label']->append('class', 'ecl-radio');
+
   if (isset($element['#id'])) {
     $variables['atomium']['attributes']['label']->append(
       'for',
@@ -63,6 +64,7 @@ function ec_europa_preprocess_form_element__checkbox(array &$variables, $hook) {
     'ecl-form-label'
   );
   $variables['atomium']['attributes']['label']->append('class', 'ecl-checkbox');
+
   if (isset($element['#id'])) {
     $variables['atomium']['attributes']['label']->append(
       'for',
@@ -92,7 +94,9 @@ function ec_europa_preprocess_form_element__checkbox(array &$variables, $hook) {
  * Implements hook_preprocess_hook().
  */
 function ec_europa_preprocess_form_element__textarea(array &$variables, $hook) {
-  $variables['label']['#attributes'] = array(
-    'id' => array($variables['element']['#id'] . '_label'),
-  );
+  if (isset($variables['label']['#attributes'])) {
+    $variables['label']['#attributes'] = array(
+      'id' => array($variables['element']['#id'] . '_label'),
+    );
+  }
 }

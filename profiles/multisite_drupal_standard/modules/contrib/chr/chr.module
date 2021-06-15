@@ -240,9 +240,10 @@ function chr_curl_http_request($url, array $options = array()) {
   $response = preg_split("/\r\n|\n|\r/", $response);
 
   // Parse the response status line.
-  list($protocol, $code, $status_message) = explode(' ', trim(array_shift($response)), 3);
-  $result->protocol = $protocol;
-  $result->status_message = $status_message;
+  $response_status_array = _drupal_parse_response_status(trim(array_shift($response)));
+  $result->protocol = $response_status_array['http_version'];
+  $result->status_message = $response_status_array['reason_phrase'];
+  $code = $response_status_array['response_code'];
 
   $result->headers = array();
 
@@ -293,7 +294,7 @@ function chr_curl_http_request($url, array $options = array()) {
       }
       break;
     default:
-      $result->error = $status_message;
+      $result->error = $result->status_message;
   }
 
   // Lastly, include any cURL specific information.

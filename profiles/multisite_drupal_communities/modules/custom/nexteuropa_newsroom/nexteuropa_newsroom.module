@@ -20,11 +20,10 @@ module_load_include('inc', 'nexteuropa_newsroom', 'nexteuropa_newsroom.theme');
 module_load_include('inc', 'nexteuropa_newsroom', 'nexteuropa_newsroom.menu');
 
 define('NEXTEUROPA_NEWSROOM_ALL', 'all');
-define('NEXTEUROPA_NEWSROOM_TOPIC_OPERATOR_OR', 'OR');
 define('NEXTEUROPA_NEWSROOM_PROPOSAL_SCRIPT', 'propose-item.cfm');
 define('NEXTEUROPA_NEWSROOM_CLICKTHROUGH_FORCE', 'force');
 define('NEXTEUROPA_NEWSROOM_CACHE_TABLE', 'cache_newsroom');
-define('NEXTEUROPA_NEWSROOM_BASE_URL', 'http://ec.europa.eu/newsroom/');
+define('NEXTEUROPA_NEWSROOM_BASE_URL', 'https://ec.europa.eu/newsroom/');
 
 define('NEXTEUROPA_NEWSROOM_CONTENT_TYPE', 'newsroom_item');
 define('NEXTEUROPA_NEWSROOM_ISSUE_CONTENT_TYPE', 'newsroom_newsletter_issue');
@@ -645,12 +644,7 @@ function nexteuropa_newsroom_entity_presave($entity, $type) {
  * Implements hook_feeds_after_save().
  */
 function nexteuropa_newsroom_feeds_after_save(FeedsSource $source, $entity, $item, $entity_id) {
-  if ($source->importer()->fetcher->id == 'newsroom_unpublished_items') {
-    $node = node_load($entity_id);
-    $node->status = 0;
-    node_save($node);
-  }
-  elseif ($source->importer()->fetcher->id == 'newsroom_deleted_items') {
+  if ($source->importer()->fetcher->id == 'newsroom_unpublished_items' || $source->importer()->fetcher->id == 'newsroom_deleted_items') {
     NexteuropaNewsroomHelper::deleteEntityTranslations($entity, $entity_id);
     entity_delete('node', $entity_id);
   }
@@ -673,16 +667,67 @@ function nexteuropa_newsroom_feeds_after_save(FeedsSource $source, $entity, $ite
           }
 
           // If title is empty it means there is no translation.
-          if (!empty($xpath_expression) && isset($item[$xpath_expression]) && empty($item[$xpath_expression])) {
+          if (!empty($xpath_expression) || empty($item[$xpath_expression])) {
             NexteuropaNewsroomHelper::deleteEntityTranslations($entity, $entity_id, $language);
           }
         }
       }
     }
 
-    _nexteuropa_newsroom_set_image_meta_info('field_newsroom_illustrative_img', $entity, $source, $item, $languages, NexteuropaNewsroomHelper::getDefaultLanguage());
-    _nexteuropa_newsroom_set_image_meta_info('field_newsroom_private_img', $entity, $source, $item, $languages, NexteuropaNewsroomHelper::getDefaultLanguage());
+    $image_fields = [
+      'field_newsroom_illustrative_img',
+      'field_newsroom_private_img',
+    ];
+
+    foreach ($image_fields as $image_field) {
+      _nexteuropa_newsroom_set_image_meta_info($image_field, $entity, $source, $item, $languages, NexteuropaNewsroomHelper::getDefaultLanguage());
+      _nexteuropa_newsroom_clean_files($entity, $image_field);
+    }
   }
+}
+
+/**
+ * Clean up files.
+ *
+ * @param object $node
+ *   Current node.
+ * @param string $field
+ *   Field name.
+ */
+function _nexteuropa_newsroom_clean_files($node, $field) {
+  $count = 0;
+
+  if (!empty($node->{$field}[LANGUAGE_NONE][0]['fid'])) {
+    $file = file_load($node->{$field}[LANGUAGE_NONE][0]['fid']);
+
+    if (!empty($file)) {
+      $query = db_select('file_managed', 'f');
+      $query->leftJoin('file_usage', 'fu', 'f.fid = fu.fid');
+      $query->leftJoin('node', 'n', 'fu.id = n.nid');
+      $query->fields('f', ['fid', 'status', 'filesize', 'filemime', 'uri']);
+      $query->fields('fu', ['id']);
+      $query->condition('f.filesize', $file->filesize);
+      $query->condition('f.filemime', $file->filemime);
+      $query->condition('f.filename', $file->filename);
+      $query->condition('f.uri', '%newsroom%', 'LIKE');
+      $query->condition('f.fid', $file->fid, '<>');
+      $db_or = db_or();
+      $db_or->condition('n.type', NEXTEUROPA_NEWSROOM_CONTENT_TYPE);
+      $db_or->isNull('n.type');
+      $query->condition($db_or);
+      $result = $query->execute()->fetchAll();
+
+      foreach ($result as $fid) {
+        $file_to_delete = file_load($fid->fid);
+        if (!empty($file_to_delete)) {
+          file_delete($file_to_delete, TRUE);
+          $count++;
+        }
+      }
+    }
+  }
+
+  return $count;
 }
 
 /**
@@ -716,7 +761,7 @@ function _nexteuropa_newsroom_set_image_meta_info($image_field, $entity, $source
         // Save default language at first.
         foreach ($config['mappings'] as $mapping) {
           foreach ($fields as $field => $field_name) {
-            if ($mapping['target'] == $image_field . ':' . $field_name . ':et:' . $default_language && !empty($mapping['source']) && isset($item[$mapping['source']]) && !empty($item[$mapping['source']])) {
+            if ($mapping['target'] == $image_field . ':' . $field_name . ':et:' . $default_language && !empty($mapping['source']) && !empty($item[$mapping['source']])) {
               $file->$field = [$default_language => [0 => ['value' => $item[$mapping['source']]]]];
             }
           }
@@ -733,7 +778,7 @@ function _nexteuropa_newsroom_set_image_meta_info($image_field, $entity, $source
                 continue;
               }
 
-              if ($mapping['target'] == $image_field . ':' . $field_name . ':et:' . $language->language && !empty($mapping['source']) && isset($item[$mapping['source']]) && !empty($item[$mapping['source']])) {
+              if ($mapping['target'] == $image_field . ':' . $field_name . ':et:' . $language->language && !empty($mapping['source']) && !empty($item[$mapping['source']])) {
                 $translation = [
                   'translate' => 0,
                   'status' => 1,
@@ -859,13 +904,14 @@ function nexteuropa_newsroom_field_default_field_instances_alter(&$fields) {
  * @see FeedsProcessor::existingEntityId()
  */
 function _nexteuropa_newsroom_use_as_guid(FeedsSource $source, $entity_type, $bundle, $target, array $values) {
-  list($field_name, $column) = explode(':', $target . ':value');
+
   // Example for if the target is a field.
   $query = new EntityFieldQuery();
   $result = $query
     ->entityCondition('entity_type', $entity_type)
     ->entityCondition('bundle', $bundle)
-    ->fieldCondition($field_name, $column, $values)
+    ->fieldCondition($target, 'value', $values)
+    ->addTag('DANGEROUS_ACCESS_CHECK_OPT_OUT')
     ->execute();
 
   if (!empty($result[$entity_type])) {
@@ -917,7 +963,7 @@ function nexteuropa_newsroom_feeds_after_parse(FeedsSource $source, FeedsParserR
 
     // If end date is empty we change it to start date.
     foreach ($result->items as &$item) {
-      if (empty($item[$end_date_exp])) {
+      if (empty($item[$end_date_exp]) && !empty($item[$start_date_exp])) {
         $item[$end_date_exp] = $item[$start_date_exp];
       }
     }
@@ -1189,4 +1235,86 @@ function _nexteuropa_newsroom_ds_content_info() {
     }
   }
   return $label;
+}
+
+/**
+ * Clean up files for the current node.
+ *
+ * @param int $nid
+ *   Node id.
+ * @param array $context
+ *   Batch context.
+ */
+function _nexteuropa_newsroom_file_cleanup_batch_process($nid, &$context) {
+  $image_fields = [
+    'field_newsroom_illustrative_img',
+    'field_newsroom_private_img',
+  ];
+
+  if (!isset($context['results']['cnt'])) {
+    $context['results']['cnt'] = 0;
+  }
+
+  $cache_key = 'get_agenda:clean_files';
+  $items = [];
+  if ($cache = cache_get($cache_key, NEXTEUROPA_NEWSROOM_CACHE_TABLE)) {
+    $items = $cache->data;
+  }
+
+  $node = node_load($nid);
+  if (!empty($node)) {
+    foreach ($image_fields as $image_field) {
+      $context['results']['cnt'] += _nexteuropa_newsroom_clean_files($node, $image_field);
+    }
+
+    $items[] = $nid;
+    cache_set($cache_key, $items, NEXTEUROPA_NEWSROOM_CACHE_TABLE);
+
+    $context['message'] = t('Deleting files for nid "!nid"', ['!nid' => $nid]);
+  }
+  else {
+    $context['message'] = t('Newsroom item is not found');
+  }
+}
+
+/**
+ * Remove file.
+ *
+ * @param int $fid
+ *   File id.
+ * @param array $context
+ *   Batch context.
+ */
+function _nexteuropa_newsroom_remove_file_batch_process($fid, &$context) {
+  if (!isset($context['results']['cnt'])) {
+    $context['results']['cnt'] = 0;
+  }
+
+  $file_to_delete = file_load($fid);
+  if (!empty($file_to_delete)) {
+    $context['message'] = t('Deleting file "!fid"', ['!fid' => $fid]);
+    file_delete($file_to_delete, TRUE);
+    $context['results']['cnt'] += 1;
+  }
+  else {
+    $context['message'] = t('File is not found');
+  }
+}
+
+/**
+ * Displays messages after the batch has finished.
+ *
+ * @param bool $success
+ *   Did the batch finished with/without errors.
+ * @param array $results
+ *   Results of batch iterations.
+ * @param array $operations
+ *   Unproccessed operations, if any.
+ */
+function _nexteuropa_newsroom_file_cleanup_batch_finish($success, array $results, array $operations) {
+  if ($success) {
+    drupal_set_message(t('@count files deleted.', [
+      '@count' => $results['cnt'],
+    ]));
+  }
 }

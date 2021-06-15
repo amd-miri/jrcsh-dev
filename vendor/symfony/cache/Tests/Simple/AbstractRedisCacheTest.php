@@ -13,6 +13,9 @@ namespace Symfony\Component\Cache\Tests\Simple;
 
 use Symfony\Component\Cache\Simple\RedisCache;
 
+/**
+ * @group legacy
+ */
 abstract class AbstractRedisCacheTest extends CacheTestCase
 {
     protected $skippedTests = [
@@ -28,7 +31,7 @@ abstract class AbstractRedisCacheTest extends CacheTestCase
         return new RedisCache(self::$redis, str_replace('\\', '.', __CLASS__), $defaultLifetime);
     }
 
-    public static function setupBeforeClass()
+    public static function setUpBeforeClass(): void
     {
         if (!\extension_loaded('redis')) {
             self::markTestSkipped('Extension redis required.');
@@ -39,7 +42,7 @@ abstract class AbstractRedisCacheTest extends CacheTestCase
         }
     }
 
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         self::$redis = null;
     }

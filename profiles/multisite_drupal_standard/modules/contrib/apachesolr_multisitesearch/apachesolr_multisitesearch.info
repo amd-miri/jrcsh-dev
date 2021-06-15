@@ -4,9 +4,9 @@ dependencies[] = apachesolr
 dependencies[] = apachesolr_search
 package = Search Toolkit
 core = "7.x"
-; Information added by Drupal.org packaging script on 2014-05-03
-version = "7.x-1.1"
+; Information added by Drupal.org packaging script on 2017-06-20
+version = "7.x-1.2"
 core = "7.x"
 project = "apachesolr_multisitesearch"
-datestamp = "1399150136"
+datestamp = "1497980650"
 

@@ -8,7 +8,7 @@
 /**
  * Implements hook_atomium_theme_hook().
  */
-function ec_europa_atomium_theme_status_messages() {
+function ec_europa_atomium_theme_status_messages(array $existing, $type, $theme, $path) {
   return array(
     'status_messages' => array(
       'variables' => array(
@@ -45,7 +45,6 @@ function ec_europa_atomium_definition_status_messages() {
         ),
         'status' => array(
           'Status message 1',
-          'Status message 2',
         ),
       ),
     ),
@@ -60,6 +59,9 @@ function ec_europa_preprocess_status_messages(array &$variables, $hook) {
     'success' => t('Success message'),
     'informative' => t('Informative message'),
     'live_stream' => t('Live Stream message'),
+    'status' => t('Status message'),
+    'warning' => t('Warning message'),
+    'error' => t('Error message'),
   );
 
   $status_modifier = array(
@@ -72,25 +74,25 @@ function ec_europa_preprocess_status_messages(array &$variables, $hook) {
   );
 
   foreach ($variables['status_messages']['status_messages'] as $type => &$messages) {
-    if (!empty($status_modifier[$type])) {
-      $messages['modifier'] = $status_modifier[$type];
-    }
-
-    if ((empty($messages['messages']['#title'])) && (!empty($status_modifier[$type]))) {
+    if (isset($status_heading[$type])) {
       $messages['messages']['#title'] = $status_heading[$type];
     }
-    $messages['status_heading'] = $messages['messages']['#title'];
 
     if (empty($messages['messages']['#attributes']['class'])) {
       $messages['messages']['#attributes']['class'] = array();
     }
-    $messages['messages']['#attributes']['class'][] = "ecl-message__body";
-    $messages['messages']['#attributes']['class'][] = "ecl-list";
+    $messages['messages']['#attributes']['class'][] = 'ecl-message__body';
+    $messages['messages']['#attributes']['class'][] = 'ecl-list';
 
     $variables['atomium']['attributes']['status-' . $type]->append('role', 'alert');
-    $variables['atomium']['attributes']['status-' . $type]->append(
-      'class',
-      array('ecl-message--' . $messages['modifier'], 'ecl-message')
-    );
+
+    if (isset($status_modifier[$type])) {
+      $variables['atomium']['attributes']['status-' . $type]->append(
+        'class',
+        array('ecl-message--' . $status_modifier[$type], 'ecl-message')
+      );
+    }
+
+    $messages['messages']['#wrapper'] = FALSE;
   }
 }

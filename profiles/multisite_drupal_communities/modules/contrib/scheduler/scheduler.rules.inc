@@ -7,11 +7,11 @@
 
 /**
  * Implements hook_rules_event_info().
+ *
+ * This hook function defines four Scheduler events which can be used by Rules
+ * to trigger other actions.
  */
 function scheduler_rules_event_info() {
-  // This hook function defines four Scheduler events which can be used by Rules
-  // to trigger other actions.
-
   // Create an array of variables, as these are the same for each of the events.
   $variables = array(
     'node' => array(
@@ -118,9 +118,9 @@ function scheduler_rules_action_info() {
 /**
  * Set the publish_on date for the node.
  *
- * @param $node
+ * @param object $node
  *   The node object to be scheduled for publishing.
- * @param $date
+ * @param int $date
  *   The date for publishing, a unix timestamp integer.
  */
 function scheduler_set_publish_date_action($node, $date) {
@@ -142,9 +142,9 @@ function scheduler_set_publish_date_action($node, $date) {
 /**
  * Set the unpublish_on date for the node.
  *
- * @param $node
+ * @param object $node
  *   The node object to be scheduled for unpublishing.
- * @param $date
+ * @param int $date
  *   The date for unpublishing, a unix timestamp integer.
  */
 function scheduler_set_unpublish_date_action($node, $date) {
@@ -162,7 +162,7 @@ function scheduler_set_unpublish_date_action($node, $date) {
 /**
  * Remove the publish_on date for the node.
  *
- * @param $node
+ * @param object $node
  *   The node object from which to remove the publish_on date.
  */
 function scheduler_remove_publish_date_action($node) {
@@ -180,7 +180,7 @@ function scheduler_remove_publish_date_action($node) {
 /**
  * Remove the unpublish_on date for the node.
  *
- * @param $node
+ * @param object $node
  *   The node object from which to remove the unpublish_on date.
  */
 function scheduler_remove_unpublish_date_action($node) {
@@ -213,19 +213,23 @@ function scheduler_rules_condition_info() {
 
   // 1. Condition to check if publishing is enabled for the content type.
   $conditions['scheduler_condition_publishing_is_enabled'] = array(
-    'label' => t('Scheduled publishing is enabled for this content type')) + $default;
+    'label' => t('Scheduled publishing is enabled for this content type'),
+  ) + $default;
 
   // 2. Condition to check if unpublishing is enabled for the content type.
   $conditions['scheduler_condition_unpublishing_is_enabled'] = array(
-    'label' => t('Scheduled unpublishing is enabled for this content type')) + $default;
+    'label' => t('Scheduled unpublishing is enabled for this content type'),
+  ) + $default;
 
   // 3. Condition to check if the node is scheduled for publishing.
   $conditions['scheduler_condition_node_is_scheduled_for_publishing'] = array(
-    'label' => t('The node is scheduled for publishing')) + $default;
+    'label' => t('The node is scheduled for publishing'),
+  ) + $default;
 
   // 4. Condition to check if the node is scheduled for unpublishing.
   $conditions['scheduler_condition_node_is_scheduled_for_unpublishing'] = array(
-    'label' => t('The node is scheduled for unpublishing')) + $default;
+    'label' => t('The node is scheduled for unpublishing'),
+  ) + $default;
 
   return $conditions;
 }
@@ -233,9 +237,10 @@ function scheduler_rules_condition_info() {
 /**
  * Determines whether scheduled publishing is enabled for this node type.
  *
- * @param $node
- *   A node object.
- * @return
+ * @param object $node
+ *   The node to check.
+ *
+ * @return bool
  *   TRUE if scheduled publishing is enabled for the node type, FALSE if not.
  */
 function scheduler_condition_publishing_is_enabled($node) {
@@ -245,9 +250,10 @@ function scheduler_condition_publishing_is_enabled($node) {
 /**
  * Determines whether scheduled unpublishing is enabled for this node type.
  *
- * @param $node
- *   A node object.
- * @return
+ * @param object $node
+ *   The node to check.
+ *
+ * @return bool
  *   TRUE if scheduled unpublishing is enabled for the node type, FALSE if not.
  */
 function scheduler_condition_unpublishing_is_enabled($node) {
@@ -257,9 +263,10 @@ function scheduler_condition_unpublishing_is_enabled($node) {
 /**
  * Determines whether a node is scheduled for publishing.
  *
- * @param $node
- *   A node object.
- * @return
+ * @param object $node
+ *   The node to check.
+ *
+ * @return bool
  *   TRUE if the node is scheduled for publishing, FALSE if not.
  */
 function scheduler_condition_node_is_scheduled_for_publishing($node) {
@@ -269,9 +276,10 @@ function scheduler_condition_node_is_scheduled_for_publishing($node) {
 /**
  * Determines whether a node is scheduled for unpublishing.
  *
- * @param $node
- *   A node object.
- * @return
+ * @param object $node
+ *   The node to check.
+ *
+ * @return bool
  *   TRUE if the node is scheduled for unpublishing, FALSE if not.
  */
 function scheduler_condition_node_is_scheduled_for_unpublishing($node) {

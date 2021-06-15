@@ -25,14 +25,10 @@ class PhpFilesAdapterTest extends AdapterTestCase
 
     public function createCachePool()
     {
-        if (!PhpFilesAdapter::isSupported()) {
-            $this->markTestSkipped('OPcache extension is not enabled.');
-        }
-
         return new PhpFilesAdapter('sf-cache');
     }
 
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         FilesystemAdapterTest::rmdir(sys_get_temp_dir().'/symfony-cache');
     }

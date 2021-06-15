@@ -26,11 +26,11 @@
     width="<?php print $width; ?>"
     height="<?php print $height; ?>" frameborder="0" allowfullscreen="" mozallowfullscreen="" webkitallowfullscreen=""
     id="videoplayer<?php print $video_id; ?>" scrolling="no"
-    src="<?php print $ec_embedded_video_url ?>">
+    src="<?php print $ec_embedded_video_url; ?>">
   </iframe>
 </div>
 
-<?php if(!empty($language_switcher)) : ?>
+<?php if (!empty($language_switcher)) : ?>
   <div class="language-switcher">
     <?php print $language_switcher; ?>
   </div>

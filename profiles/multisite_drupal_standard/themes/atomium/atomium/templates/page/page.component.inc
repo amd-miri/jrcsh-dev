@@ -13,6 +13,7 @@
  */
 function atomium_preprocess_page(array &$variables, $hook) {
   $variables['page_manager_control'] = NULL;
+
   if (isset($variables['node'])) {
     // Tell the template whether the node is panelizer-controlled.
     $variables['page_manager_control'] = isset($variables['node']->panelizer_view_mode) ? $variables['node']->panelizer_view_mode : NULL;
@@ -25,7 +26,8 @@ function atomium_preprocess_page(array &$variables, $hook) {
 
   // Custom 404.
   $headers = drupal_get_http_header();
-  if (isset($headers['status']) && '404 Not Found' == $headers['status']) {
+
+  if (isset($headers['status']) && $headers['status'] === '404 Not Found') {
     $variables['theme_hook_suggestions'][] = 'page__404';
   }
 
@@ -34,9 +36,15 @@ function atomium_preprocess_page(array &$variables, $hook) {
       // Remove the "theres no content default yadi yada" from the frontpage.
       unset($variables['page']['content']['system_main']['default_message']);
     }
+
     if (!empty($variables['page']['content']['system_main']['#theme_wrappers'])) {
-      // Remove the block template wrapper from the main content block.
-      $variables['page']['content']['system_main']['#theme_wrappers'] = \array_diff($variables['page']['content']['system_main']['#theme_wrappers'], array('block'));
+      // Remove the block hook wrapper from the main content block.
+      $variables['page']['content']['system_main']['#theme_wrappers'] = \array_filter(
+        $variables['page']['content']['system_main']['#theme_wrappers'],
+        static function ($theme_hook) {
+          return !(atomium_get_base_hook($theme_hook) === 'block');
+        }
+      );
     }
   }
 
@@ -67,14 +75,21 @@ function atomium_preprocess_page(array &$variables, $hook) {
   }
 
   $variables['messages'] = NULL;
+
   if ($variables['show_messages']) {
     $variables['messages'] = array(
-      '#theme' => _atomium_extend_theme_hook('status_messages', $variables['theme_hook_original']),
+      '#theme' => _atomium_extend_theme_hook(
+        'status_messages',
+        $variables['theme_hook_original']
+      ),
     );
   }
 
   $variables['breadcrumb'] = array(
-    '#theme' => _atomium_extend_theme_hook('breadcrumb', $variables['theme_hook_original']),
+    '#theme' => _atomium_extend_theme_hook(
+      'breadcrumb',
+      $variables['theme_hook_original']
+    ),
     '#breadcrumb' => atomium_drupal_get_breadcrumb(),
   );
 

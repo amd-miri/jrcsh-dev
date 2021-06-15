@@ -1824,11 +1824,11 @@ class FieldFormTestCase extends FieldTestCase {
     // Display creation form -> 1 widget.
     $this->drupalGet('test-entity/add/test-bundle');
     $result = $this->xpath("//label[not(contains(@class, 'element-invisible')) and contains(text(), :label)]/span/text()", array(':label' => $this->instance['label']));
-    $this->assertEqual($result[0], '*', t('Required symbol added to field label.'));
+    $this->assertEqual($result[0], '*', 'Required symbol added to field label.');
     // Check that the label of the field input is visually hidden and contains
     // the field title and an indication of the delta for a11y.
     $result = $this->xpath("//label[contains(@class, 'element-invisible') and contains(text(), :label)]/span/text()", array(':label' => $this->instance['label']));
-    $this->assertEqual($result[0], '*', t('Required symbol and field label are visually hidden.'));
+    $this->assertEqual($result[0], '*', 'Required symbol and field label are visually hidden.');
   }
 
   /**

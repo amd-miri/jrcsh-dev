@@ -8,7 +8,7 @@
 /**
  * Implements hook_atomium_theme_hook().
  */
-function atomium_atomium_theme_text_format_wrapper() {
+function atomium_atomium_theme_text_format_wrapper(array $existing, $type, $theme, $path) {
   return array(
     'text_format_wrapper' => array(
       'render element' => 'element',
@@ -28,7 +28,10 @@ function atomium_preprocess_text_format_wrapper(array &$variables, $hook) {
       '#markup' => $element['#children'],
       '#weight' => 5,
     ),
-    '#theme_wrappers' => _atomium_extend_theme_hook('html_tag', $variables['theme_hook_original']),
+    '#theme_wrappers' => _atomium_extend_theme_hook(
+      'html_tag',
+      $variables['theme_hook_original']
+    ),
     '#tag' => 'div',
     '#attributes' => array(
       'class' => array(
@@ -42,7 +45,10 @@ function atomium_preprocess_text_format_wrapper(array &$variables, $hook) {
       'description' => array(
         '#markup' => $element['#description'],
         '#weight' => 10,
-        '#theme_wrappers' => _atomium_extend_theme_hook('html_tag', $variables['theme_hook_original']),
+        '#theme_wrappers' => _atomium_extend_theme_hook(
+          'html_tag',
+          $variables['theme_hook_original']
+        ),
         '#tag' => 'div',
         '#attributes' => array(
           'class' => array(

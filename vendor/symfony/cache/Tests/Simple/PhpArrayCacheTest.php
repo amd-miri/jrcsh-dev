@@ -17,6 +17,7 @@ use Symfony\Component\Cache\Tests\Adapter\FilesystemAdapterTest;
 
 /**
  * @group time-sensitive
+ * @group legacy
  */
 class PhpArrayCacheTest extends CacheTestCase
 {
@@ -49,13 +50,15 @@ class PhpArrayCacheTest extends CacheTestCase
 
     protected static $file;
 
-    public static function setupBeforeClass()
+    public static function setUpBeforeClass(): void
     {
         self::$file = sys_get_temp_dir().'/symfony-cache/php-array-adapter-test.php';
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
+        $this->createSimpleCache()->clear();
+
         if (file_exists(sys_get_temp_dir().'/symfony-cache')) {
             FilesystemAdapterTest::rmdir(sys_get_temp_dir().'/symfony-cache');
         }
@@ -95,49 +98,35 @@ class PhpArrayCacheTest extends CacheTestCase
 
     public function testStoredFile()
     {
-        $expected = [
+        $data = [
             'integer' => 42,
             'float' => 42.42,
             'boolean' => true,
             'array_simple' => ['foo', 'bar'],
             'array_associative' => ['foo' => 'bar', 'foo2' => 'bar2'],
         ];
+        $expected = [
+            [
+                'integer' => 0,
+                'float' => 1,
+                'boolean' => 2,
+                'array_simple' => 3,
+                'array_associative' => 4,
+            ],
+            [
+                0 => 42,
+                1 => 42.42,
+                2 => true,
+                3 => ['foo', 'bar'],
+                4 => ['foo' => 'bar', 'foo2' => 'bar2'],
+            ],
+        ];
 
         $cache = new PhpArrayCache(self::$file, new NullCache());
-        $cache->warmUp($expected);
+        $cache->warmUp($data);
 
         $values = eval(substr(file_get_contents(self::$file), 6));
 
         $this->assertSame($expected, $values, 'Warm up should create a PHP file that OPCache can load in memory');
-    }
-}
-
-class PhpArrayCacheWrapper extends PhpArrayCache
-{
-    public function set($key, $value, $ttl = null)
-    {
-        \call_user_func(\Closure::bind(function () use ($key, $value) {
-            $this->values[$key] = $value;
-            $this->warmUp($this->values);
-            $this->values = eval(substr(file_get_contents($this->file), 6));
-        }, $this, PhpArrayCache::class));
-
-        return true;
-    }
-
-    public function setMultiple($values, $ttl = null)
-    {
-        if (!\is_array($values) && !$values instanceof \Traversable) {
-            return parent::setMultiple($values, $ttl);
-        }
-        \call_user_func(\Closure::bind(function () use ($values) {
-            foreach ($values as $key => $value) {
-                $this->values[$key] = $value;
-            }
-            $this->warmUp($this->values);
-            $this->values = eval(substr(file_get_contents($this->file), 6));
-        }, $this, PhpArrayCache::class));
-
-        return true;
     }
 }

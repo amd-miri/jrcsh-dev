@@ -1,0 +1,204 @@
+<?php
+
+/**
+ * @file
+ * Exposes as TMGMT source content in a specific moderation state.
+ */
+
+define('TMGMT_WORKBENCH_REQUEST_SOURCE_LG_INDEX', 1);
+define('TMGMT_WORKBENCH_REQUEST_STATE_INDEX', 4);
+define('TMGMT_WORKBENCH_REQUEST_OPERATION_INDEX', 5);
+define('TMGMT_WORKBENCH_REQUEST_LAST_CHANGE_INDEX', 6);
+
+/**
+ * Implements hook_help().
+ */
+function tmgmt_workbench_help($path, $arg) {
+  $output = '';
+  $states = variable_get('tmgmt_workbench_moderation_states', array());
+  $states = array_filter($states);
+
+  if ($path == 'node/%/translate') {
+    $node = node_load($arg[1]);
+    if (workbench_moderation_node_moderated($node)) {
+      $node = node_load($arg[1]);
+      $state = $node->workbench_moderation['current']->state;
+      $output .= '<p>' . t('Translation of a piece of content is only available if its latest revision is in the following states: <strong>!states</strong>', array('!states' => implode(', ', $states)));
+      $output .= '<br/>' . t("The current piece of content's moderation state is: <strong>!state</strong>", array('!state' => $state)) . '</p>';
+    }
+  }
+  if ($path == 'admin/tmgmt/sources') {
+    $output = $output . '<div>' . t('This table contains only content with latest revision in the following states: <strong>!states</strong>', array('!states' => implode(', ', $states))) . '</div>';
+  }
+
+  return $output;
+}
+
+/**
+ * Implements hook_menu().
+ */
+function tmgmt_workbench_menu() {
+  $items['admin/config/regional/tmgmt_workbench_settings'] = array(
+    'title' => 'Translation Management Workbench',
+    'description' => 'Translation Management Workbench settings',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('tmgmt_workbench_settings_form'),
+    'access arguments' => array('administer tmgmt'),
+    'file' => 'includes/tmgmt_workbench.pages.inc',
+    'weight' => 11,
+  );
+
+  return $items;
+}
+
+/**
+ * Implements hook_tmgmt_source_plugin_info().
+ */
+function tmgmt_workbench_tmgmt_source_plugin_info() {
+  $info = array();
+  // Only expose Workbench Moderation source if at least one content type
+  // is moderated and nodes are translatable by Entity Translation.
+  $entity_types = variable_get('entity_translation_entity_types', array());
+  $content_types = workbench_moderation_moderate_node_types();
+  if ($content_types && isset($entity_types['node']) && $entity_types['node']) {
+    $info['workbench_moderation'] = array(
+      'label' => t('Workbench Moderation'),
+      'description' => t('Source handler for node entities using workbench moderation.'),
+      'plugin controller class' => 'TMGMTWorkbenchSourcePluginController',
+      'ui controller class' => 'TMGMTWorkbenchSourceUIController',
+      'item types' => array(
+        'node' => t('Moderated content'),
+      ),
+    );
+  }
+
+  return $info;
+}
+
+/**
+ * Implements hook_query_TAG_alter().
+ */
+function tmgmt_workbench_query_tmgmt_entity_get_translatable_entities_alter(QueryAlterableInterface $query) {
+  $moderated = workbench_moderation_moderate_node_types();
+
+  // Alter query when on TMGMT Source Overview page.
+  // See: TMGMTWorkbenchSourceUIController::overviewForm().
+  if (drupal_static('tmgmt_workbench_overview_form')) {
+    // Don't show content that is not moderated.
+    $fields = $query->getFields();
+    $query->condition('e.type', $moderated, 'IN');
+    // Don't show content that is not in a translatable state.
+    $states = variable_get('tmgmt_workbench_moderation_states', array());
+    foreach ($fields as $info) {
+      // Get field on primary table, which is aliased as "e".
+      // @see: tmgmt_entity_get_translatable_entities() for more details.
+      if ($states && ($info['table'] == 'e')) {
+        $query->join('workbench_moderation_node_history', 'wmnh', 'e.' . $info['alias'] . ' = wmnh.nid');
+        // @todo: we only consider the current revision
+        // check if this assumption is correct.
+        $query->condition('wmnh.is_current', 1);
+        $query->condition('wmnh.state', $states);
+        break;
+      }
+    }
+  }
+  else {
+    $query->condition('e.type', $moderated, 'NOT IN');
+  }
+}
+
+/**
+ * Implements hook_views_api().
+ */
+function tmgmt_workbench_views_api() {
+  return array(
+    'api' => 3,
+    'path' => drupal_get_path('module', 'tmgmt_workbench') . '/includes',
+  );
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ *
+ * Alter function for the form on the 'Translate' tab.
+ */
+function tmgmt_workbench_form_tmgmt_entity_ui_translate_form_alter(&$form, $form_state) {
+  $entity_type = $form_state['entity_type'];
+  if ($entity_type == 'node') {
+    $node = $form_state['entity'];
+    if (workbench_moderation_node_moderated($node)) {
+      $states = array_values(_tmgmt_workbench_available_states());
+      $state = $node->workbench_moderation['current']->state;
+      $translation_possible = in_array($state, $states, 'strict');
+
+      $options = $form['languages']['#options'];
+
+      // Getting information about existing job items.
+      if (!isset($form_state['tmgmt_workbench']['existing_jobs'])) {
+        $form_state['tmgmt_workbench']['existing_jobs'] = _tmgmt_workbench_get_existing_jobs($node);
+      }
+      $existing_jobs = $form_state['tmgmt_workbench']['existing_jobs'];
+
+      $always_show_direct_translation_links = variable_get('tmgmt_workbench_moderation_always_show_direct_translation_links', FALSE);
+
+      // Setting up an array with language codes based on the available options.
+      $lang_codes = array_keys($options);
+
+      foreach ($lang_codes as $lang_code) {
+        if (isset($options[$lang_code]) && isset($existing_jobs[$lang_code])) {
+          $item = $existing_jobs[$lang_code];
+          $uri = $item->uri();
+          $wrapper = entity_metadata_wrapper('tmgmt_job_item', $item);
+          $form['languages']['#options'][$lang_code][TMGMT_WORKBENCH_REQUEST_STATE_INDEX] = l($wrapper->state->label(),
+            $uri['path'],
+            array('query' => array('destination' => current_path())));
+        }
+
+        // Disable checkbox selection if current node revision is not
+        // in translatable moderation states.
+        if (!$translation_possible) {
+          $form['languages'][$lang_code] = array(
+            '#type' => 'checkbox',
+            '#disabled' => TRUE,
+          );
+          $form['languages']['#suffix'] = '<div class="description">' .
+            t('Current moderation state does not allow to request a translation
+             for this content.') . '</div>';
+
+          if ($always_show_direct_translation_links && ($lang_code != $node->translations->original)) {
+            $options[$lang_code][TMGMT_WORKBENCH_REQUEST_OPERATION_INDEX] = '';
+          }
+        }
+      }
+    }
+  }
+}
+
+/**
+ * Helper function. Provides information on configuration and returns states.
+ */
+function _tmgmt_workbench_available_states() {
+  $states = variable_get('tmgmt_workbench_moderation_states', array());
+  if (empty($states)) {
+    drupal_set_message(t('You have to enable at least one workbench state'));
+  }
+  return $states;
+}
+
+/**
+ * Returns existing TMGMT job items for the given node object.
+ *
+ * @param object $node
+ *   A node object.
+ *
+ * @return array
+ *   Returns TMGMTJobItem[] array
+ */
+function _tmgmt_workbench_get_existing_jobs($node) {
+  return tmgmt_job_item_load_latest(
+    'workbench_moderation',
+    'node',
+    $node->nid,
+    $node->translations->original
+  );
+}

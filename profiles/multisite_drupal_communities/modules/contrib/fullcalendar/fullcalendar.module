@@ -243,13 +243,14 @@ function fullcalendar_form_views_ui_edit_display_form_alter(&$form, &$form_state
  * Returns events for FullCalendar.
  */
 function fullcalendar_results($view_name = NULL, $view_display = NULL) {
+  $func_args = func_get_args();
   // Bail out if no view_name or view_display is passed.
   if (empty($view_name) || empty($view_display) || empty($_POST['dom_id'])) {
     return;
   }
 
   // Find Views arguments.
-  $args = func_get_args();
+  $args = $func_args;
   unset($args[0], $args[1]);
   $args = array_values($args);
 

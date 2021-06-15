@@ -1,0 +1,37 @@
+<?php
+
+/**
+ * @file
+ * Exposes API for configuration staging.
+ */
+
+/**
+ * Very simple service container.
+ *
+ * Usage:
+ * multisite_config_service('system')->getVariable('site_name').
+ *
+ * @param string $module
+ *   Module name.
+ *
+ * @return mixed|Drupal\multisite_config\ConfigBase
+ *   Configuration API object.
+ *
+ * @throws \Exception
+ *   Throw exception if either module, service class or both are missing.
+ */
+function multisite_config_service($module) {
+  $class = "\\Drupal\\{$module}\\Config";
+  if (class_exists($class) && module_exists($module)) {
+    return new $class();
+  }
+  elseif (class_exists($class) && !module_exists($module)) {
+    throw new \Exception('The service class "' . $class . '" refers to a module "' . $module . '" which does not exist or is not enabled.');
+  }
+  elseif (!class_exists($class) && module_exists($module)) {
+    throw new \Exception('The service class "' . $class . '" from the module "' . $module . '" does not exist.');
+  }
+  else {
+    throw new \Exception('The service class "' . $class . '" and the module "' . $module . '" do not exist.');
+  }
+}

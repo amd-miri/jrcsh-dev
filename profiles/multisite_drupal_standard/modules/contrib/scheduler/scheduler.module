@@ -232,16 +232,16 @@ function scheduler_form_alter(&$form, $form_state) {
  * unpublishing, by implementing hook_scheduler_allow_publishing() or
  * hook_scheduler_allow_unpublishing().
  *
- * @see hook_scheduler_allow_publishing()
- * @see hook_scheduler_allow_unpublishing()
- *
- * @param stdClass $node
+ * @param object $node
  *   The node object on which the action is to be performed.
  * @param string $action
  *   The action that needs to be checked. Can be 'publish' or 'unpublish'.
  *
  * @return bool
  *   TRUE if the action is allowed, FALSE if not.
+ *
+ * @see hook_scheduler_allow_publishing()
+ * @see hook_scheduler_allow_unpublishing()
  */
 function _scheduler_allow($node, $action) {
   // Default to TRUE.
@@ -282,7 +282,8 @@ function _scheduler_strtotime($str) {
       // date_limit_format() to derive the format of the returned string value.
       $granularity = date_format_order($date_format);
       $date_format = date_limit_format(DATE_FORMAT_DATETIME, $granularity);
-      $date_only_format = date_limit_format(DATE_FORMAT_DATETIME, array('day', 'month', 'year'));
+      $granularity = array('day', 'month', 'year');
+      $date_only_format = date_limit_format(DATE_FORMAT_DATETIME, $granularity);
     }
     $str = trim(preg_replace('/\s+/', ' ', $str));
     $time = _scheduler_strptime($str, $date_format);
@@ -340,6 +341,8 @@ function _scheduler_strptime($date, $format) {
   // Build a regex pattern for each element allowed in the date and time format.
   $date_entities_and_replacements = array(
     // Date elements, one for each character in SCHEDULER_DATE_LETTERS.
+    // Inline comments on each row are useful here, so 'ignore' for standards.
+    // @codingStandardsIgnoreStart
     'd' => '(\d{2})',      // Day of the month with leading zero.
     'j' => '(\d{1,2})',    // Day of the month without leading zero.
     'm' => '(\d{2})',      // Month number with leading zero.
@@ -358,6 +361,7 @@ function _scheduler_strptime($date, $format) {
     's' => '(\d{2})',      // Seconds with leading zero.
     'a' => '([ap]m)',      // Lower case meridian.
     'A' => '([AP]M)',      // Upper case meridian.
+    // @codingStandardsIgnoreEnd
   );
   $date_entities = array_keys($date_entities_and_replacements);
   $date_regex_replacements = array_values($date_entities_and_replacements);
@@ -370,7 +374,15 @@ function _scheduler_strptime($date, $format) {
     return FALSE;
   }
 
-  $results = array('day' => 0, 'month' => 0, 'year' => 0, 'hour' => 0, 'minute' => 0, 'second' => 0, 'meridiem' => NULL);
+  $results = array(
+    'day' => 0,
+    'month' => 0,
+    'year' => 0,
+    'hour' => 0,
+    'minute' => 0,
+    'second' => 0,
+    'meridiem' => NULL,
+  );
   $index = 1;
   foreach ($entity_matches[1] as $entity) {
     $value = intval($value_matches[$index]);
@@ -467,7 +479,7 @@ function scheduler_node_load($nodes, $types) {
 /**
  * Implements hook_node_view().
  */
-function scheduler_node_view($node, $view_mode = 'full', $langcode) {
+function scheduler_node_view($node, $view_mode, $langcode) {
   // If the node is going to be unpublished, then add this information to the
   // header for search engines. Only do this when the current page is the
   // full-page view of the node.
@@ -487,7 +499,7 @@ function scheduler_node_validate($node, $form, &$form_state) {
   // Use !== FALSE because the key returned will be 0.
   // @see https://www.drupal.org/node/2723929
   if (!empty($form_state['triggering_element']['#submit']) && array_search('node_form_delete_submit', $form_state['triggering_element']['#submit']) !== FALSE) {
-    if ($errors = form_get_errors()) {
+    if (form_get_errors()) {
       // If there are already errors (from date_popup) remove them to allow
       // deletion to proceed.
       form_clear_error();
@@ -504,13 +516,13 @@ function scheduler_node_validate($node, $form, &$form_state) {
   // passed as an array this means we are using the Date Popup module and a
   // validation error has occurred. In this case we should skip validation as
   // it is being handled by Date Popup.
-
   $date_format = variable_get('scheduler_date_format', SCHEDULER_DATE_FORMAT);
+  $args = array('%time' => format_date(REQUEST_TIME, 'custom', $date_format));
 
   if (!empty($node->publish_on) && !is_numeric($node->publish_on) && !is_array($node->publish_on)) {
     $publishtime = _scheduler_strtotime($node->publish_on);
     if ($publishtime === FALSE) {
-      form_set_error('publish_on', t("The 'publish on' value does not match the expected format of %time", array('%time' => format_date(REQUEST_TIME, 'custom', $date_format))));
+      form_set_error('publish_on', t("The 'publish on' value does not match the expected format of %time", $args));
     }
     elseif ($publishtime && variable_get('scheduler_publish_past_date_' . $node->type, 'error') == 'error' && $publishtime < REQUEST_TIME) {
       form_set_error('publish_on', t("The 'publish on' date must be in the future"));
@@ -520,7 +532,7 @@ function scheduler_node_validate($node, $form, &$form_state) {
   if (!empty($node->unpublish_on) && !is_numeric($node->unpublish_on) && !is_array($node->unpublish_on)) {
     $unpublishtime = _scheduler_strtotime($node->unpublish_on);
     if ($unpublishtime === FALSE) {
-      form_set_error('unpublish_on', t("The 'unpublish on' value does not match the expected format of %time", array('%time' => format_date(REQUEST_TIME, 'custom', $date_format))));
+      form_set_error('unpublish_on', t("The 'unpublish on' value does not match the expected format of %time", $args));
     }
     elseif ($unpublishtime && $unpublishtime < REQUEST_TIME) {
       form_set_error('unpublish_on', t("The 'unpublish on' date must be in the future"));
@@ -585,7 +597,9 @@ function scheduler_node_presave($node) {
       // message themselves explaining why publication is denied.
       if ($publication_allowed) {
         $date_format = variable_get('scheduler_date_format', SCHEDULER_DATE_FORMAT);
-        drupal_set_message(t('This post is unpublished and will be published @publish_time.', array('@publish_time' => format_date($node->publish_on, 'custom', $date_format))), 'status', FALSE);
+        drupal_set_message(t('This post is unpublished and will be published @publish_time.', array(
+          '@publish_time' => format_date($node->publish_on, 'custom', $date_format),
+        )), 'status', FALSE);
       }
     }
   }
@@ -704,6 +718,7 @@ function scheduler_cron() {
   if (variable_get('scheduler_cache_clear_all', 0) && ($nodes_published || $nodes_unpublished)) {
     // Clear the page and block caches.
     cache_clear_all();
+    watchdog('scheduler', 'Page and block caches cleared.', array(), WATCHDOG_NOTICE, l(t('settings'), 'admin/config/content/scheduler'));
   }
 
   // Reset the static scheduler_cron flag.
@@ -882,8 +897,8 @@ function scheduler_feeds_set_target($source, $entity, $target, $value, $mapping)
  * Implements hook_ctools_plugin_directory().
  */
 function scheduler_ctools_plugin_directory($owner, $plugin_type) {
- // Declare a form pane (panels content type) for use in ctools and page
- // manager. This allows the Scheduler fieldset to be placed in a panel.
+  // Declare a form pane (panels content type) for use in ctools and page
+  // manager. This allows the Scheduler fieldset to be placed in a panel.
   if ($owner == 'ctools' && $plugin_type == 'content_types') {
     return 'plugins/content_types';
   }

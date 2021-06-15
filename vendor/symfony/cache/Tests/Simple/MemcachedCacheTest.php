@@ -14,6 +14,9 @@ namespace Symfony\Component\Cache\Tests\Simple;
 use Symfony\Component\Cache\Adapter\AbstractAdapter;
 use Symfony\Component\Cache\Simple\MemcachedCache;
 
+/**
+ * @group legacy
+ */
 class MemcachedCacheTest extends CacheTestCase
 {
     protected $skippedTests = [
@@ -24,7 +27,7 @@ class MemcachedCacheTest extends CacheTestCase
 
     protected static $client;
 
-    public static function setupBeforeClass()
+    public static function setUpBeforeClass(): void
     {
         if (!MemcachedCache::isSupported()) {
             self::markTestSkipped('Extension memcached >=2.2.0 required.');
@@ -73,11 +76,11 @@ class MemcachedCacheTest extends CacheTestCase
 
     /**
      * @dataProvider provideBadOptions
-     * @expectedException \ErrorException
-     * @expectedExceptionMessage constant(): Couldn't find constant Memcached::
      */
     public function testBadOptions($name, $value)
     {
+        $this->expectException('ErrorException');
+        $this->expectExceptionMessage('constant(): Couldn\'t find constant Memcached::');
         MemcachedCache::createConnection([], [$name => $value]);
     }
 
@@ -102,12 +105,10 @@ class MemcachedCacheTest extends CacheTestCase
         $this->assertSame(1, $client->getOption(\Memcached::OPT_LIBKETAMA_COMPATIBLE));
     }
 
-    /**
-     * @expectedException \Symfony\Component\Cache\Exception\CacheException
-     * @expectedExceptionMessage MemcachedAdapter: "serializer" option must be "php" or "igbinary".
-     */
     public function testOptionSerializer()
     {
+        $this->expectException('Symfony\Component\Cache\Exception\CacheException');
+        $this->expectExceptionMessage('MemcachedAdapter: "serializer" option must be "php" or "igbinary".');
         if (!\Memcached::HAVE_JSON) {
             $this->markTestSkipped('Memcached::HAVE_JSON required');
         }

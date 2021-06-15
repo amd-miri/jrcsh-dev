@@ -11,42 +11,6 @@
 function nexteuropa_newsroom_field_default_field_bases() {
   $field_bases = array();
 
-  // Exported field_base: 'field_newsroom_associated_select'.
-  $field_bases['field_newsroom_associated_select'] = array(
-    'active' => 1,
-    'cardinality' => 1,
-    'deleted' => 0,
-    'entity_types' => array(),
-    'field_name' => 'field_newsroom_associated_select',
-    'indexes' => array(
-      'target_id' => array(
-        0 => 'target_id',
-      ),
-    ),
-    'locked' => 1,
-    'module' => 'entityreference',
-    'settings' => array(
-      'entity_translation_sync' => FALSE,
-      'handler' => 'base',
-      'handler_settings' => array(
-        'behaviors' => array(
-          'views-select-list' => array(
-            'status' => 0,
-          ),
-        ),
-        'sort' => array(
-          'type' => 'none',
-        ),
-        'target_bundles' => array(
-          'newsroom_selection' => 'newsroom_selection',
-        ),
-      ),
-      'target_type' => 'node',
-    ),
-    'translatable' => 0,
-    'type' => 'entityreference',
-  );
-
   // Exported field_base: 'field_newsroom_associated_topic'.
   $field_bases['field_newsroom_associated_topic'] = array(
     'active' => 1,
@@ -93,7 +57,7 @@ function nexteuropa_newsroom_field_default_field_bases() {
       'entity_translation_sync' => FALSE,
       'max_length' => 255,
     ),
-    'translatable' => 0,
+    'translatable' => 1,
     'type' => 'text',
   );
 
@@ -141,7 +105,7 @@ function nexteuropa_newsroom_field_default_field_bases() {
       'entity_translation_sync' => FALSE,
       'max_length' => 255,
     ),
-    'translatable' => 1,
+    'translatable' => 0,
     'type' => 'text',
   );
 
@@ -1451,70 +1415,6 @@ function nexteuropa_newsroom_field_default_field_bases() {
     'type' => 'text',
   );
 
-  // Exported field_base: 'field_newsroom_selected_topics'.
-  $field_bases['field_newsroom_selected_topics'] = array(
-    'active' => 1,
-    'cardinality' => -1,
-    'deleted' => 0,
-    'entity_types' => array(),
-    'field_name' => 'field_newsroom_selected_topics',
-    'indexes' => array(
-      'target_id' => array(
-        0 => 'target_id',
-      ),
-    ),
-    'locked' => 1,
-    'module' => 'entityreference',
-    'settings' => array(
-      'entity_translation_sync' => FALSE,
-      'handler' => 'base',
-      'handler_settings' => array(
-        'behaviors' => array(
-          'views-select-list' => array(
-            'status' => 0,
-          ),
-        ),
-        'sort' => array(
-          'type' => 'none',
-        ),
-        'target_bundles' => array(
-          'newsroom_topic' => 'newsroom_topic',
-        ),
-      ),
-      'target_type' => 'taxonomy_term',
-    ),
-    'translatable' => 0,
-    'type' => 'entityreference',
-  );
-
-  // Exported field_base: 'field_newsroom_selected_types'.
-  $field_bases['field_newsroom_selected_types'] = array(
-    'active' => 1,
-    'cardinality' => -1,
-    'deleted' => 0,
-    'entity_types' => array(),
-    'field_name' => 'field_newsroom_selected_types',
-    'indexes' => array(
-      'tid' => array(
-        0 => 'tid',
-      ),
-    ),
-    'locked' => 1,
-    'module' => 'taxonomy',
-    'settings' => array(
-      'allowed_values' => array(
-        0 => array(
-          'vocabulary' => 'newsroom_item_type',
-          'parent' => 0,
-        ),
-      ),
-      'entity_translation_sync' => FALSE,
-      'options_list_callback' => 'i18n_taxonomy_allowed_values',
-    ),
-    'translatable' => 0,
-    'type' => 'taxonomy_term_reference',
-  );
-
   // Exported field_base: 'field_newsroom_service'.
   $field_bases['field_newsroom_service'] = array(
     'active' => 1,
@@ -1842,32 +1742,6 @@ function nexteuropa_newsroom_field_default_field_bases() {
     'type' => 'text',
   );
 
-  // Exported field_base: 'field_newsroom_topic_operator'.
-  $field_bases['field_newsroom_topic_operator'] = array(
-    'active' => 1,
-    'cardinality' => 1,
-    'deleted' => 0,
-    'entity_types' => array(),
-    'field_name' => 'field_newsroom_topic_operator',
-    'indexes' => array(
-      'value' => array(
-        0 => 'value',
-      ),
-    ),
-    'locked' => 1,
-    'module' => 'list',
-    'settings' => array(
-      'allowed_values' => array(
-        'AND' => 'AND',
-        'OR' => 'OR',
-      ),
-      'allowed_values_function' => '',
-      'entity_translation_sync' => FALSE,
-    ),
-    'translatable' => 0,
-    'type' => 'list_text',
-  );
-
   // Exported field_base: 'field_newsroom_topics'.
   $field_bases['field_newsroom_topics'] = array(
     'active' => 1,
@@ -1945,41 +1819,6 @@ function nexteuropa_newsroom_field_default_field_bases() {
     ),
     'translatable' => 0,
     'type' => 'text',
-  );
-
-  // Exported field_base: 'field_selected_topic_highlights'.
-  $field_bases['field_selected_topic_highlights'] = array(
-    'active' => 1,
-    'cardinality' => -1,
-    'deleted' => 0,
-    'entity_types' => array(),
-    'field_name' => 'field_selected_topic_highlights',
-    'indexes' => array(
-      'target_id' => array(
-        0 => 'target_id',
-      ),
-    ),
-    'locked' => 1,
-    'module' => 'entityreference',
-    'settings' => array(
-      'entity_translation_sync' => FALSE,
-      'handler' => 'views',
-      'handler_settings' => array(
-        'behaviors' => array(
-          'views-select-list' => array(
-            'status' => 0,
-          ),
-        ),
-        'view' => array(
-          'args' => array(),
-          'display_name' => 'entityreference_1',
-          'view_name' => 'newsroom_term_selection',
-        ),
-      ),
-      'target_type' => 'taxonomy_term',
-    ),
-    'translatable' => 0,
-    'type' => 'entityreference',
   );
 
   return $field_bases;

@@ -18,7 +18,7 @@ global $user;
       <div class="middle-step">
         <input type="text" class="newsroom-service-email" id="newsroom-service-email" />
         <div class="newsroom-service-email-description">
-          <span><?php echo t('or'); ?></span> <?php echo l(t('login'), 'user/login'); ?> <?php echo t('to manage your subscriptions.'); ?>
+          <span><?php echo t('or'); ?></span> <?php echo l(t('login'), 'ecas'); ?> <?php echo t('to manage your subscriptions.'); ?>
         </div>
       </div>
     <?php endif; ?>

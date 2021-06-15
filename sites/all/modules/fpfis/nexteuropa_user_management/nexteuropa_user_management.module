@@ -1,0 +1,153 @@
+<?php
+/**
+ * @file
+ * Code for the NextEuropa Manage Roles feature.
+ */
+
+include_once 'nexteuropa_user_management.features.inc';
+include_once 'nexteuropa_user_management.actions.inc';
+
+/**
+ * Implements hook_permission().
+ */
+function nexteuropa_user_management_permission() {
+  return array(
+    'access nexteuropa user management views' => array(
+      'title' => t('Allow to access nexteuropa user management views'),
+      'restrict access' => TRUE,
+    ),
+    'nexteuropa manage users non restricted operations' => array(
+      'title' => t('Allow to manage users with non restricted operations'),
+      'restrict access' => TRUE,
+    ),
+  );
+}
+
+/**
+ * Implements hook_entity_info_alter().
+ */
+function nexteuropa_user_management_entity_info_alter(&$entity_info) {
+  $entity_info['user']['access callback'] = 'nexteuropa_user_management_metadata_user_access';
+}
+
+/**
+ * Access callback for the user entity.
+ */
+function nexteuropa_user_management_metadata_user_access($op, $entity = NULL, $account = NULL, $entity_type = NULL) {
+  $account = isset($account) ? $account : $GLOBALS['user'];
+  if ($op === 'update' && user_access('nexteuropa manage users non restricted operations', $account)) {
+    return TRUE;
+  }
+
+  // Call the original core callback too.
+  return entity_metadata_user_access($op, $entity, $account, $entity_type);
+}
+
+/**
+ * Implements hook_module_implements_alter().
+ *
+ * To make sure nothing will override our access callback, we need to run last.
+ * Because the entity module override the access callback, and using this
+ * technique, using weight is totally useless.
+ */
+function nexteuropa_user_management_module_implements_alter(&$implementations, $hook) {
+  if ($hook === 'entity_info_alter') {
+    // Move our hook implementation to the bottom.
+    $group = $implementations['nexteuropa_user_management'];
+    unset($implementations['nexteuropa_user_management']);
+    $implementations['nexteuropa_user_management'] = $group;
+  }
+}
+
+/**
+ * Restrict roles according to the settings.php.
+ *
+ * @param array $roles
+ *   A roles list to restrict. The keys should be role ids (rid) the values
+ *   should be the role name.
+ */
+function _nexteuropa_user_management_restrict_roles(&$roles) {
+  $banned_roles = variable_get('nexteuropa_user_management_banned_roles', array());
+  $banned_role_ids = variable_get('nexteuropa_user_management_banned_role_ids', array(
+    variable_get('user_admin_role', 0),
+    variable_get('nexteuropa_user_management_user_manager_rid'),
+  ));
+
+  // Make sure one of the two options are set, if not, then make it unusable
+  // the form and provide a message.
+  if (empty($banned_roles) && empty($banned_role_ids)) {
+    $roles = array();
+    drupal_set_message(t('First you need to setup the banned roles in the settings.php.'), 'error', FALSE);
+    return;
+  }
+
+  // Check if at least the variable type is correct to prevent later on
+  // notifications.
+  if (!is_array($banned_roles) || !is_array($banned_role_ids)) {
+    $roles = array();
+    drupal_set_message(t('Incorrect parameter type. The set variable should be an array.'), 'error', FALSE);
+    return;
+  }
+
+  // Setup replaceable tokens.
+  $replacement = array(
+    '<!!ADMIN_RID!!>' => variable_get('user_admin_role', 0),
+    '<!!USER_MANAGER_RID!!>' => variable_get('nexteuropa_user_management_user_manager_rid'),
+  );
+
+  // Replace tokens to IDs.
+  $banned_role_ids = array_map(function ($value) use ($replacement) {
+    return isset($replacement[$value]) ? $replacement[$value] : $value;
+  }, $banned_role_ids);
+
+  // Unset banned role by ids.
+  foreach ($banned_role_ids as $banned_role_id) {
+    unset($roles[$banned_role_id]);
+  }
+
+  // Unset banned roles by names.
+  $roles = array_filter($roles, function ($value) use ($banned_roles) {
+    return !in_array($value, $banned_roles, FALSE);
+  });
+}
+
+/**
+ * Implements hook_views_default_views_alter().
+ */
+function nexteuropa_user_management_views_default_views_alter(&$views) {
+  if (array_key_exists('nexteuropa_user_management', $views)) {
+    $admin_rid = variable_get('user_admin_role', 0);
+    $user_manager_rid = variable_get('nexteuropa_user_management_user_manager_rid');
+
+    $view = $views['nexteuropa_user_management'];
+
+    $handler = $view->display['default']->handler;
+    // Add proper roles as filtration.
+    $handler->display->display_options['arguments']['uid']['validate_options']['roles'] = array(
+      (int) $admin_rid => $admin_rid,
+      (int) $user_manager_rid => $user_manager_rid,
+    );
+
+    // Remove first and last name if realname module is not installed.
+    if (!module_exists('realname')) {
+      /* Display: Master */
+      $handler->display->display_options['style_options']['columns'] = array_filter($handler->display->display_options['style_options']['columns'], function ($value) {
+        return !in_array($value, array('field_firstname', 'field_lastname'));
+      });
+
+      unset($handler->display->display_options['style_options']['info']['field_firstname']);
+      unset($handler->display->display_options['style_options']['info']['field_lastname']);
+
+      /* Field: User: First name */
+      unset($handler->display->display_options['fields']['field_firstname']);
+      /* Field: User: Last name */
+      unset($handler->display->display_options['fields']['field_lastname']);
+
+      /* Filter criterion: User: First name (field_firstname) */
+      unset($handler->display->display_options['filters']['field_firstname_value']);
+
+      /* Filter criterion: User: Last name (field_lastname) */
+      unset($handler->display->display_options['filters']['field_lastname_value']);
+    }
+  }
+}

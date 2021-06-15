@@ -7,7 +7,7 @@ Dates can be entered either as plain text or with Javascript calendar
 popups (JSCalendar in Drupal 5, Date Popup in Drupal 6).
 
 JSCalendar is part of the JSTools module (http://drupal.org/project/jstools).
-The Date Popup module is part of the the Date module (http://drupal.org/project/date).
+Date Popup is part of the the Date module (http://drupal.org/project/date).
 
 Notice:
 - Please check if cron is running correctly if scheduler does not publish your

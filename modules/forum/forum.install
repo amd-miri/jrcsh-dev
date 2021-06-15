@@ -222,6 +222,7 @@ function forum_schema() {
       'created' => array('created'),
       'last_comment_timestamp' => array('last_comment_timestamp'),
     ),
+    'primary key' => array('nid', 'tid'),
     'foreign keys' => array(
       'tracked_node' => array(
         'table' => 'node',
@@ -460,6 +461,20 @@ function forum_update_7011() {
 function forum_update_7012() {
   db_add_index('forum_index', 'created', array('created'));
   db_add_index('forum_index', 'last_comment_timestamp', array('last_comment_timestamp'));
+}
+
+/**
+ * Add missing primary key.
+ */
+function forum_update_7013() {
+  $db_table = 'forum_index';
+
+  // If it was already done manually,
+  // remove primary key.
+  if (db_index_exists($db_table, 'PRIMARY')) {
+    db_drop_primary_key($db_table);
+  }
+  db_add_primary_key($db_table, array('nid', 'tid'));
 }
 
 /**

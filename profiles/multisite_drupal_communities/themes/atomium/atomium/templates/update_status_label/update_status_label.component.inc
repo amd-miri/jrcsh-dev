@@ -8,13 +8,49 @@
 /**
  * Implements hook_atomium_theme_hook().
  */
-function atomium_atomium_theme_update_status_label() {
+function atomium_atomium_theme_update_status_label(array $existing, $type, $theme, $path) {
   return array(
     'update_status_label' => array(
       'template' => 'update-status-label',
       'variables' => array('status' => NULL),
     ),
   );
+}
+
+/**
+ * Implements hook_atomium_definition_hook().
+ */
+function atomium_atomium_definition_update_status_label() {
+  return array(
+    'label' => 'Update status label',
+    'description' => 'Update status label description.',
+    'dependencies' => array(
+      'update',
+    ),
+    'preview' => array(),
+  );
+}
+
+/**
+ * Implements hook_atomium_definition_form_hook().
+ */
+function atomium_atomium_definition_form_update_status_label(array $form, array &$form_state) {
+  $statuses = array(
+    UPDATE_CURRENT,
+    UPDATE_NOT_CURRENT,
+    UPDATE_NOT_SECURE,
+    UPDATE_NOT_SUPPORTED,
+    UPDATE_REVOKED,
+  );
+
+  foreach ($statuses as $status) {
+    $form['status-' . $status] = array(
+      '#theme' => 'update_status_label',
+      '#status' => $status,
+    );
+  }
+
+  return $form;
 }
 
 /**
@@ -54,7 +90,6 @@ function atomium_preprocess_update_status_label(array &$variables, $hook) {
       $text = t('Up to date');
 
       break;
-
   }
 
   $variables['atomium']['attributes']['wrapper']->append('class', $class);

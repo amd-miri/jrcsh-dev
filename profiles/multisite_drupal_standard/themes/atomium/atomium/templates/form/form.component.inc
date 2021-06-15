@@ -8,7 +8,7 @@
 /**
  * Implements hook_atomium_theme_hook().
  */
-function atomium_atomium_theme_form() {
+function atomium_atomium_theme_form(array $existing, $type, $theme, $path) {
   return array(
     'form' => array(
       'render element' => 'element',
@@ -31,6 +31,7 @@ function atomium_preprocess_form(array &$variables, $hook) {
     $element['#attributes']['action'] = drupal_strip_dangerous_protocols($element['#action']);
   }
   element_set_attributes($element, array('method', 'id'));
+
   if (empty($element['#attributes']['accept-charset'])) {
     $element['#attributes']['accept-charset'] = 'UTF-8';
   }

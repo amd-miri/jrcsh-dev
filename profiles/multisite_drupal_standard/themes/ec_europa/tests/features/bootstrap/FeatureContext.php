@@ -13,11 +13,11 @@ class FeatureContext extends RawDrupalContext {
    * @Given :amount nodes of type :type
    */
   public function nodesOfType($amount, $type) {
-    for ($i = 0; $i < $amount; $i++) {
-      $node = (object) [
+    for ($i = 0; $i < $amount; ++$i) {
+      $node = (object) array(
         'type' => $type,
-        'title' => ucfirst($type) . " " . $i,
-      ];
+        'title' => \ucfirst($type) . ' ' . $i,
+      );
       $this->nodeCreate($node);
     }
   }

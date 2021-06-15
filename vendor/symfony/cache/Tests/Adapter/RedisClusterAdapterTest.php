@@ -11,9 +11,13 @@
 
 namespace Symfony\Component\Cache\Tests\Adapter;
 
+use Symfony\Component\Cache\Adapter\AbstractAdapter;
+use Symfony\Component\Cache\Adapter\RedisAdapter;
+use Symfony\Component\Cache\Traits\RedisClusterProxy;
+
 class RedisClusterAdapterTest extends AbstractRedisAdapterTest
 {
-    public static function setupBeforeClass()
+    public static function setUpBeforeClass(): void
     {
         if (!class_exists('RedisCluster')) {
             self::markTestSkipped('The RedisCluster class is required.');
@@ -22,6 +26,33 @@ class RedisClusterAdapterTest extends AbstractRedisAdapterTest
             self::markTestSkipped('REDIS_CLUSTER_HOSTS env var is not defined.');
         }
 
-        self::$redis = new \RedisCluster(null, explode(' ', $hosts));
+        self::$redis = AbstractAdapter::createConnection('redis:?host['.str_replace(' ', ']&host[', $hosts).']', ['lazy' => true, 'redis_cluster' => true]);
+    }
+
+    public function createCachePool($defaultLifetime = 0)
+    {
+        $this->assertInstanceOf(RedisClusterProxy::class, self::$redis);
+        $adapter = new RedisAdapter(self::$redis, str_replace('\\', '.', __CLASS__), $defaultLifetime);
+
+        return $adapter;
+    }
+
+    /**
+     * @dataProvider provideFailedCreateConnection
+     */
+    public function testFailedCreateConnection($dsn)
+    {
+        $this->expectException('Symfony\Component\Cache\Exception\InvalidArgumentException');
+        $this->expectExceptionMessage('Redis connection failed');
+        RedisAdapter::createConnection($dsn);
+    }
+
+    public function provideFailedCreateConnection()
+    {
+        return [
+            ['redis://localhost:1234?redis_cluster=1'],
+            ['redis://foo@localhost?redis_cluster=1'],
+            ['redis://localhost/123?redis_cluster=1'],
+        ];
     }
 }

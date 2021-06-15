@@ -1,0 +1,14 @@
+name = Translation Management Workbench
+description = Exposes as TMGMT source content in a specific moderation state.
+package = Translation Management
+core = 7.x
+configure = admin/config/regional/tmgmt_workbench_settings
+
+dependencies[] = date_popup
+dependencies[] = tmgmt_entity
+dependencies[] = tmgmt_entity_ui
+dependencies[] = workbench
+dependencies[] = workbench_moderation
+
+files[] = includes/tmgmt_workbench.plugin.inc
+files[] = includes/tmgmt_workbench.ui.inc
