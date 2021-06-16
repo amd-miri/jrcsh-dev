@@ -1750,15 +1750,6 @@ function jrc_sh_views_views_default_views() {
   $handler->display->display_options['filters']['type']['expose']['label'] = 'Type';
   $handler->display->display_options['filters']['type']['expose']['operator'] = 'type_op';
   $handler->display->display_options['filters']['type']['expose']['identifier'] = 'type';
-  /* Filter criterion: Broken/missing handler */
-  $handler->display->display_options['filters']['field_dont_show_on_landing_page_value']['id'] = 'field_dont_show_on_landing_page_value';
-  $handler->display->display_options['filters']['field_dont_show_on_landing_page_value']['table'] = 'field_data_field_dont_show_on_landing_page';
-  $handler->display->display_options['filters']['field_dont_show_on_landing_page_value']['field'] = 'field_dont_show_on_landing_page_value';
-  $handler->display->display_options['filters']['field_dont_show_on_landing_page_value']['operator'] = 'not';
-  $handler->display->display_options['filters']['field_dont_show_on_landing_page_value']['value'] = array(
-    1 => '1',
-  );
-  $handler->display->display_options['filters']['field_dont_show_on_landing_page_value']['group'] = 1;
   /* Filter criterion: Workbench Moderation: Published */
   $handler->display->display_options['filters']['published']['id'] = 'published';
   $handler->display->display_options['filters']['published']['table'] = 'workbench_moderation_node_history';
