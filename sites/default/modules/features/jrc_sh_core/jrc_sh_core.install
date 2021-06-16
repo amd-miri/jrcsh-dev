@@ -1041,6 +1041,8 @@ function jrc_sh_core_update_7052() {
 function jrc_sh_core_update_7053() {
   module_enable(array(
     'jrc_sh_views',
+    'jrc_sh_permissions',
+    'jrc_sh_content_types',
   ),
     TRUE);
   features_revert_module('jrc_sh_permissions');
