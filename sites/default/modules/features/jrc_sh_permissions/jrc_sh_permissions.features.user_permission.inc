@@ -678,5 +678,15 @@ function jrc_sh_permissions_user_default_permissions() {
     'module' => 'node',
   );
 
+  // Exported permission: 'bypass honeypot protection'.
+  $permissions['bypass honeypot protection'] = array(
+    'name' => 'bypass honeypot protection',
+    'roles' => array(
+      'administrator' => 'administrator',
+      'authenticated user' => 'authenticated user',
+    ),
+    'module' => 'honeypot',
+  );
+
   return $permissions;
 }

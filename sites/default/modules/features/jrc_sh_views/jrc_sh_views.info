@@ -1,0 +1,12 @@
+name = JRC SH views
+description = JRC Science Hub altered views
+core = 7.x
+package = JRC
+multisite_version = 2.6
+php = 7.3
+dependencies[] = field_group
+dependencies[] = views
+features[ctools][] = views:views_default:3.0
+features[features_api][] = api:2
+features[views_view][] = jrc_news
+features_exclude[dependencies][ctools] = ctools

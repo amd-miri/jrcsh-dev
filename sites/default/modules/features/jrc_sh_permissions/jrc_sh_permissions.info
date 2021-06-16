@@ -1,8 +1,8 @@
 name = JRC SH permissions
 description = JRC Science Hub roles and permissions
 core = 7.x
-multisite_version = 2.5
-php = 5.6
+multisite_version = 2.6
+php = 7.3
 package = JRC
 dependencies[] = bean
 dependencies[] = ctools
@@ -68,5 +68,6 @@ features[user_permission][] = delete any scientific_tool content
 features[user_permission][] = delete own scientific_tool content
 features[user_permission][] = edit any scientific_tool content
 features[user_permission][] = edit own scientific_tool contents
+features[user_permission][] = bypass honeypot protection
 features[user_role][] = Open access editor
 features[user_role][] = Webtool creator
