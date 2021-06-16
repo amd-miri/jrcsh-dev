@@ -1034,3 +1034,16 @@ function jrc_sh_core_update_7052() {
   features_revert_module('jrc_sh_rules');
   features_revert(array('jrc_sh_core' => array('context')));
 }
+
+/**
+ * Enable JRCSH_views feature.
+ */
+function jrc_sh_core_update_7053() {
+  module_enable(array(
+    'jrc_sh_views',
+  ),
+    TRUE);
+  features_revert_module('jrc_sh_permissions');
+  features_revert_module('jrc_sh_content_types');
+  features_revert_module('jrc_sh_views');
+}
