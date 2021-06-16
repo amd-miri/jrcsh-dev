@@ -88,6 +88,7 @@ features[field_instance][] = node-science_updates-field_related_topics_nexus_iss
 features[field_instance][] = node-scientific_tool-field_migration_status
 features[field_instance][] = node-scientific_tool-field_related_topics_nexus_issue
 features[field_instance][] = node-topic-field_migration_status
+features[field_instance][] = node-topic-field_related_topics_nexus_issue
 features[field_instance][] = node-training_programme-field_related_topics_nexus_issue
 features[field_instance][] = node-video_gallery-field_related_topics_nexus_issue
 features[field_instance][] = user-user-field_related_topics_nexus_issue
